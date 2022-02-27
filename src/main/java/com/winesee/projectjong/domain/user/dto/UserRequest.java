@@ -21,7 +21,7 @@ import java.time.LocalDateTime;
 @Getter
 public class UserRequest {
     @NotBlank(message = "닉네임은 필수 입력 입니다.")
-    @Pattern(regexp = "^[0-9a-zA-Z가-힣]{1,10}$", message = "닉네임은 1자리부터 10자리까지 영문,한글,숫자만 입력 가능합니다.")
+    @Pattern(regexp = "^[0-9a-zA-Z가-힣]{3,10}$", message = "닉네임은 3자리부터 10자리까지 영문,한글,숫자만 입력 가능합니다.")
     private String name;
     @NotBlank(message = "아이디는 필수 입력 입니다.")
     @Pattern(regexp = "^[A-Za-z]{1}[A-Za-z0-9]{4,19}$", message = "아이디는 소문자 영문시작 그리고 최소 5자리 이상 19자 이하 영문과 숫자만 입력 가능합니다.")

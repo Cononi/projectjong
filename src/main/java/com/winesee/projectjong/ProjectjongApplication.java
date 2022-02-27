@@ -12,6 +12,8 @@ import javax.annotation.PostConstruct;
 import java.io.File;
 import java.util.TimeZone;
 
+import static com.winesee.projectjong.config.constant.FileConstant.USER_FOLDER;
+
 
 @ComponentScan()
 @SpringBootApplication
@@ -26,6 +28,7 @@ public class ProjectjongApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(ProjectjongApplication.class, args);
+		new File(USER_FOLDER).mkdirs();
 	}
 
 	@Bean

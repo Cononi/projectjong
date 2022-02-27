@@ -1,9 +1,13 @@
 package com.winesee.projectjong.service;
 
+import com.winesee.projectjong.config.exception.EmailExistException;
+import com.winesee.projectjong.config.exception.UserNotFoundException;
+import com.winesee.projectjong.config.exception.UsernameExistException;
 import com.winesee.projectjong.domain.user.Role;
 import com.winesee.projectjong.domain.user.User;
 import com.winesee.projectjong.domain.user.dto.UserRequest;
 import com.winesee.projectjong.domain.user.dto.UserResponse;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.mail.MessagingException;
@@ -22,7 +26,7 @@ public interface UserService {
      * @param userRequest UserRequest 데이터.
      * @return UserResponse 데이터
      */
-    UserResponse regiter(UserRequest userRequest) throws IOException;
+    UserResponse regiter(UserRequest userRequest) throws IOException, UserNotFoundException, EmailExistException, UsernameExistException;
 
     /**
      * 유저 가져오기
@@ -45,15 +49,21 @@ public interface UserService {
     /*-----------------------------------------------
     findByUsername - 유저 이름으로 정보 조회
     -----------------------------------------------*/
-    UserResponse findByUsername(String username);
+    User findByUsername(String username);
 
     /**
      * 이메일로 회원 정보 조회
      * @param email String
      * @return User
      */
-    User findUserByEmail(String email);
+    User findByEmail(String email);
 
+    /**
+     * 이름으로 회원 정보 조회
+     * @param name String
+     * @return User
+     */
+    User findByName(String name);
     /**
      * 유저 프로필 이미지 업데이트
      * @param username String
@@ -69,12 +79,14 @@ public interface UserService {
      */
     void deleteUser(long id);
 
-    /**
-     * 비밀번호 초기화
-     * @param email String
-     * @throws MessagingException 메세지 익셉션
-     * @throws EmailNotFoundException 이메일 익셉션
-     */
+//    /**
+//     * 비밀번호 초기화
+//     * @param email String
+//     * @throws MessagingException 메세지 익셉션
+//     * @throws EmailNotFoundException 이메일 익셉션
+//     */
+
+    ResponseEntity<?> userCheck(String username, String uri) throws UserNotFoundException, EmailExistException, UsernameExistException;
 }
 
 

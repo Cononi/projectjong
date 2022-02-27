@@ -1,15 +1,21 @@
 package com.winesee.projectjong.service;
 
+import com.winesee.projectjong.config.exception.EmailExistException;
 import com.winesee.projectjong.config.exception.NotAnImageFileException;
+import com.winesee.projectjong.config.exception.UserNotFoundException;
+import com.winesee.projectjong.config.exception.UsernameExistException;
 import com.winesee.projectjong.domain.user.Role;
 import com.winesee.projectjong.domain.user.User;
 import com.winesee.projectjong.domain.user.UserRepository;
 import com.winesee.projectjong.domain.user.dto.UserRequest;
 import com.winesee.projectjong.domain.user.dto.UserResponse;
+import com.winesee.projectjong.service.attempt.LoginAttemptService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -26,7 +32,10 @@ import java.nio.file.Paths;
 import java.util.*;
 
 import static com.winesee.projectjong.config.constant.FileConstant.*;
+import static com.winesee.projectjong.config.constant.UserImplConstant.*;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.*;
 
 @Service
@@ -39,6 +48,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     // User CRUD 인터페이스 JpaRepsitory 객체
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final LoginAttemptService loginAttemptService;
 
     /*
     -    인증 및 권한 부여와 그것의 인증절차
@@ -76,8 +86,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
      */
     @Override
     public UserDetails loadUserByUsername(String username) {
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("존재하지 않는 아이디."));
+        User user = userRepository.findByUsername(username);
+        validateLoginAttempt(user);
 //            Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
 //            authorities.add(new SimpleGrantedAuthority(user.getRoleKey()));
         return user;
@@ -87,7 +97,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         Regiser - 회원 가입
          -----------------------------------------------*/
     @Override
-    public UserResponse regiter(UserRequest userRequest) throws IOException {
+    public UserResponse regiter(UserRequest userRequest) throws IOException, UserNotFoundException, EmailExistException, UsernameExistException {
+        validateNewUsernameAndEmail(EMPTY, userRequest.getUsername(), userRequest.getEmail(), userRequest.getName());
         User user = User.builder()
                 .name(userRequest.getName())
                 .username(userRequest.getUsername())
@@ -108,8 +119,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
      -----------------------------------------------*/
     @Override
     public UserResponse getUser(String username) {
-        return new UserResponse(userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("해당 유저는 존재하지 않습니다.")));
+        return new UserResponse(userRepository.findByUsername(username));
     }
 
     /*-----------------------------------------------
@@ -140,19 +150,26 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     findUserbyUsername - 유저 이름으로 정보 조회
     -----------------------------------------------*/
     @Override
-    public UserResponse findByUsername(String username) {
-        User uesr = userRepository.findByUsername(username).orElseThrow(
-                () -> new UsernameNotFoundException("존재하지 않는 유저"));
-        return new UserResponse(uesr);
+    public User findByUsername(String username) {
+        return userRepository.findByUsername(username);
     }
 
     /*-----------------------------------------------
       findUserByEmail - 유저 이메일로 정보 조회
       -----------------------------------------------*/
     @Override
-    public User findUserByEmail(String email) {
-        return userRepository.findUserByEmail(email);
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email);
     }
+
+    /*-----------------------------------------------
+  findUserByEmail - 유저 이메일로 정보 조회
+  -----------------------------------------------*/
+    @Override
+    public User findByName(String name) {
+        return userRepository.findByName(name);
+    }
+
 
     /*-----------------------------------------------
       deleteUser - 유저 삭제
@@ -163,6 +180,24 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
 
+    /*-----------------------------------------------
+      가입조회 - 유저 삭제
+    -----------------------------------------------*/
+    @Override
+    public ResponseEntity<?> userCheck(String username, String uri) throws UserNotFoundException, EmailExistException, UsernameExistException {
+        String msg = "";
+        if(uri.equals("/user/find/username/"+username)){
+            validateNewUsernameAndEmail(null,username,null,null);
+            msg= "("+ username +")은 사용가능한 아이디 입니다.";
+        } else if(uri.equals("/user/find/email/"+username)) {
+            validateNewUsernameAndEmail(null,null,username,null);
+            msg= "("+ username +")은 사용가능한 이메일 입니다.";
+        } else {
+            validateNewUsernameAndEmail(null,null,null,username);
+            msg= "("+ username +")은 사용가능한 닉네임 입니다.";
+        }
+        return new ResponseEntity<>(msg,OK);
+    }
 
 
     /*
@@ -170,6 +205,36 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     Sub - Method.
     #----------------------------------------------------------------------------------------
      */
+
+    private User validateNewUsernameAndEmail(String currentUsername, String newUsername, String newEmail, String newName) throws UserNotFoundException, UsernameExistException, EmailExistException {
+        User userByNewUsername = newUsername != null ? findByUsername(newUsername) : null;
+        User userByNewEmail = newEmail != null ?  findByEmail(newEmail) : null;
+        User userByNewName = newName != null ? findByName(newName) : null;
+        if(StringUtils.isNotBlank(currentUsername)) {
+            User currentUser = findByUsername(currentUsername);
+            if(currentUser == null) {
+                throw new UserNotFoundException(NO_USER_FOUND_BY_USERNAME + currentUsername);
+            }
+            if(userByNewEmail != null && !currentUser.getId().equals(userByNewEmail.getId())){
+                throw new EmailExistException(EMAIL_ALREADY_EXISTS);
+            }
+            if(userByNewName != null && !currentUser.getId().equals(userByNewName.getId())){
+                throw new UsernameExistException(NAME_ALREADY_EXISTS);
+            }
+            return currentUser;
+        } else {
+            if(userByNewUsername != null){
+                throw new UsernameExistException(USERNAME_ALREADY_EXISTS);
+            }
+            if(userByNewEmail != null){
+                throw new EmailExistException(EMAIL_ALREADY_EXISTS);
+            }
+            if(userByNewName != null){
+                throw new UsernameExistException(NAME_ALREADY_EXISTS);
+            }
+            return null;
+        }
+    }
 
     // 비밀번호 암호화
     private String encodePassword(String passBefore) {
@@ -213,5 +278,11 @@ public class UserServiceImpl implements UserService, UserDetailsService {
                 .path(DEFAULT_USER_IMAGE_PATH + username).toUriString();
     }
 
-
+    private void validateLoginAttempt(User user) {
+        if(user.getIsNonLocked()) {
+            user.userSecurityLockUpdate(user.getIsActive(), !loginAttemptService.hasExceededMaxAttempts(user.getUsername()), user.getIsEmailEnabled());
+        } else {
+            loginAttemptService.evictUserFromLoginAttemptCache(user.getUsername());
+        }
+    }
 }

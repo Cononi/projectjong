@@ -51,12 +51,12 @@ public class UserResource {
         return new ResponseEntity<>("완료", OK);
     }
 
-    @PostMapping("/user/register")
-    public ResponseEntity<UserResponse> register(@RequestBody UserRequest userRequest) throws  IOException {
-        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/user/register").toUriString());
-        UserResponse user = userService.regiter(userRequest);
-        return new ResponseEntity<>(user, OK);
-    }
+//    @PostMapping("/user/register")
+//    public ResponseEntity<UserResponse> register(@RequestBody UserRequest userRequest) throws  IOException {
+//        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/user/register").toUriString());
+//        UserResponse user = userService.regiter(userRequest);
+//        return new ResponseEntity<>(user, OK);
+//    }
 
 //    @PostMapping("/update/profile/image")
 //    public ResponseEntity<UserResponse> updateProfileImage(@RequestParam("username") String username,

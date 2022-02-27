@@ -13,7 +13,10 @@ import java.util.Optional;
  * @Query 어노테이션으로 직접 쿼리를 작성하여 사용.
  */
 public interface UserRepository extends JpaRepository<User, Long> {
-    Optional<User> findByUsername(String username);
+    User findByUsername(String username);
 
-    User findUserByEmail(String email);
+    User findByEmail(String email);
+
+    User findByName(String name);
+
 }

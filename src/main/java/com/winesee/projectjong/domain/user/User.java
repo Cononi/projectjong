@@ -170,9 +170,10 @@ public class User extends BaseTime implements Serializable, Principal, UserDetai
         this.lastLoginDate = lastLoginDate;
     }
 
-    public void userSecurityLockUpdate(boolean isActive, boolean isNotLocked){
+    public void userSecurityLockUpdate(boolean isActive, boolean isNotLocked, Boolean isEmailEnabled){
         this.isActive = isActive;
         this.isNonLocked = isNotLocked;
+        this.isEmailEnabled = isEmailEnabled;
     }
 
     public void userProfileImageUpdate(String profileImageUrl) {
