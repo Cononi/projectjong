@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="layout/error-default">
+
+<head>
+    <title>Success</title>
+    <style>
+        .page-heading {
+            width: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1;
+        }
+    </style>
+</head>
+<th:block layout:fragment="content">
+        <!-- content -->
+        <div id="main-content">
+            <div class="page-heading text-center">
+                <div class="page-title">
+                    <div class="row justify-content-center">
+                        <div class="col-12 col-md-6 order-md-1">
+                            <h3 th:if="${resultSuccess['check'].equals('true')}" th:text="${resultSuccess['message']}"></h3>
+                            <h3 th:if="${resultSuccess['check'].equals('false')}" th:text="${resultSuccess['message']}"></h3>
+                            <h3 th:if="${resultSuccess['check'].equals('error')}">잘못된 페이지 입니다.</h3>
+                        </div>
+                    </div>
+                </div>
+                <section class="section">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="card-title">이용 메세지</h4>
+                        </div>
+                        <div class="card-body">
+                            <h6 th:if="${resultSuccess['check'].equals('true')}" th:text="${resultSuccess['success']}"></h6>
+                            <h6 th:if="${resultSuccess['check'].equals('false')}" th:text="${resultSuccess['success']}"></h6>
+                            <h6 th:if="${resultSuccess['check'].equals('error')}">확인을 누르면 해당 창이 닫힙니다.</h6>
+                        </div>
+                    </div>
+                </section>
+                <button th:if="${resultSuccess['check'].equals('true')}" class="btn btn-outline-primary" type='button' onClick='window.location.href="/"'>확인</button>
+                <button th:if="${resultSuccess['check'].equals('false')}" class="btn btn-outline-primary" type='button' onClick='window.close()'>확인</button>
+                <button th:if="${resultSuccess['check'].equals('error')}" class="btn btn-outline-primary" type='button' onClick='window.close()'>확인</button>
+            </div>
+        </div>
+</th:block>
+</html>

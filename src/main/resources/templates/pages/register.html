@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="layout/user-default">
+
+<head>
+    <title>와린이- 회원가입</title>
+</head>
+<th:block layout:fragment="content">
+    <form>
+
+    </form>
+    <div class="row h-100">
+        <div class="col-lg-5 col-12">
+            <div id="auth-left">
+                <div class="auth-logo">
+                    <a href="/"><img src="/assets/images/logo/logo.png" alt="Logo"></a>
+                </div>
+                <h1 class="auth-title">Sign Up</h1>
+                <p class="auth-subtitle mb-3">회원 정보를 입력해주세요.</p>
+                <form autocomplete="off">
+                    <div class="form-group position-relative has-icon-left">
+                        <input type="text" class="form-control form-control-xl" placeholder="Username" id="username"
+                            required>
+                        <div class="form-control-icon">
+                            <i class="bi bi-person"></i>
+                        </div>
+                        <div id="validationServerUsernameFeedback" class="invalid-feedback">
+                            <i class="bi bi-check mb-4"></i>
+                            <span></span>
+                        </div>
+                    </div>
+                    <div class="form-group position-relative has-icon-left">
+                        <input type="password" class="form-control form-control-xl" placeholder="Password" id="password"
+                            required>
+                        <div class="form-control-icon">
+                            <i class="bi bi-shield-lock"></i>
+                        </div>
+                        <div id="validationServerPasswordFeedback" class="invalid-feedback">
+                            <i class="bi bi-check mb-4"></i>
+                            <span></span>
+                        </div>
+                    </div>
+                    <div class="form-group position-relative has-icon-left">
+                        <input type="password" class="form-control form-control-xl" placeholder="Confirm Password"
+                            id="re-password" required>
+                        <div class="form-control-icon">
+                            <i class="bi bi-shield-lock"></i>
+                        </div>
+                        <div id="validationServerRePasswordFeedback" class="invalid-feedback">
+                            <i class="bi bi-check mb-4"></i>
+                            <span></span>
+                        </div>
+                    </div>
+                    <div class="form-group position-relative has-icon-left">
+                        <input type="text" class="form-control form-control-xl" placeholder="NickName" id="name"
+                            required>
+                        <div class="form-control-icon">
+                            <i class="bi bi-aspect-ratio"></i>
+                        </div>
+                        <div id="validationServerNameFeedback" class="invalid-feedback">
+                            <i class="bi bi-check mb-4"></i>
+                            <span></span>
+                        </div>
+                    </div>
+                    <div class="form-group position-relative has-icon-left">
+                        <input type="text" class="form-control form-control-xl" placeholder="Email" id="email" required>
+                        <div class="form-control-icon">
+                            <i class="bi bi-envelope"></i>
+                        </div>
+                        <div id="validationServerEmailFeedback" class="invalid-feedback">
+                            <i class="bi bi-check mb-4"></i>
+                            <span></span>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary btn-block btn-lg shadow-lg mt-3" type="button" disabled="" hidden="true" id="btn-signon">
+                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                        <span class="visually-hidden">Loading...</span>
+                    </button>
+                    <button type="button" class="btn btn-primary btn-block btn-lg shadow-lg mt-3" id="btn-sign">
+                        Sign
+                        Up</button>
+                        
+                </form>
+                <div class="text-center mt-5 text-lg fs-4">
+                    <p class='text-gray-600'>로그인 하러가기 <a href="auth-login.html" class="font-bold">Log
+                            in</a>.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-7 d-none d-lg-block">
+            <div id="auth-right">
+
+            </div>
+        </div>
+
+    </div>
+    </div>
+</th:block>
+
+</html>

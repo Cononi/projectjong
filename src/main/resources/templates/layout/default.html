@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<!-- CSS 파일 -->
+<!-- cssFragment(~{::title},~{::link}) -->
+<th:block th:replace="include/head :: cssFragment(~{::title})"></th:block>
+
+<body>
+    <div id="app">
+         <!-- 공통 sidebar -->
+        <th:block th:replace="include/sidebar :: sidebarFragment"></th:block>
+        <!-- main -->
+        <div id="main" class='layout-navbar'>
+            <!-- header -->
+            <th:block th:replace="include/header :: headerFragment"></th:block>
+            <div id="main-content">
+                <!-- content -->
+                <th:block layout:fragment="content"></th:block>
+                <!-- footer -->
+                <th:block th:replace="include/footer :: footerFragment"></th:block>
+            </div>
+        </div>
+        <!-- script -->
+        <th:block th:replace="include/script :: scriptFragment"></th:block>
+    </div>
+</body>
+</html>
