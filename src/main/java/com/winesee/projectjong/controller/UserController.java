@@ -12,21 +12,19 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
+import org.springframework.validation.*;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.security.Principal;
-import java.util.HashMap;
-import java.util.Map;
 
-import static org.springframework.http.HttpStatus.FORBIDDEN;
+import java.io.IOException;
+import java.security.Principal;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import static org.springframework.http.HttpStatus.OK;
 
 @Controller
@@ -36,6 +34,7 @@ import static org.springframework.http.HttpStatus.OK;
 public class UserController {
 
     private final UserService userService;
+    private final Validator validator;
 
     @RequestMapping("login")
     public String login(Model model, @ModelAttribute("user") UserRequest user, HttpServletRequest request) {
@@ -52,17 +51,35 @@ public class UserController {
     }
 
     @PostMapping("register")
-    public String registerPost(Model model, @ModelAttribute("user") @Validated UserRequest user, BindingResult bindingResult) {
-        // 유효성 검사.
+    public String registerPost(Model model, @ModelAttribute("user") @Validated UserRequest user, BindingResult bindingResult) throws UserNotFoundException, EmailExistException, IOException, UsernameExistException {
+
+        //** 에러 - 로직을 서비스 로직으로 옮길 필요가 있음.
+        Errors errors = new BeanPropertyBindingResult(user,"user");
+        bindingResult.addAllErrors(userService.userValidateCheck(errors, user));
+
+        String[] names = { "username", "email", "name"};
+        List<String> filedNames = new ArrayList<>();
         if (bindingResult.hasErrors()) {
-            model.addAttribute("isError",true);
+            for(FieldError field: bindingResult.getFieldErrors()){
+                filedNames.add(field.getField());
+                model.addAttribute(field.getField(),true);
+            }
+            for (String name : names) {
+                for (String filedName : filedNames) {
+                    if (!name.equals(filedName)) {
+                        model.addAttribute(name + "in", true);
+                        break;
+                    }
+                }
+            }
             return "pages/register";
         }
-        return "pages/register";
+        userService.regiter(user);
+        return "redirect:/";
     }
 
     @GetMapping(path = {"/find/email/{username}", "/find/username/{username}", "/find/name/{username}"}, produces= MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getUser(@PathVariable("username") String username, HttpServletRequest request) throws UserNotFoundException, EmailExistException, UsernameExistException, UserNotFoundException, EmailExistException, UsernameExistException {
+    public ResponseEntity<?> getUser(@PathVariable("username") String username, HttpServletRequest request) throws UserNotFoundException, EmailExistException, UsernameExistException {
         return new ResponseEntity<>(userService.userCheck(username,request.getRequestURI()), OK);
     }
 

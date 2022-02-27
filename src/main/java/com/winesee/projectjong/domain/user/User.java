@@ -29,6 +29,12 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @EqualsAndHashCode(of = {"id"}, callSuper = false)
+@Table(
+        name="user",
+        uniqueConstraints={
+                @UniqueConstraint(columnNames={"name", "username", "email"})
+        }
+)
 public class User extends BaseTime implements Serializable, Principal, UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

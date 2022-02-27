@@ -23,7 +23,7 @@ public class MainController {
     @RequestMapping("/")
     public String main(Principal principal, Model model){
         if(principal != null){
-            UserResponse userinfo = userService.findByUsername(principal.getName());
+            UserResponse userinfo = new UserResponse(userService.findByUsername(principal.getName()));
             model.addAttribute("userinfo",userinfo);
         }
         return "/pages/index";

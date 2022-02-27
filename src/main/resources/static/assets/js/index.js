@@ -122,35 +122,10 @@ let main = {
             }
         });
     },
-    register: function () {
-        var data = {
-            username: $('#username').val(),
-            password: $('#password').val(),
-            name: $('#name').val(),
-            email: $('#email').val()
-        };
-        $.ajax({
-            type: 'POST',
-            url: '/user/register',
-            dataType: 'json',
-            contentType: 'application/json; charset=utf-8',
-            data: JSON.stringify(data)
-        }).done(function (success) {        
-            alert(success.message);
-            window.location.href = "/account/login";   
-        }).fail(function (error) {
-            $('#btn-signon').attr('hidden', 'true');
-            $('#btn-sign').removeAttr('hidden');
-            alert(error.responseJSON.message);
-        });
-        // if(los == false) {
-        //     window.location.href = 'account/login';
-        // }
-    },
     check: function (v, c) {
         $.ajax({
             type: 'GET',
-            url: '/user/find/' + c + '/' + v,
+            url: '/account/find/' + c + '/' + v,
             dataType: 'json',
             contentType: 'application/json; charset=utf-8'
         }).done(function (ok) {

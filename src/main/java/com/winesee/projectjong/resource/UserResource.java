@@ -1,5 +1,8 @@
 package com.winesee.projectjong.resource;
 
+import com.winesee.projectjong.config.exception.EmailExistException;
+import com.winesee.projectjong.config.exception.UserNotFoundException;
+import com.winesee.projectjong.config.exception.UsernameExistException;
 import com.winesee.projectjong.domain.user.Role;
 import com.winesee.projectjong.domain.user.dto.UserRequest;
 import com.winesee.projectjong.domain.user.dto.UserResponse;
@@ -7,12 +10,14 @@ import com.winesee.projectjong.service.UserService;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;

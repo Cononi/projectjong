@@ -8,6 +8,7 @@ import com.winesee.projectjong.domain.user.User;
 import com.winesee.projectjong.domain.user.dto.UserRequest;
 import com.winesee.projectjong.domain.user.dto.UserResponse;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.Errors;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.mail.MessagingException;
@@ -46,9 +47,6 @@ public interface UserService {
      * @param username String
      * @return User.
      */
-    /*-----------------------------------------------
-    findByUsername - 유저 이름으로 정보 조회
-    -----------------------------------------------*/
     User findByUsername(String username);
 
     /**
@@ -87,6 +85,8 @@ public interface UserService {
 //     */
 
     ResponseEntity<?> userCheck(String username, String uri) throws UserNotFoundException, EmailExistException, UsernameExistException;
+
+    Errors userValidateCheck(Errors errors, UserRequest user);
 }
 
 

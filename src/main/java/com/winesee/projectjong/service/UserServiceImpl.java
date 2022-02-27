@@ -21,7 +21,11 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.BeanPropertyBindingResult;
+import org.springframework.validation.DataBinder;
+import org.springframework.validation.Errors;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.RequestContext;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.transaction.Transactional;
@@ -181,15 +185,15 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
 
     /*-----------------------------------------------
-      가입조회 - 유저 삭제
-    -----------------------------------------------*/
+          userCheck - 유저 가입 조회
+        -----------------------------------------------*/
     @Override
     public ResponseEntity<?> userCheck(String username, String uri) throws UserNotFoundException, EmailExistException, UsernameExistException {
         String msg = "";
-        if(uri.equals("/user/find/username/"+username)){
+        if(uri.equals("/account/find/username/"+username)){
             validateNewUsernameAndEmail(null,username,null,null);
             msg= "("+ username +")은 사용가능한 아이디 입니다.";
-        } else if(uri.equals("/user/find/email/"+username)) {
+        } else if(uri.equals("/account/find/email/"+username)) {
             validateNewUsernameAndEmail(null,null,username,null);
             msg= "("+ username +")은 사용가능한 이메일 입니다.";
         } else {
@@ -199,6 +203,20 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         return new ResponseEntity<>(msg,OK);
     }
 
+    @Override
+    public Errors userValidateCheck(Errors errors, UserRequest user) {
+        List<User> findAll = userRepository.findAllByUsernameOrEmailOrName(user.getUsername(), user.getEmail(), user.getName());
+        for(User find : findAll){
+            if(user.getUsername().equals(find.getUsername())){
+                errors.rejectValue("username","username.error","해당 아이디는 이미 사용중 입니다.");
+            } else if(user.getEmail().equals(find.getEmail())){
+                errors.rejectValue("email","email.error", "해당 이메일은 이미 사용중 입니다.");
+            } else if(user.getName().equals(find.getName())){
+                errors.rejectValue("name","name.error", "해당 닉네임은 이미 사용중 입니다.");
+            }
+        }
+        return errors;
+    }
 
     /*
     #----------------------------------------------------------------------------------------
