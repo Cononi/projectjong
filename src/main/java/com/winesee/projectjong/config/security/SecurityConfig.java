@@ -16,6 +16,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
+import static com.winesee.projectjong.config.constant.SecurityConstant.*;
+
 /**
  * @author Jhong
  * @version 1.0
@@ -59,7 +61,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf().disable().cors()
                 .and()
                 // 모든 사용자가 해당 메뉴를 제외하고 액세스를 허용함
-                .authorizeRequests().antMatchers("/","/account/**","/api/user/**","/assets/**","/api/image/**").permitAll()
+                .authorizeRequests().antMatchers(PUBLIC_URLS).permitAll()
                 .and()
                 .authorizeRequests().antMatchers("/api/delete/**").hasRole("ADMIN")
                 .anyRequest().authenticated()
