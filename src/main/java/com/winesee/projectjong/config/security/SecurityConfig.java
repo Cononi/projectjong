@@ -72,6 +72,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .expiredUrl("/account/login")
                 .sessionRegistry(sessionRegistry());
 
+
     }
 
 

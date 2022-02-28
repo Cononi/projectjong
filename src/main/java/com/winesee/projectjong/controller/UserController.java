@@ -3,13 +3,16 @@ package com.winesee.projectjong.controller;
 import com.winesee.projectjong.config.exception.EmailExistException;
 import com.winesee.projectjong.config.exception.UserNotFoundException;
 import com.winesee.projectjong.config.exception.UsernameExistException;
+import com.winesee.projectjong.domain.user.User;
 import com.winesee.projectjong.domain.user.dto.UserRequest;
 import com.winesee.projectjong.domain.user.dto.UserResponse;
 import com.winesee.projectjong.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.*;
@@ -37,7 +40,10 @@ public class UserController {
     private final Validator validator;
 
     @RequestMapping("login")
-    public String login(Model model, @ModelAttribute("user") UserRequest user, HttpServletRequest request) {
+    public String login(Model model, @ModelAttribute("user") UserRequest user, HttpServletRequest request, @AuthenticationPrincipal UserResponse userinfo) {
+        if(ObjectUtils.isNotEmpty(userinfo)){
+            return "redirect:/";
+        }
         if(!request.getRequestURI().equals("/account/login")){
             String referrer = request.getHeader("Referer");
             request.getSession().setAttribute("prevPage", referrer);
@@ -46,7 +52,10 @@ public class UserController {
     }
 
     @GetMapping("register")
-    public String registerGet(Model model, @ModelAttribute("user") UserRequest user, HttpServletRequest request) {
+    public String registerGet(@ModelAttribute("user") UserRequest user,@AuthenticationPrincipal UserResponse userinfo) {
+        if(ObjectUtils.isNotEmpty(userinfo)){
+            return "redirect:/";
+        }
         return "pages/register";
     }
 
@@ -84,11 +93,8 @@ public class UserController {
     }
 
     @GetMapping("mypage")
-    public String mypage(Principal principal, Model model){
-        if(principal != null){
-            UserResponse userinfo = new UserResponse(userService.findByUsername(principal.getName()));
-            model.addAttribute("userinfo",userinfo);
-        }
+    public String mypage(@AuthenticationPrincipal UserResponse userinfo, Model model){
+        model.addAttribute("userinfo",userinfo);
         return "pages/mypage";
     }
 }

@@ -87,6 +87,7 @@ public interface UserService {
     ResponseEntity<?> userCheck(String username, String uri) throws UserNotFoundException, EmailExistException, UsernameExistException;
 
     Errors userValidateCheck(Errors errors, UserRequest user);
+
 }
 
 

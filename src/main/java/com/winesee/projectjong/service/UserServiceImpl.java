@@ -12,10 +12,12 @@ import com.winesee.projectjong.domain.user.dto.UserResponse;
 import com.winesee.projectjong.service.attempt.LoginAttemptService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -94,7 +96,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         validateLoginAttempt(user);
 //            Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
 //            authorities.add(new SimpleGrantedAuthority(user.getRoleKey()));
-        return user;
+        return new UserResponse(user);
     }
 
     /*-----------------------------------------------
@@ -218,6 +220,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         return errors;
     }
 
+
     /*
     #----------------------------------------------------------------------------------------
     Sub - Method.
@@ -303,4 +306,5 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             loginAttemptService.evictUserFromLoginAttemptCache(user.getUsername());
         }
     }
+
 }
