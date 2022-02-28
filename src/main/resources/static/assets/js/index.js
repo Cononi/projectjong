@@ -66,6 +66,7 @@ let main = {
         $('#btn-sign').on('click', function () {
             let list = $('input[class*=form-control]')
             let count = new Array()
+            let checkItem = false;
             $.each(list, function (i, value) {
                 if ($(this).val().length == 0) {
                     _this.msg($(this).nextAll('div').children('span'), value, i, false);
@@ -92,7 +93,6 @@ let main = {
             if (count.length == 0) {
                 $('#btn-sign').attr('hidden', 'true');
                 $('#btn-signon').removeAttr('hidden');
-                _this.register();
             }
         });
         $('#username, #password, #re-password, #email, #name').on('blur', function () {

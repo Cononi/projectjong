@@ -5,11 +5,9 @@
 <head>
     <title>와린이- 회원가입</title>
 </head>
-<th:block layout:fragment="content">
-    <form>
 
-    </form>
-    <div class="row h-100">
+<th:block layout:fragment="content">
+    <div class="row h-100" >
         <div class="col-lg-5 col-12">
             <div id="auth-left">
                 <div class="auth-logo">
@@ -73,6 +71,7 @@
                             <span><th:block th:errors="*{email}"></th:block></span>
                         </div>
                     </div>
+                    <span>이메일 인증은 필수 입니다. <br> 꼭 인증가능한 이메일을 신중히 입력해 주십시요.</span>
                     <button class="btn btn-primary btn-block btn-lg shadow-lg mt-3" type="button" disabled="" hidden="true" id="btn-signon">
                         <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
                         <span class="visually-hidden">Loading...</span>

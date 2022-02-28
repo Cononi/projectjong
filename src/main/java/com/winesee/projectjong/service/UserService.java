@@ -27,7 +27,7 @@ public interface UserService {
      * @param userRequest UserRequest 데이터.
      * @return UserResponse 데이터
      */
-    UserResponse regiter(UserRequest userRequest) throws IOException, UserNotFoundException, EmailExistException, UsernameExistException;
+    void register(UserRequest userRequest) throws IOException, UserNotFoundException, EmailExistException, UsernameExistException, MessagingException;
 
     /**
      * 유저 가져오기
@@ -88,6 +88,7 @@ public interface UserService {
 
     Errors userValidateCheck(Errors errors, UserRequest user);
 
+    List<String> emailConfirm(String email, String authId, String authKey) throws MessagingException;
 }
 
 

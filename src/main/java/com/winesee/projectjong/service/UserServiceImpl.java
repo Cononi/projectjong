@@ -4,12 +4,15 @@ import com.winesee.projectjong.config.exception.EmailExistException;
 import com.winesee.projectjong.config.exception.NotAnImageFileException;
 import com.winesee.projectjong.config.exception.UserNotFoundException;
 import com.winesee.projectjong.config.exception.UsernameExistException;
+import com.winesee.projectjong.domain.redis.EmailCode;
+import com.winesee.projectjong.domain.redis.EmailCodeRepository;
 import com.winesee.projectjong.domain.user.Role;
 import com.winesee.projectjong.domain.user.User;
 import com.winesee.projectjong.domain.user.UserRepository;
 import com.winesee.projectjong.domain.user.dto.UserRequest;
 import com.winesee.projectjong.domain.user.dto.UserResponse;
 import com.winesee.projectjong.service.attempt.LoginAttemptService;
+import com.winesee.projectjong.service.email.EmailService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
@@ -30,6 +33,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.RequestContext;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.mail.MessagingException;
 import javax.transaction.Transactional;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -55,6 +59,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final LoginAttemptService loginAttemptService;
+    private final EmailCodeRepository emailCodeRepository;
+    private final EmailService emailService;
 
     /*
     -    인증 및 권한 부여와 그것의 인증절차
@@ -101,28 +107,63 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     /*-----------------------------------------------
         Regiser - 회원 가입
-         -----------------------------------------------*/
+     -----------------------------------------------*/
     @Override
-    public UserResponse regiter(UserRequest userRequest) throws IOException, UserNotFoundException, EmailExistException, UsernameExistException {
+    public void register(UserRequest userRequest) throws IOException, UserNotFoundException, EmailExistException, UsernameExistException, MessagingException {
         validateNewUsernameAndEmail(EMPTY, userRequest.getUsername(), userRequest.getEmail(), userRequest.getName());
-        User user = User.builder()
+        // 계정 생성
+        userRepository.save(User.builder()
                 .name(userRequest.getName())
                 .username(userRequest.getUsername())
                 .password(encodePassword(userRequest.getPassword()))
                 .email(userRequest.getEmail())
                 .isActive(true)
                 .isNonLocked(true)
-                .isEmailEnabled(true)
+                .isEmailEnabled(false)
                 .lastLoginDate(null)
                 .roles(Role.USER)
                 .profileImageUrl(getTemporaryProfileImageUrl(userRequest.getUsername()))
-                .build();
-        return new UserResponse(userRepository.save(user));
+                .build());
+        // Redis 코드 저장
+        EmailCode emailCode = new EmailCode(userRequest.getEmail());
+        emailCodeRepository.save(emailCode);
+        // 이메일 발송
+        emailService.sendEmail(userRequest.getUsername(),userRequest.getEmail(),emailCode.getCode(), emailCode.getId(),"newEmailCode");
     }
 
     /*-----------------------------------------------
-    getUser - 해당 유저 정보 조회
+        emailConfirm - 이메일 인증
      -----------------------------------------------*/
+
+    @Override
+    public List<String> emailConfirm(String email, String authId, String authKey) throws MessagingException {
+        List<String> msg = new ArrayList<>();
+        // 이메일이 존재하고 이메일 인증이 안된경우.
+        Optional<User> user = Optional.of(userRepository.findByEmailAndIsEmailEnabledFalse(email));
+        // 가입 유저가 맞고 해당하는 authId와 실제 RedisServer에 존재하는 authId가 맞으면 코드 데이터를 넣고 아니면 새로 코드 발급
+        EmailCode emailCode = emailCodeRepository.findById(authId)
+                .orElseGet(() ->emailCodeRepository.save(new EmailCode(email))
+        );
+        // 이메일이 존재하고 인증되지 않았으며 인증코드 조회가 되는경우 authId를 비교하며 비교후 맞으면 가입완료처리 아니면 재발송
+       if(emailCode.getId().equals(authId)) {
+           user.get().userSecurityLockUpdate(user.get().getIsActive(), user.get().getIsNonLocked(), true);
+           userRepository.save(user.get());
+           emailCodeRepository.delete(emailCode);
+           msg.add("회원가입을 축하드립니다!");
+           msg.add("인증이 완료되었습니다. <br/>확인을 누르면 메인페이지로 이동합니다.");
+       } else {
+           emailService.sendEmail(user.get().getUsername(),user.get().getEmail(),emailCode.getCode(), emailCode.getId(),"newEmailCode");
+           msg.add("유효하지 않은 접근 입니다.");
+           msg.add("이메일 인증에 실패하였습니다. <br/>유효하지 않은 코드이거나 유효하지 않은 접근 입니다. <br/>새로운 이메일을 발송합니다.");
+       }
+       // 메세지 리턴
+       return msg;
+    }
+
+
+    /*-----------------------------------------------
+        getUser - 해당 유저 정보 조회
+         -----------------------------------------------*/
     @Override
     public UserResponse getUser(String username) {
         return new UserResponse(userRepository.findByUsername(username));

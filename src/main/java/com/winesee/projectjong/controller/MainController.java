@@ -18,6 +18,7 @@ import java.security.Principal;
 
 @Controller
 @RequiredArgsConstructor
+@RequestMapping("/")
 @Slf4j
 public class MainController {
 
@@ -26,7 +27,7 @@ public class MainController {
     @RequestMapping("/")
     public String main(@AuthenticationPrincipal UserResponse userinfo, Model model){
         model.addAttribute("userinfo",userinfo);
-        return "/pages/index";
+        return "pages/index";
     }
 
 }

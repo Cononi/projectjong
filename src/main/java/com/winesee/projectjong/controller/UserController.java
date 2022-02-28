@@ -18,15 +18,14 @@ import org.springframework.ui.Model;
 import org.springframework.validation.*;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
 
 import java.io.IOException;
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static org.springframework.http.HttpStatus.OK;
 
@@ -60,8 +59,11 @@ public class UserController {
     }
 
     @PostMapping("register")
-    public String registerPost(Model model, @ModelAttribute("user") @Validated UserRequest user, BindingResult bindingResult) throws UserNotFoundException, EmailExistException, IOException, UsernameExistException {
-
+    public String registerPost(Model model, @ModelAttribute("user") @Validated UserRequest user
+            , BindingResult bindingResult, RedirectAttributes rtts)
+            throws UserNotFoundException, EmailExistException, IOException, UsernameExistException, MessagingException {
+        // 메세지
+        List<String> msg = new ArrayList<>();
         //** 에러 - 로직을 서비스 로직으로 옮길 필요가 있음.
         Errors errors = new BeanPropertyBindingResult(user,"user");
         bindingResult.addAllErrors(userService.userValidateCheck(errors, user));
@@ -83,18 +85,38 @@ public class UserController {
             }
             return "pages/register";
         }
-        userService.regiter(user);
-        return "redirect:/";
+        userService.register(user);
+        msg.add("가입인증 메일 발송");
+        msg.add(user.getEmail()+"로 인증 확인 메일을 보냇습니다. <br/> 인증 확인후 로그인이 가능합니다.");
+        rtts.addFlashAttribute("registerSummitMsg", msg);
+        return "redirect:/account/message";
     }
 
-    @GetMapping(path = {"/find/email/{username}", "/find/username/{username}", "/find/name/{username}"}, produces= MediaType.APPLICATION_JSON_VALUE)
+    /*
+    아이디 인증
+     */
+    @GetMapping(path = {"find/email/{username}", "find/username/{username}", "find/name/{username}"}, produces= MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getUser(@PathVariable("username") String username, HttpServletRequest request) throws UserNotFoundException, EmailExistException, UsernameExistException {
         return new ResponseEntity<>(userService.userCheck(username,request.getRequestURI()), OK);
+    }
+
+    // 이메일 가입
+    @GetMapping("email/sign/confirm")
+    public String emailConfirm(@RequestParam("email") String email, @RequestParam("authId") String authId, @RequestParam("authKey") String authKey, Model model) throws MessagingException {
+        // 서비스에서 유저 조회
+        List<String> msg = userService.emailConfirm(email, authId, authKey);
+        model.addAttribute("registerSummitMsg", msg);
+        return "pages/message/register-message";
     }
 
     @GetMapping("mypage")
     public String mypage(@AuthenticationPrincipal UserResponse userinfo, Model model){
         model.addAttribute("userinfo",userinfo);
         return "pages/mypage";
+    }
+
+    @GetMapping("message")
+    public String message(){
+        return "pages/message/register-message";
     }
 }

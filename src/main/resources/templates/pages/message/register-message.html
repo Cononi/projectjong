@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="layout/error-default">
+
+<head>
+    <title>Success</title>
+    <style>
+        .page-heading {
+            width: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1;
+        }
+    </style>
+</head>
+<th:block layout:fragment="content">
+        <!-- content -->
+        <div id="main-content" th:with="msg = ${registerSummitMsg}">
+            <div class="page-heading text-center">
+                <div class="page-title">
+                    <div class="row justify-content-center">
+                        <div class="col-12 col-md-6 order-md-1">
+                            <h3 th:utext="${!#lists.isEmpty(msg)} ? ${msg[0]} : '잘못된 페이지 입니다.' "></h3>
+                        </div>
+                    </div>
+                </div>
+                <section class="section">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="card-title">메세지</h4>
+                        </div>
+                        <div class="card-body">
+                            <h6 th:utext="${!#lists.isEmpty(msg)} ? ${msg[1]} : '해당 페이지에 요청이 맞는지 확인해주시기 바랍니다.'"></h6>
+                        </div>
+                    </div>
+                </section>
+                <button th:if="${!#lists.isEmpty(msg)}" class="btn btn-outline-primary" type='button' onClick='window.location.href="/account/login"'>확인</button>
+                <button th:if="${#lists.isEmpty(msg)}" class="btn btn-outline-primary" type='button' onClick='window.location.href="/"'>확인</button>
+            </div>
+        </div>
+</th:block>
+</html>
