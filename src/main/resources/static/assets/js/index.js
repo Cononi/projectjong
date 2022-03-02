@@ -50,7 +50,7 @@ let main = {
         let _this = this;
         let input_boolean = false;
         $('#btn-login').on('click', function () {
-            let list = $('input[class*=form-control]')
+            let list = $('input[class*=form-user-input]')
             $.each(list, function (i, value) {
                 if ($(this).val().length == 0) {
                     _this.msg('.login-error-msg', value, i, false);
@@ -64,9 +64,8 @@ let main = {
             });
         });
         $('#btn-sign').on('click', function () {
-            let list = $('input[class*=form-control]')
+            let list = $('input[class*=form-user-input]')
             let count = new Array()
-            let checkItem = false;
             $.each(list, function (i, value) {
                 if ($(this).val().length == 0) {
                     _this.msg($(this).nextAll('div').children('span'), value, i, false);
@@ -96,8 +95,8 @@ let main = {
             }
         });
         $('#username, #password, #re-password, #email, #name').on('blur', function () {
-            if ($(location).attr('pathname') == "/account/register") {
-                let list = $('input[class*=form-control]')
+            if ($(location).attr('pathname') == "/account/register" || $(location).attr('pathname') == "/account/mypage") {
+                let list = $('input[class*=form-user-input]')
                 let _me = this;
                 $.each(list, function (i, value) {
                     if (this.value.length == 0) {
@@ -119,6 +118,20 @@ let main = {
                         }
                     }
                 })
+            }
+        });
+        $("input[name=IMG_IMG]").off().on("change", function(){
+
+            if (this.files && this.files[0]) {
+        
+                var maxSize = 5 * 1024 * 1024;
+                var fileSize = this.files[0].size;
+        
+                if(fileSize > maxSize){
+                    alert("첨부파일 사이즈는 5MB 이내로 등록 가능합니다.");
+                    $(this).val('');
+                    return false;
+                }
             }
         });
     },

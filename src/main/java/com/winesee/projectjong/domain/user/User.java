@@ -127,7 +127,7 @@ public class User extends BaseTime implements Serializable, Principal, UserDetai
      */
     @Override
     public boolean isAccountNonExpired() {
-        return true;
+        return this.isActive;
     }
 
     /**
@@ -160,7 +160,7 @@ public class User extends BaseTime implements Serializable, Principal, UserDetai
      */
     @Override
     public boolean isEnabled() {
-        return this.isActive;
+        return this.isEmailEnabled;
     }
 
 
@@ -182,7 +182,8 @@ public class User extends BaseTime implements Serializable, Principal, UserDetai
         this.isEmailEnabled = isEmailEnabled;
     }
 
-    public void userProfileImageUpdate(String profileImageUrl) {
+    public void userProfileUpdate(String name,String profileImageUrl) {
+        this.name = name;
         this.profileImageUrl = profileImageUrl;
     }
 

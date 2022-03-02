@@ -1,6 +1,7 @@
 package com.winesee.projectjong.service;
 
 import com.winesee.projectjong.config.exception.EmailExistException;
+import com.winesee.projectjong.config.exception.NotAnImageFileException;
 import com.winesee.projectjong.config.exception.UserNotFoundException;
 import com.winesee.projectjong.config.exception.UsernameExistException;
 import com.winesee.projectjong.domain.user.Role;
@@ -69,7 +70,7 @@ public interface UserService {
      * @return UserResponse
      * @throws IOException IO관련 익셉션
      */
-//    UserResponse updateProfileImage(String username, MultipartFile profileImage) throws IOException;
+    void updateProfile(UserResponse userinfo, String username, String name, String email,MultipartFile profileImage) throws IOException, UserNotFoundException, EmailExistException, UsernameExistException, NotAnImageFileException;
 
     /**
      * 유저 삭제
@@ -84,7 +85,7 @@ public interface UserService {
 //     * @throws EmailNotFoundException 이메일 익셉션
 //     */
 
-    ResponseEntity<?> userCheck(String username, String uri) throws UserNotFoundException, EmailExistException, UsernameExistException;
+    String userCheck(String username, String uri) throws UserNotFoundException, EmailExistException, UsernameExistException;
 
     Errors userValidateCheck(Errors errors, UserRequest user);
 

@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.concurrent.ExecutionException;
 
+import static java.util.concurrent.TimeUnit.HOURS;
 import static java.util.concurrent.TimeUnit.MINUTES;
 
 @Service
@@ -17,6 +18,7 @@ public class LoginAttemptService {
 
     public LoginAttemptService() {
         super();
+        // 계정 차단
         loginAttemptCache = CacheBuilder.newBuilder()
                 .expireAfterWrite(15, MINUTES)
                 .maximumSize(100)

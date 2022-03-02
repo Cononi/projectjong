@@ -50,7 +50,5 @@ activemq-data
 manifest.yml
 
 ### SETTING ###
-local.yml
-security.yml
-application.yml
+*.yml
 constant/

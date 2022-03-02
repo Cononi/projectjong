@@ -63,13 +63,6 @@ public class UserResource {
 //        return new ResponseEntity<>(user, OK);
 //    }
 
-//    @PostMapping("/update/profile/image")
-//    public ResponseEntity<UserResponse> updateProfileImage(@RequestParam("username") String username,
-//                                                           @RequestParam(value = "profileImage") MultipartFile profileImage) throws UserNotFoundException, EmailExistException, IOException, UsernameExistException, NotAnImageFileException {
-//        UserResponse user = userService.updateProfileImage(username,profileImage);
-//        return new ResponseEntity<>(user, OK);
-//    }
-
     @GetMapping(path = "/image/{username}/{fileName}", produces = IMAGE_JPEG_VALUE)
     public byte[] getProfileImage(@PathVariable("username") String username, @PathVariable("fileName") String fileName) throws IOException {
         return Files.readAllBytes(Paths.get(USER_FOLDER + username + FORWARD_SLASH + fileName));

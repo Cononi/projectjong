@@ -1,6 +1,8 @@
 package com.winesee.projectjong.controller;
 
+import com.winesee.projectjong.config.HttpResponse;
 import com.winesee.projectjong.config.exception.EmailExistException;
+import com.winesee.projectjong.config.exception.NotAnImageFileException;
 import com.winesee.projectjong.config.exception.UserNotFoundException;
 import com.winesee.projectjong.config.exception.UsernameExistException;
 import com.winesee.projectjong.domain.user.User;
@@ -10,14 +12,20 @@ import com.winesee.projectjong.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.*;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.mail.MessagingException;
@@ -28,6 +36,7 @@ import java.security.Principal;
 import java.util.*;
 
 import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.MediaType.IMAGE_JPEG_VALUE;
 
 @Controller
 @RequiredArgsConstructor
@@ -36,7 +45,6 @@ import static org.springframework.http.HttpStatus.OK;
 public class UserController {
 
     private final UserService userService;
-    private final Validator validator;
 
     @RequestMapping("login")
     public String login(Model model, @ModelAttribute("user") UserRequest user, HttpServletRequest request, @AuthenticationPrincipal UserResponse userinfo) {
@@ -92,12 +100,26 @@ public class UserController {
         return "redirect:/account/message";
     }
 
+    // 프로필 업데이트
+    @PostMapping(value = "mypage/update/profile", produces = IMAGE_JPEG_VALUE)
+    public String updateProfileImage(@AuthenticationPrincipal UserResponse userinfo,
+                                                            @RequestParam("username") String username,
+                                                           @RequestParam("name") String name,
+                                                           @RequestParam(value = "email") String email,
+                                                           @RequestParam(value = "profileImage") MultipartFile profileImage) throws UserNotFoundException, EmailExistException, IOException, UsernameExistException, NotAnImageFileException {
+        userService.updateProfile(userinfo,username, name, email,profileImage);
+        return "redirect:/account/mypage";
+    }
+
     /*
     아이디 인증
      */
-    @GetMapping(path = {"find/email/{username}", "find/username/{username}", "find/name/{username}"}, produces= MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getUser(@PathVariable("username") String username, HttpServletRequest request) throws UserNotFoundException, EmailExistException, UsernameExistException {
-        return new ResponseEntity<>(userService.userCheck(username,request.getRequestURI()), OK);
+    @GetMapping(path = {"find/email/{username}", "find/username/{username}", "find/name/{username}"}, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getUser(@AuthenticationPrincipal UserResponse userinfo, @PathVariable("username") String username, HttpServletRequest request) throws UserNotFoundException, EmailExistException, UsernameExistException {
+        if(userinfo!=null&& userinfo.getName().equals(username)){
+            return response(OK,"변경사항 없음");
+        }
+        return response(OK,userService.userCheck(username,request.getRequestURI()));
     }
 
     // 이메일 가입
@@ -110,7 +132,15 @@ public class UserController {
     }
 
     @GetMapping("mypage")
-    public String mypage(@AuthenticationPrincipal UserResponse userinfo, Model model){
+    public String mypageGet(@AuthenticationPrincipal UserResponse userinfo, Model model
+            ,@ModelAttribute("user") UserRequest user){
+        model.addAttribute("userinfo",userinfo);
+        return "pages/mypage";
+    }
+
+    @PostMapping("mypage")
+    public String mypagePost(@AuthenticationPrincipal UserResponse userinfo, Model model
+            , @ModelAttribute("user") @Validated UserRequest user, BindingResult bindingResult){
         model.addAttribute("userinfo",userinfo);
         return "pages/mypage";
     }
@@ -118,5 +148,10 @@ public class UserController {
     @GetMapping("message")
     public String message(){
         return "pages/message/register-message";
+    }
+
+    private ResponseEntity<HttpResponse> response(HttpStatus httpStatus, String message) {
+        return new ResponseEntity<>(new HttpResponse(httpStatus.value(), httpStatus,
+                httpStatus.getReasonPhrase().toUpperCase(), message.toUpperCase()), httpStatus);
     }
 }

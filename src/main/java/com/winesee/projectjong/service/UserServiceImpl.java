@@ -11,8 +11,9 @@ import com.winesee.projectjong.domain.user.User;
 import com.winesee.projectjong.domain.user.UserRepository;
 import com.winesee.projectjong.domain.user.dto.UserRequest;
 import com.winesee.projectjong.domain.user.dto.UserResponse;
+import com.winesee.projectjong.service.attempt.LoginAttemptAddressService;
 import com.winesee.projectjong.service.attempt.LoginAttemptService;
-import com.winesee.projectjong.service.email.EmailService;
+import com.winesee.projectjong.service.email.MailService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
@@ -20,20 +21,17 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.BeanPropertyBindingResult;
-import org.springframework.validation.DataBinder;
 import org.springframework.validation.Errors;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.support.RequestContext;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.mail.MessagingException;
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -60,7 +58,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     private final PasswordEncoder passwordEncoder;
     private final LoginAttemptService loginAttemptService;
     private final EmailCodeRepository emailCodeRepository;
-    private final EmailService emailService;
+    private final MailService mailService;
 
     /*
     -    인증 및 권한 부여와 그것의 인증절차
@@ -98,7 +96,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
      */
     @Override
     public UserDetails loadUserByUsername(String username) {
-        User user = userRepository.findByUsername(username);
+        User user = Optional.ofNullable(userRepository.findByUsername(username)).orElseThrow(() -> new UsernameNotFoundException("없는 아이디"));
         validateLoginAttempt(user);
 //            Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
 //            authorities.add(new SimpleGrantedAuthority(user.getRoleKey()));
@@ -128,7 +126,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         EmailCode emailCode = new EmailCode(userRequest.getEmail());
         emailCodeRepository.save(emailCode);
         // 이메일 발송
-        emailService.sendEmail(userRequest.getUsername(),userRequest.getEmail(),emailCode.getCode(), emailCode.getId(),"newEmailCode");
+        mailService.sendRegisterMail(userRequest.getUsername(),userRequest.getEmail(),emailCode.getCode(), emailCode.getId());
     }
 
     /*-----------------------------------------------
@@ -152,7 +150,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
            msg.add("회원가입을 축하드립니다!");
            msg.add("인증이 완료되었습니다. <br/>확인을 누르면 메인페이지로 이동합니다.");
        } else {
-           emailService.sendEmail(user.get().getUsername(),user.get().getEmail(),emailCode.getCode(), emailCode.getId(),"newEmailCode");
+           mailService.sendRegisterMail(user.get().getUsername(),user.get().getEmail(),emailCode.getCode(), emailCode.getId());
            msg.add("유효하지 않은 접근 입니다.");
            msg.add("이메일 인증에 실패하였습니다. <br/>유효하지 않은 코드이거나 유효하지 않은 접근 입니다. <br/>새로운 이메일을 발송합니다.");
        }
@@ -182,20 +180,20 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         return userResponse;
     }
 
-//    /*-----------------------------------------------
-//    updateProfileImage - 유저 프로필 이미지 업데이트.
-//    -----------------------------------------------*/
-//    @Override
-//    public UserResponse updateProfileImage(String username, MultipartFile profileImage) throws IOException {
-//        User user = validateNewUsernameAndEmail(username, null, null);
-//        saveProfileImage(user, profileImage);
-//        return new UserResponse(user);
-//    }
-
+    /*-----------------------------------------------
+    updateProfile - 유저 프로필  업데이트.
+    -----------------------------------------------*/
+    @Override
+    public void updateProfile(UserResponse userinfo, String username, String name, String email, MultipartFile profileImage) throws IOException, UserNotFoundException, EmailExistException, UsernameExistException, NotAnImageFileException {
+        if(userinfo.getUsername().equals(username)){
+            User user = findByUsername(userinfo.getUsername());
+            saveProfileImage(user, name, profileImage);
+        }
+    }
 
     /*-----------------------------------------------
-    findUserbyUsername - 유저 이름으로 정보 조회
-    -----------------------------------------------*/
+        findUserbyUsername - 유저 이름으로 정보 조회
+        -----------------------------------------------*/
     @Override
     public User findByUsername(String username) {
         return userRepository.findByUsername(username);
@@ -229,9 +227,9 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     /*-----------------------------------------------
           userCheck - 유저 가입 조회
-        -----------------------------------------------*/
+    -----------------------------------------------*/
     @Override
-    public ResponseEntity<?> userCheck(String username, String uri) throws UserNotFoundException, EmailExistException, UsernameExistException {
+    public String userCheck(String username, String uri) throws UserNotFoundException, EmailExistException, UsernameExistException {
         String msg = "";
         if(uri.equals("/account/find/username/"+username)){
             validateNewUsernameAndEmail(null,username,null,null);
@@ -243,7 +241,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             validateNewUsernameAndEmail(null,null,null,username);
             msg= "("+ username +")은 사용가능한 닉네임 입니다.";
         }
-        return new ResponseEntity<>(msg,OK);
+        return msg;
     }
 
     @Override
@@ -309,8 +307,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         return RandomStringUtils.randomNumeric(6);
     }
 
-    private void saveProfileImage(User user, MultipartFile profileImage) throws IOException, NotAnImageFileException {
-        if (profileImage != null) { // user/home/warine/user/rick
+    private void saveProfileImage(User user , String name, MultipartFile profileImage) throws IOException, NotAnImageFileException {
+        if (!profileImage.getName().equals("profileImage")) { // user/home/warine/user/rick
             if(!Arrays.asList(IMAGE_JPEG_VALUE, IMAGE_PNG_VALUE, IMAGE_GIF_VALUE).contains(profileImage.getContentType())) {
                 throw new NotAnImageFileException(profileImage.getOriginalFilename() + NOT_AN_IMAGE_FILE);
             }
@@ -321,9 +319,12 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             }
             Files.deleteIfExists(Paths.get(userFolder + user.getUsername() + DOT + JPG_EXTENSION));
             Files.copy(profileImage.getInputStream(), userFolder.resolve(user.getUsername() + DOT + JPG_EXTENSION), REPLACE_EXISTING);
-            user.userProfileImageUpdate(setProfileImageUrl(user.getUsername()));
+            user.userProfileUpdate(name,setProfileImageUrl(user.getUsername()));
             userRepository.save(user);
             log.info(FILE_SAVED_IN_FILE_SYSTEM + profileImage.getOriginalFilename());
+        } else {
+            user.userProfileUpdate(name,user.getProfileImageUrl());
+            userRepository.save(user);
         }
     }
 
@@ -347,5 +348,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             loginAttemptService.evictUserFromLoginAttemptCache(user.getUsername());
         }
     }
+
 
 }

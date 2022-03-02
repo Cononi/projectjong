@@ -7,7 +7,7 @@
 </head>
 
 <th:block layout:fragment="content">
-    <div class="row h-100" >
+    <div class="row h-100">
         <div class="col-lg-5 col-12">
             <div id="auth-left">
                 <div class="auth-logo">
@@ -17,30 +17,35 @@
                 <p class="auth-subtitle mb-3">회원 정보를 입력해주세요.</p>
                 <form autocomplete="off" action="/account/register" th:object="${user}" method="post">
                     <div class="form-group position-relative has-icon-left" th:classappend="${username} ? 'mb-10' : ''">
-                        <input type="text" class="form-control form-control-xl" placeholder="Username" 
-                        th:field="*{username}" th:errorclass="is-invalid" th:classappend="${usernamein} ? is-valid : ''">
+                        <input type="text" class="form-control form-control-xl form-user-input" placeholder="Username"
+                            th:field="*{username}" th:errorclass="is-invalid"
+                            th:classappend="${usernamein} ? is-valid : ''">
                         <div class="form-control-icon">
                             <i class="bi bi-person"></i>
                         </div>
-                        <div id="validationServerUsernameFeedback" class="invalid-feedback" >
+                        <div id="validationServerUsernameFeedback" class="invalid-feedback">
                             <i class="bi bi-check mb-4"></i>
-                            <span><th:block th:errors="*{username}"></th:block></span>
+                            <span>
+                                <th:block th:errors="*{username}"></th:block>
+                            </span>
                         </div>
                     </div>
                     <div class="form-group position-relative has-icon-left" th:classappend="${password} ? 'mb-10' : ''">
-                        <input type="password" class="form-control form-control-xl" placeholder="Password" 
-                        th:field="*{password}" th:errorclass="is-invalid">
+                        <input type="password" class="form-control form-control-xl form-user-input"
+                            placeholder="Password" th:field="*{password}" th:errorclass="is-invalid">
                         <div class="form-control-icon">
                             <i class="bi bi-shield-lock"></i>
                         </div>
                         <div id="validationServerPasswordFeedback" class="invalid-feedback">
                             <i class="bi bi-check mb-4"></i>
-                            <span><th:block th:errors="*{password}"></th:block></span>
+                            <span>
+                                <th:block th:errors="*{password}"></th:block>
+                            </span>
                         </div>
                     </div>
                     <div class="form-group position-relative has-icon-left">
-                        <input type="password" class="form-control form-control-xl" placeholder="Confirm Password"
-                            id="re-password" required>
+                        <input type="password" class="form-control form-control-xl form-user-input"
+                            placeholder="Confirm Password" id="re-password" required>
                         <div class="form-control-icon">
                             <i class="bi bi-shield-lock"></i>
                         </div>
@@ -50,36 +55,41 @@
                         </div>
                     </div>
                     <div class="form-group position-relative has-icon-left" th:classappend="${name} ? 'mb-10' : ''">
-                        <input type="text" class="form-control form-control-xl" placeholder="NickName" 
-                        th:field="*{name}" th:errorclass="is-invalid" th:classappend="${namein} ? is-valid : ''">
+                        <input type="text" class="form-control form-control-xl form-user-input" placeholder="NickName"
+                            th:field="*{name}" th:errorclass="is-invalid" th:classappend="${namein} ? is-valid : ''">
                         <div class="form-control-icon">
                             <i class="bi bi-aspect-ratio"></i>
                         </div>
                         <div id="validationServerNameFeedback" class="invalid-feedback">
                             <i class="bi bi-check mb-4"></i>
-                            <span><th:block th:errors="*{name}"></th:block></span>
+                            <span>
+                                <th:block th:errors="*{name}"></th:block>
+                            </span>
                         </div>
                     </div>
                     <div class="form-group position-relative has-icon-left" th:classappend="${email} ? 'mb-10' : ''">
-                        <input type="text" class="form-control form-control-xl" placeholder="Email" 
-                        th:field="*{email}" th:errorclass="is-invalid" th:classappend="${emailin} ? is-valid : ''">
+                        <input type="text" class="form-control form-control-xl form-user-input" placeholder="Email"
+                            th:field="*{email}" th:errorclass="is-invalid" th:classappend="${emailin} ? is-valid : ''">
                         <div class="form-control-icon">
                             <i class="bi bi-envelope"></i>
                         </div>
                         <div id="validationServerEmailFeedback" class="invalid-feedback">
                             <i class="bi bi-check mb-4"></i>
-                            <span><th:block th:errors="*{email}"></th:block></span>
+                            <span>
+                                <th:block th:errors="*{email}"></th:block>
+                            </span>
                         </div>
                     </div>
                     <span>이메일 인증은 필수 입니다. <br> 꼭 인증가능한 이메일을 신중히 입력해 주십시요.</span>
-                    <button class="btn btn-primary btn-block btn-lg shadow-lg mt-3" type="button" disabled="" hidden="true" id="btn-signon">
+                    <button class="btn btn-primary btn-block btn-lg shadow-lg mt-3" type="button" disabled=""
+                        hidden="true" id="btn-signon">
                         <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
                         <span class="visually-hidden">Loading...</span>
                     </button>
                     <button class="btn btn-primary btn-block btn-lg shadow-lg mt-3" id="btn-sign">
                         Sign
                         Up</button>
-                        
+
                 </form>
                 <div class="text-center mt-5 text-lg fs-4">
                     <p class='text-gray-600'>로그인 하러가기 <a href="auth-login.html" class="font-bold">Log
@@ -89,10 +99,8 @@
         </div>
         <div class="col-lg-7 d-none d-lg-block">
             <div id="auth-right">
-
             </div>
         </div>
-
     </div>
     </div>
 </th:block>

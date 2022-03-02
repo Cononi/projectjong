@@ -3,6 +3,7 @@ package com.winesee.projectjong.config.security;
 import com.winesee.projectjong.config.handler.CustomLoginFailureHandler;
 import com.winesee.projectjong.config.handler.CustomLoginSuccessHandler;
 import com.winesee.projectjong.service.UserService;
+import com.winesee.projectjong.service.attempt.LoginAttemptAddressService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -33,6 +34,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final UserDetailsService userDetailsService;
     // 암호 인코더를 사용.
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final LoginAttemptAddressService loginAttemptAddressService;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -89,6 +91,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     public CustomLoginFailureHandler failureHandler() {
-        return new CustomLoginFailureHandler();
+        return new CustomLoginFailureHandler(loginAttemptAddressService);
     }
 }
