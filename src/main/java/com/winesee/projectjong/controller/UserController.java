@@ -5,7 +5,6 @@ import com.winesee.projectjong.config.exception.EmailExistException;
 import com.winesee.projectjong.config.exception.NotAnImageFileException;
 import com.winesee.projectjong.config.exception.UserNotFoundException;
 import com.winesee.projectjong.config.exception.UsernameExistException;
-import com.winesee.projectjong.domain.user.User;
 import com.winesee.projectjong.domain.user.dto.UserRequest;
 import com.winesee.projectjong.domain.user.dto.UserResponse;
 import com.winesee.projectjong.service.UserService;
@@ -15,11 +14,12 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.*;
@@ -30,9 +30,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import java.io.IOException;
-import java.security.Principal;
 import java.util.*;
 
 import static org.springframework.http.HttpStatus.OK;
@@ -45,7 +45,12 @@ import static org.springframework.http.MediaType.IMAGE_JPEG_VALUE;
 public class UserController {
 
     private final UserService userService;
+    private final AuthenticationManager authenticationManager;
+    private final PasswordEncoder passwordEncoder;
 
+    /*-----------------------------------------------
+    login - 로그인 페이지
+    -----------------------------------------------*/
     @RequestMapping("login")
     public String login(Model model, @ModelAttribute("user") UserRequest user, HttpServletRequest request, @AuthenticationPrincipal UserResponse userinfo) {
         if(ObjectUtils.isNotEmpty(userinfo)){
@@ -58,6 +63,9 @@ public class UserController {
         return "pages/login";
     }
 
+    /*-----------------------------------------------
+    registerGet - 회원 가입 페이지
+    -----------------------------------------------*/
     @GetMapping("register")
     public String registerGet(@ModelAttribute("user") UserRequest user,@AuthenticationPrincipal UserResponse userinfo) {
         if(ObjectUtils.isNotEmpty(userinfo)){
@@ -66,6 +74,9 @@ public class UserController {
         return "pages/register";
     }
 
+    /*-----------------------------------------------
+    registerPost - 회원 가입 서비스 컨트롤러
+    -----------------------------------------------*/
     @PostMapping("register")
     public String registerPost(Model model, @ModelAttribute("user") @Validated UserRequest user
             , BindingResult bindingResult, RedirectAttributes rtts)
@@ -100,20 +111,9 @@ public class UserController {
         return "redirect:/account/message";
     }
 
-    // 프로필 업데이트
-    @PostMapping(value = "mypage/update/profile", produces = IMAGE_JPEG_VALUE)
-    public String updateProfileImage(@AuthenticationPrincipal UserResponse userinfo,
-                                                            @RequestParam("username") String username,
-                                                           @RequestParam("name") String name,
-                                                           @RequestParam(value = "email") String email,
-                                                           @RequestParam(value = "profileImage") MultipartFile profileImage) throws UserNotFoundException, EmailExistException, IOException, UsernameExistException, NotAnImageFileException {
-        userService.updateProfile(userinfo,username, name, email,profileImage);
-        return "redirect:/account/mypage";
-    }
-
-    /*
-    아이디 인증
-     */
+    /*-----------------------------------------------
+    getUser - 사용중인 계정 확인
+    -----------------------------------------------*/
     @GetMapping(path = {"find/email/{username}", "find/username/{username}", "find/name/{username}"}, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getUser(@AuthenticationPrincipal UserResponse userinfo, @PathVariable("username") String username, HttpServletRequest request) throws UserNotFoundException, EmailExistException, UsernameExistException {
         if(userinfo!=null&& userinfo.getName().equals(username)){
@@ -122,7 +122,9 @@ public class UserController {
         return response(OK,userService.userCheck(username,request.getRequestURI()));
     }
 
-    // 이메일 가입
+    /*-----------------------------------------------
+    emailConfirm - 이메일 가입 확인 인증
+    -----------------------------------------------*/
     @GetMapping("email/sign/confirm")
     public String emailConfirm(@RequestParam("email") String email, @RequestParam("authId") String authId, @RequestParam("authKey") String authKey, Model model) throws MessagingException {
         // 서비스에서 유저 조회
@@ -131,18 +133,81 @@ public class UserController {
         return "pages/message/register-message";
     }
 
+
+    /*-----------------------------------------------
+    updateProfile - 프로필 업데이트 서비스 컨트롤러
+    -----------------------------------------------*/
+    @PostMapping(value = "mypage/update/profile", produces = IMAGE_JPEG_VALUE)
+    public String updateProfile(@AuthenticationPrincipal UserResponse userinfo,
+                                                            @RequestParam("username") String username,
+                                                           @RequestParam("name") String name,
+                                                           @RequestParam(value = "email") String email,
+                                                           @RequestParam(value = "profileImage") MultipartFile profileImage
+                                                            ,HttpSession session) throws UserNotFoundException, EmailExistException, IOException, UsernameExistException, NotAnImageFileException {
+        userService.updateProfile(userinfo,username, name, email,profileImage);
+
+        /* 변경된 세션 등록 */
+        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userinfo.getUsername(), session.getAttribute("userProfilePasswordAuth")));
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        session.removeAttribute("userProfilePasswordAuth");
+        return "redirect:/account/mypage";
+    }
+
+    /*-----------------------------------------------
+    mypageGet - View - 프로필 페이지
+    -----------------------------------------------*/
     @GetMapping("mypage")
     public String mypageGet(@AuthenticationPrincipal UserResponse userinfo, Model model
             ,@ModelAttribute("user") UserRequest user){
         model.addAttribute("userinfo",userinfo);
-        return "pages/mypage";
+        model.addAttribute("thisMypageActive","mypage");
+        return "pages/mypage/mypage";
     }
 
-    @PostMapping("mypage")
-    public String mypagePost(@AuthenticationPrincipal UserResponse userinfo, Model model
-            , @ModelAttribute("user") @Validated UserRequest user, BindingResult bindingResult){
+
+    /*-----------------------------------------------
+    updateProfileAuth - 내 정보 진입전 비밀번호 확인
+    -----------------------------------------------*/
+    @PostMapping("mypage/update")
+    public String updateProfileAuth(@AuthenticationPrincipal UserResponse userinfo, @RequestParam("passwordAuth") String password
+            ,HttpSession session,RedirectAttributes rtts){
+
+        boolean check = userService.passwordAuth(userinfo.getPassword(),password);
+        log.info(String.valueOf(check));
+        if(check){
+            session.setAttribute("userProfilePasswordAuth", password);
+            session.setMaxInactiveInterval(300);
+            rtts.addFlashAttribute("profileSuccess", check);
+        }
+        return "redirect:/account/mypage";
+    }
+
+    /*-----------------------------------------------
+    passChangeUpdate - 비밀번호 변경페이지 진입전 비밀번호 확인 페이지
+    -----------------------------------------------*/
+    @PostMapping("mypage/pass/change")
+    public String passChangeUpdate(@AuthenticationPrincipal UserResponse userinfo, @RequestParam("passwordAuth") String password
+            ,HttpSession session,RedirectAttributes rtts){
+
+        boolean check = userService.passwordAuth(userinfo.getPassword(),password);
+        log.info(String.valueOf(check));
+        if(check){
+            session.setAttribute("userProfilePasswordAuth", password);
+            session.setMaxInactiveInterval(300);
+            rtts.addFlashAttribute("profileSuccess", check);
+        }
+        return "redirect:/account/mypage/pass/change";
+    }
+
+    /*-----------------------------------------------
+    passChangeGet - 비밀번호 페이지
+    -----------------------------------------------*/
+    @GetMapping("mypage/pass/change")
+    public String passChangeGet(@AuthenticationPrincipal UserResponse userinfo, Model model
+            ,@ModelAttribute("user") UserRequest user){
         model.addAttribute("userinfo",userinfo);
-        return "pages/mypage";
+        model.addAttribute("thisMypageActive","mypagePasswordChange");
+        return "pages/mypage/pass";
     }
 
     @GetMapping("message")

@@ -1,0 +1,15 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<th:block th:fragment="mypageNavbarFragment">
+<div class="card-header">
+    <h5 class="card-title">My Page</h5>
+    <ul class="nav nav-pills nav-fill gap-3 mb-3">
+        <li class="nav-item">
+            <a class="nav-link btn btn-outline-primary" th:classappend="${#strings.equals(thisMypageActive, 'mypage')} ? active : ''" aria-current="page" th:href="@{/account/mypage}">내정보 수정</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link btn btn-outline-primary" th:classappend="${#strings.equals(thisMypageActive, 'mypagePasswordChange')} ? active : ''" th:href="@{/account/mypage/pass/change}">비밀번호 변경</a>
+        </li>
+
+    </ul>
+</div>
+<th:block>

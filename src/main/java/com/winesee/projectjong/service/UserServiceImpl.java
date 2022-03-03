@@ -21,6 +21,10 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -184,11 +188,32 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     updateProfile - 유저 프로필  업데이트.
     -----------------------------------------------*/
     @Override
-    public void updateProfile(UserResponse userinfo, String username, String name, String email, MultipartFile profileImage) throws IOException, UserNotFoundException, EmailExistException, UsernameExistException, NotAnImageFileException {
+    public String updateProfile(UserResponse userinfo, String username, String name, String email, MultipartFile profileImage) throws IOException, UserNotFoundException, EmailExistException, UsernameExistException, NotAnImageFileException {
         if(userinfo.getUsername().equals(username)){
             User user = findByUsername(userinfo.getUsername());
-            saveProfileImage(user, name, profileImage);
+            return saveProfileImage(user, name, profileImage);
+        } else {
+            return saveProfileImage(userinfo, name, profileImage);
         }
+    }
+
+//    /*-----------------------------------------------
+//    updateProfilePassword - 유저 비밀번호  업데이트.
+//    -----------------------------------------------*/
+//    @Override
+//    public void updateProfilePassword(UserResponse userinfo, String password) throws IOException, UserNotFoundException, EmailExistException, UsernameExistException, NotAnImageFileException {
+//        if(userinfo.getUsername().equals(username)){
+//            User user = findByUsername(userinfo.getUsername());
+//            saveProfileImage(user, name, profileImage);
+//        }
+//    }
+
+    /*-----------------------------------------------
+    updatePassword - 유저 패스워드 검증
+    -----------------------------------------------*/
+    @Override
+    public boolean passwordAuth(String password, String passwordAuth) {
+        return passwordEncoder.matches(passwordAuth, password);
     }
 
     /*-----------------------------------------------
@@ -307,8 +332,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         return RandomStringUtils.randomNumeric(6);
     }
 
-    private void saveProfileImage(User user , String name, MultipartFile profileImage) throws IOException, NotAnImageFileException {
-        if (!profileImage.getName().equals("profileImage")) { // user/home/warine/user/rick
+    private String saveProfileImage(User user , String name, MultipartFile profileImage) throws IOException, NotAnImageFileException {
+        if (profileImage.isEmpty()) { // user/home/warine/user/rick
             if(!Arrays.asList(IMAGE_JPEG_VALUE, IMAGE_PNG_VALUE, IMAGE_GIF_VALUE).contains(profileImage.getContentType())) {
                 throw new NotAnImageFileException(profileImage.getOriginalFilename() + NOT_AN_IMAGE_FILE);
             }
@@ -322,10 +347,13 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             user.userProfileUpdate(name,setProfileImageUrl(user.getUsername()));
             userRepository.save(user);
             log.info(FILE_SAVED_IN_FILE_SYSTEM + profileImage.getOriginalFilename());
-        } else {
+        } else if(StringUtils.isNotBlank(name)) {
             user.userProfileUpdate(name,user.getProfileImageUrl());
             userRepository.save(user);
+        } else {
+            return "정보를 수정할 수 없습니다.";
         }
+        return "정보를 수정 완료했습니다.";
     }
 
     private String setProfileImageUrl(String username) {

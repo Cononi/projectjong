@@ -15,7 +15,7 @@
                 </div>
                 <h1 class="auth-title">Sign Up</h1>
                 <p class="auth-subtitle mb-3">회원 정보를 입력해주세요.</p>
-                <form autocomplete="off" action="/account/register" th:object="${user}" method="post">
+                <form autocomplete="off" th:action="@{/account/register}" th:object="${user}" method="post">
                     <div class="form-group position-relative has-icon-left" th:classappend="${username} ? 'mb-10' : ''">
                         <input type="text" class="form-control form-control-xl form-user-input" placeholder="Username"
                             th:field="*{username}" th:errorclass="is-invalid"

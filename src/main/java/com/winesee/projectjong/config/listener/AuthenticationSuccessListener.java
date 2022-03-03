@@ -25,6 +25,7 @@ public class AuthenticationSuccessListener {
             User user = (User) event.getAuthentication().getPrincipal();
             loginAttempService.evictUserFromLoginAttemptCache(user.getUsername());
         }
+        if(auth!= null)
         loginAttemptCacheAddressService.evictUserFromLoginAttemptCache(auth.getRemoteAddress());
     }
 }

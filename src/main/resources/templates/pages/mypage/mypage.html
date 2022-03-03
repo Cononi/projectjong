@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="layout/default-mypage">
+
+
+<head>
+    <title>내 정보</title>
+</head>
+
+<th:block layout:fragment="content">
+                <th:block th:if="${profileSuccess}">
+                    <div class="card-body" th:with="auth=${userinfo}">
+                        <div id="auth">
+                            <div id="auth-left">
+                                <h1 class="auth-title">Sign Up</h1>
+                                <p class="auth-subtitle mb-3">변경할 회원 정보를 입력해주세요.</p>
+                                <form autocomplete="off" th:action="@{/account/mypage/update/profile}"
+                                    th:object="${user}" enctype="multipart/form-data" method="post">
+                                    <div class="form-group position-relative has-icon-left readonly"
+                                        th:classappend="${username} ? 'mb-10' : ''">
+                                        <input type="text" class="form-control form-control-xl form-user-input"
+                                            name="username" th:value="${auth.username}" readonly>
+                                        <div class="form-control-icon">
+                                            <i class="bi bi-person"></i>
+                                        </div>
+                                        <div id="validationServerUsernameFeedback" class="invalid-feedback">
+                                            <i class="bi bi-check mb-4"></i>
+                                            <span>
+                                                <th:block th:errors="*{username}"></th:block>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group position-relative has-icon-left"
+                                        th:classappend="${name} ? 'mb-10' : ''">
+                                        <input type="text" class="form-control form-control-xl form-user-input"
+                                            placeholder="NickName" name="name" id="name" th:value="${auth.name}">
+                                        <div class="form-control-icon">
+                                            <i class="bi bi-aspect-ratio"></i>
+                                        </div>
+                                        <div id="validationServerNameFeedback" class="invalid-feedback">
+                                            <i class="bi bi-check mb-4"></i>
+                                            <span>
+                                                <th:block th:errors="*{name}"></th:block>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group position-relative has-icon-left"
+                                        th:classappend="${email} ? 'mb-10' : ''">
+                                        <input type="text" class="form-control form-control-xl form-user-input"
+                                            placeholder="Email" name="email" th:value="${auth.email}"
+                                            readonly>
+                                        <div class="form-control-icon">
+                                            <i class="bi bi-aspect-ratio"></i>
+                                        </div>
+                                        <div id="validationServeremailFeedback" class="invalid-feedback">
+                                            <i class="bi bi-check mb-4"></i>
+                                            <span>
+                                                <th:block th:errors="*{email}"></th:block>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group position-relative">
+                                        <input id="profileImage" name="profileImage" value="" accept="image/*"
+                                            class="form-control form-control-xl" type="file" />
+                                    </div>
+                                    <!-- <label for="formFileLg" class="form-label">프로필 이미지 변경</label>
+                                <input class="form-control form-control-lg" id="formFileLg" type="file" /> -->
+                                    <button class="btn btn-primary btn-block btn-lg shadow-lg mt-3" type="button"
+                                        disabled="" hidden="true" id="btn-signon">
+                                        <span class="spinner-border spinner-border-sm" role="status"
+                                            aria-hidden="true"></span>
+                                        <span class="visually-hidden">Loading...</span>
+                                    </button>
+                                    <p class="auth-subtitle mb-3" th:text="${errorProfileMsg} ?: ''"></p>
+                                    <button class="btn btn-primary btn-block btn-lg shadow-lg mt-3" id="btn-sign">
+                                        확인</button>
+
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </th:block>
+                <th:block th:unless="${profileSuccess}">
+                    <div class="card-body">
+                        <div id="auth">
+                            <div id="auth-left">
+                                <h1 class="auth-title">회원 정보 수정</h1>
+                                <label for="profileImage" class="form-label">비밀번호 입력후 엔터</label>
+                                <div class="form-group position-relative">
+                                    <form th:action="@{/account/mypage/update}" method="post">
+                                        <input id="passwordAuth" name="passwordAuth" value=""
+                                        class="form-control form-control-xl" type="password" />
+                                        <button class="btn btn-primary btn-block btn-lg shadow-lg mt-3" id="btn-sign">
+                                            확인</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </th:block>
+</th:block>
+
+</html>

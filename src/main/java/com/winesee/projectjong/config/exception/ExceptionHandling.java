@@ -12,18 +12,24 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.LockedException;
+import org.springframework.ui.Model;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.persistence.NoResultException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Objects;
 
 import static org.springframework.http.HttpStatus.*;
 
-@RestControllerAdvice
+@ControllerAdvice
 public class ExceptionHandling implements ErrorController {
 
     private final Logger LOGGER = LoggerFactory.getLogger(getClass());
@@ -40,6 +46,14 @@ public class ExceptionHandling implements ErrorController {
     @ExceptionHandler(DisabledException.class)
     public ResponseEntity<HttpResponse> accountDisabledException(){
         return  createHttpResponse(BAD_REQUEST, ACCOUNT_DISABLED);
+    }
+
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public String maxUploadSizeExceededException(HttpServletRequest request, HttpServletResponse response, RedirectAttributes rtts) throws IOException {
+        String referer = request.getHeader("referer");
+        rtts.addFlashAttribute("profileSuccess", true);
+        rtts.addFlashAttribute("errorProfileMsg", "해당 사진 용량이 초과 입니다.");
+        return "redirect:"+referer;
     }
 
     @ExceptionHandler(BadCredentialsException.class)

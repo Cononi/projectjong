@@ -28,6 +28,7 @@ public class AuthenticationFallureListener {
             String username = (String) event.getAuthentication().getPrincipal();
             loginAttempService.addUserToLoginAttemptCache(username);
         }
+        if(auth!= null)
         loginAttemptCacheAddressService.addUserToLoginAttemptCache(auth.getRemoteAddress());
     }
 }

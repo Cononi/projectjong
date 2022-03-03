@@ -70,7 +70,7 @@ public interface UserService {
      * @return UserResponse
      * @throws IOException IO관련 익셉션
      */
-    void updateProfile(UserResponse userinfo, String username, String name, String email,MultipartFile profileImage) throws IOException, UserNotFoundException, EmailExistException, UsernameExistException, NotAnImageFileException;
+    String updateProfile(UserResponse userinfo, String username, String name, String email,MultipartFile profileImage) throws IOException, UserNotFoundException, EmailExistException, UsernameExistException, NotAnImageFileException;
 
     /**
      * 유저 삭제
@@ -90,6 +90,8 @@ public interface UserService {
     Errors userValidateCheck(Errors errors, UserRequest user);
 
     List<String> emailConfirm(String email, String authId, String authKey) throws MessagingException;
+
+    boolean passwordAuth(String password, String passwordAuth);
 }
 
 
