@@ -85,6 +85,8 @@ public interface UserService {
 //     * @throws EmailNotFoundException 이메일 익셉션
 //     */
 
+    String updateProfilePassword(UserResponse userinfo, String password);
+
     String userCheck(String username, String uri) throws UserNotFoundException, EmailExistException, UsernameExistException;
 
     Errors userValidateCheck(Errors errors, UserRequest user);

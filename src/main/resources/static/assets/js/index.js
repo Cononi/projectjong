@@ -138,7 +138,7 @@ let main = {
     check: function (v, c) {
         $.ajax({
             type: 'GET',
-            url: '/account/find/' + c + '/' + v,
+            url: '/api/find/' + c + '/' + v,
             dataType: 'json',
             contentType: 'application/json; charset=utf-8'
         }).done(function (ok) {

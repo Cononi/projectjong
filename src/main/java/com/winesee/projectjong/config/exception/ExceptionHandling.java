@@ -41,7 +41,7 @@ public class ExceptionHandling implements ErrorController {
     private static final String ACCOUNT_DISABLED = "계정이 비활성화 되었습니다. 오류일 경우 관리자에게 문의 바랍니다.";
     private static final String ERROR_PROCESSING_FILE = "파일을 처리하는데 오류가 발생하여 실패하였습니다.";
     private static final String NOT_ENOUGH_PERMISSION = "권한이 충분하지 않습니다.";
-    public static final String ERROR_PATH = "/error"; // http://server/error
+    public static final String ERROR_PATH = "/errosr"; // http://server/error
 
     @ExceptionHandler(DisabledException.class)
     public ResponseEntity<HttpResponse> accountDisabledException(){
@@ -131,14 +131,14 @@ public class ExceptionHandling implements ErrorController {
         return createHttpResponse(INTERNAL_SERVER_ERROR, ERROR_PROCESSING_FILE);
     }
 
-    @RequestMapping(ERROR_PATH)
-    public ResponseEntity<HttpResponse> notFound404( ) {
-        return createHttpResponse(NOT_FOUND, "해당 페이지는 잘못된 경로 입니다.");
-    }
-
-    public String getErrorPath() {
-        return ERROR_PATH;
-    }
+//    @RequestMapping(ERROR_PATH)
+//    public ResponseEntity<HttpResponse> notFound404( ) {
+//        return createHttpResponse(NOT_FOUND, "해당 페이지는 잘못된 경로 입니다.");
+//    }
+//
+//    public String getErrorPath() {
+//        return ERROR_PATH;
+//    }
 
     /**
      * Http 응답상태와 메세지를 받아와 ResponseEntity로 반환

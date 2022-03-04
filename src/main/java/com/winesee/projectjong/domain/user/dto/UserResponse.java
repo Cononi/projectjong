@@ -25,7 +25,6 @@ import java.util.List;
  */
 @Getter
 public class UserResponse extends User {
-
     private Long id;
     private String name;
     private String username;

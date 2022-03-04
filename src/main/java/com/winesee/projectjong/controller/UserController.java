@@ -1,6 +1,5 @@
 package com.winesee.projectjong.controller;
 
-import com.winesee.projectjong.config.HttpResponse;
 import com.winesee.projectjong.config.exception.EmailExistException;
 import com.winesee.projectjong.config.exception.NotAnImageFileException;
 import com.winesee.projectjong.config.exception.UserNotFoundException;
@@ -11,15 +10,11 @@ import com.winesee.projectjong.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.*;
@@ -35,7 +30,6 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.*;
 
-import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.IMAGE_JPEG_VALUE;
 
 @Controller
@@ -46,16 +40,13 @@ public class UserController {
 
     private final UserService userService;
     private final AuthenticationManager authenticationManager;
-    private final PasswordEncoder passwordEncoder;
 
     /*-----------------------------------------------
     login - 로그인 페이지
     -----------------------------------------------*/
     @RequestMapping("login")
-    public String login(Model model, @ModelAttribute("user") UserRequest user, HttpServletRequest request, @AuthenticationPrincipal UserResponse userinfo) {
-        if(ObjectUtils.isNotEmpty(userinfo)){
-            return "redirect:/";
-        }
+    public String login(Model model, @ModelAttribute("user") UserRequest user, HttpServletRequest request) {
+        // 로그인 성공후 이전페이지로 리다이렉트.
         if(!request.getRequestURI().equals("/account/login")){
             String referrer = request.getHeader("Referer");
             request.getSession().setAttribute("prevPage", referrer);
@@ -67,10 +58,7 @@ public class UserController {
     registerGet - 회원 가입 페이지
     -----------------------------------------------*/
     @GetMapping("register")
-    public String registerGet(@ModelAttribute("user") UserRequest user,@AuthenticationPrincipal UserResponse userinfo) {
-        if(ObjectUtils.isNotEmpty(userinfo)){
-            return "redirect:/";
-        }
+    public String registerGet(@ModelAttribute("user") UserRequest user) {
         return "pages/register";
     }
 
@@ -87,6 +75,7 @@ public class UserController {
         Errors errors = new BeanPropertyBindingResult(user,"user");
         bindingResult.addAllErrors(userService.userValidateCheck(errors, user));
 
+        // 로직 변경해야댐.
         String[] names = { "username", "email", "name"};
         List<String> filedNames = new ArrayList<>();
         if (bindingResult.hasErrors()) {
@@ -111,16 +100,6 @@ public class UserController {
         return "redirect:/account/message";
     }
 
-    /*-----------------------------------------------
-    getUser - 사용중인 계정 확인
-    -----------------------------------------------*/
-    @GetMapping(path = {"find/email/{username}", "find/username/{username}", "find/name/{username}"}, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getUser(@AuthenticationPrincipal UserResponse userinfo, @PathVariable("username") String username, HttpServletRequest request) throws UserNotFoundException, EmailExistException, UsernameExistException {
-        if(userinfo!=null&& userinfo.getName().equals(username)){
-            return response(OK,"변경사항 없음");
-        }
-        return response(OK,userService.userCheck(username,request.getRequestURI()));
-    }
 
     /*-----------------------------------------------
     emailConfirm - 이메일 가입 확인 인증
@@ -137,13 +116,13 @@ public class UserController {
     /*-----------------------------------------------
     updateProfile - 프로필 업데이트 서비스 컨트롤러
     -----------------------------------------------*/
-    @PostMapping(value = "mypage/update/profile", produces = IMAGE_JPEG_VALUE)
+    @PutMapping(value = "mypage", produces = IMAGE_JPEG_VALUE)
     public String updateProfile(@AuthenticationPrincipal UserResponse userinfo,
-                                                            @RequestParam("username") String username,
-                                                           @RequestParam("name") String name,
-                                                           @RequestParam(value = "email") String email,
-                                                           @RequestParam(value = "profileImage") MultipartFile profileImage
-                                                            ,HttpSession session) throws UserNotFoundException, EmailExistException, IOException, UsernameExistException, NotAnImageFileException {
+                                @RequestParam("username") String username,
+                                @RequestParam("name") String name,
+                                @RequestParam(value = "email") String email,
+                                @RequestParam(value = "profileImage") MultipartFile profileImage
+                                ,HttpSession session) throws UserNotFoundException, EmailExistException, IOException, UsernameExistException, NotAnImageFileException {
         userService.updateProfile(userinfo,username, name, email,profileImage);
 
         /* 변경된 세션 등록 */
@@ -157,9 +136,8 @@ public class UserController {
     mypageGet - View - 프로필 페이지
     -----------------------------------------------*/
     @GetMapping("mypage")
-    public String mypageGet(@AuthenticationPrincipal UserResponse userinfo, Model model
-            ,@ModelAttribute("user") UserRequest user){
-        model.addAttribute("userinfo",userinfo);
+    public String mypageGet(Model model
+            ,@ModelAttribute("user") UserRequest user, RedirectAttributes rtts){
         model.addAttribute("thisMypageActive","mypage");
         return "pages/mypage/mypage";
     }
@@ -168,41 +146,33 @@ public class UserController {
     /*-----------------------------------------------
     updateProfileAuth - 내 정보 진입전 비밀번호 확인
     -----------------------------------------------*/
-    @PostMapping("mypage/update")
-    public String updateProfileAuth(@AuthenticationPrincipal UserResponse userinfo, @RequestParam("passwordAuth") String password
-            ,HttpSession session,RedirectAttributes rtts){
-
-        boolean check = userService.passwordAuth(userinfo.getPassword(),password);
-        log.info(String.valueOf(check));
-        if(check){
-            session.setAttribute("userProfilePasswordAuth", password);
-            session.setMaxInactiveInterval(300);
-            rtts.addFlashAttribute("profileSuccess", check);
-        }
-        return "redirect:/account/mypage";
+    @PostMapping("mypage")
+    public String updateProfileAuth(@AuthenticationPrincipal UserResponse userinfo, @RequestParam("passwordAuth") String inputPassword
+            ,HttpSession session,RedirectAttributes rtts, HttpServletRequest request){
+        return passwordCheck(userinfo,inputPassword,session,rtts, request.getRequestURI());
     }
 
     /*-----------------------------------------------
     passChangeUpdate - 비밀번호 변경페이지 진입전 비밀번호 확인 페이지
     -----------------------------------------------*/
-    @PostMapping("mypage/pass/change")
-    public String passChangeUpdate(@AuthenticationPrincipal UserResponse userinfo, @RequestParam("passwordAuth") String password
+    @PostMapping("mypage/pass-change")
+    public String passChangeUpdate(@AuthenticationPrincipal UserResponse userinfo, @RequestParam("passwordAuth") String inputPassword
             ,HttpSession session,RedirectAttributes rtts){
 
-        boolean check = userService.passwordAuth(userinfo.getPassword(),password);
+        boolean check = userService.passwordAuth(userinfo.getPassword(),inputPassword);
         log.info(String.valueOf(check));
         if(check){
-            session.setAttribute("userProfilePasswordAuth", password);
+            session.setAttribute("userProfilePasswordAuth", inputPassword);
             session.setMaxInactiveInterval(300);
             rtts.addFlashAttribute("profileSuccess", check);
         }
-        return "redirect:/account/mypage/pass/change";
+        return "redirect:/account/pass-change";
     }
 
     /*-----------------------------------------------
     passChangeGet - 비밀번호 페이지
     -----------------------------------------------*/
-    @GetMapping("mypage/pass/change")
+    @GetMapping("mypage/pass-change")
     public String passChangeGet(@AuthenticationPrincipal UserResponse userinfo, Model model
             ,@ModelAttribute("user") UserRequest user){
         model.addAttribute("userinfo",userinfo);
@@ -215,8 +185,23 @@ public class UserController {
         return "pages/message/register-message";
     }
 
-    private ResponseEntity<HttpResponse> response(HttpStatus httpStatus, String message) {
-        return new ResponseEntity<>(new HttpResponse(httpStatus.value(), httpStatus,
-                httpStatus.getReasonPhrase().toUpperCase(), message.toUpperCase()), httpStatus);
+    public String errorEditUserCheck(HttpSession session, String uri, RedirectAttributes rtts){
+        // 세션이 유효하다면 비밀번호 확인페이지로 접속하지 않아도 됨.
+        if(ObjectUtils.isNotEmpty(session.getAttribute("userProfilePasswordAuth"))){
+            rtts.addFlashAttribute("profileSuccess", true);
+            return "redirect:" +uri;
+        }
+        return "";
+    }
+
+    public String passwordCheck(UserResponse userinfo, String inputPassword, HttpSession session, RedirectAttributes rtts, String uri){
+        // 세션 인증시간 만료시 다시 비밀번호 체크.
+        boolean check = userService.passwordAuth(userinfo.getPassword(),inputPassword);
+        if(check){
+            session.setAttribute("userProfilePasswordAuth", inputPassword);
+            session.setMaxInactiveInterval(300);
+            rtts.addFlashAttribute("profileSuccess", true);
+        }
+        return "redirect:" +uri;
     }
 }

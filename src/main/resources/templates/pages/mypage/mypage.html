@@ -12,9 +12,11 @@
                     <div class="card-body" th:with="auth=${userinfo}">
                         <div id="auth">
                             <div id="auth-left">
-                                <h1 class="auth-title">Sign Up</h1>
-                                <p class="auth-subtitle mb-3">변경할 회원 정보를 입력해주세요.</p>
-                                <form autocomplete="off" th:action="@{/account/mypage/update/profile}"
+                                <div class="text-center">
+                                    <h1 class="auth-title">프로필 수정</h1>
+                                    <p class="auth-subtitle mb-3">변경할 정보를 입력해주세요.</p>
+                                </div>
+                                <form autocomplete="off" th:action="@{/account/mypage}"
                                     th:object="${user}" enctype="multipart/form-data" method="post">
                                     <div class="form-group position-relative has-icon-left readonly"
                                         th:classappend="${username} ? 'mb-10' : ''">
@@ -63,6 +65,7 @@
                                         <input id="profileImage" name="profileImage" value="" accept="image/*"
                                             class="form-control form-control-xl" type="file" />
                                     </div>
+                                    <input type="hidden" name="_method" value="put">
                                     <!-- <label for="formFileLg" class="form-label">프로필 이미지 변경</label>
                                 <input class="form-control form-control-lg" id="formFileLg" type="file" /> -->
                                     <button class="btn btn-primary btn-block btn-lg shadow-lg mt-3" type="button"
@@ -84,10 +87,9 @@
                     <div class="card-body">
                         <div id="auth">
                             <div id="auth-left">
-                                <h1 class="auth-title">회원 정보 수정</h1>
-                                <label for="profileImage" class="form-label">비밀번호 입력후 엔터</label>
+                                <label for="profileImage" class="form-label">비밀번호 입력</label>
                                 <div class="form-group position-relative">
-                                    <form th:action="@{/account/mypage/update}" method="post">
+                                    <form th:action="@{/account/mypage}" method="post">
                                         <input id="passwordAuth" name="passwordAuth" value=""
                                         class="form-control form-control-xl" type="password" />
                                         <button class="btn btn-primary btn-block btn-lg shadow-lg mt-3" id="btn-sign">

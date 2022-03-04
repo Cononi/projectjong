@@ -17,6 +17,7 @@ import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.web.filter.HiddenHttpMethodFilter;
 
 import static com.winesee.projectjong.config.constant.SecurityConstant.*;
 
@@ -47,7 +48,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .formLogin()
                     .loginPage("/account/login")
-                    .failureUrl("/account/login?error=true")
+                    .failureUrl("/account/login")
                     .usernameParameter("username")
                     .passwordParameter("password")
                     .loginProcessingUrl("/account/login")
@@ -61,8 +62,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .deleteCookies("JSESSIONID");
 
         http
-                .csrf().disable().cors()
-                .and()
+                .csrf().disable()
                 // 모든 사용자가 해당 메뉴를 제외하고 액세스를 허용함
                 .authorizeRequests().antMatchers(PUBLIC_URLS).permitAll()
                 .and()
@@ -85,19 +85,28 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return new SessionRegistryImpl();
     }
 
+    // 로그인 성공시
     @Bean
     public AuthenticationSuccessHandler successHandler() {
         return new CustomLoginSuccessHandler("/");
     }
 
+    // 로그인 실패시
     @Bean
     public CustomLoginFailureHandler failureHandler() {
         return new CustomLoginFailureHandler(loginAttemptAddressService);
     }
 
+    // 회원 정보 수정시
     @Bean
     @Override
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
+    }
+
+    // form에서 put delete 메소드를 받기위해
+    @Bean
+    public HiddenHttpMethodFilter httpMethodFilter() {
+        return new HiddenHttpMethodFilter();
     }
 }

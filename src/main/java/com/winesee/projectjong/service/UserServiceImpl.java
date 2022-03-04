@@ -197,16 +197,16 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         }
     }
 
-//    /*-----------------------------------------------
-//    updateProfilePassword - 유저 비밀번호  업데이트.
-//    -----------------------------------------------*/
-//    @Override
-//    public void updateProfilePassword(UserResponse userinfo, String password) throws IOException, UserNotFoundException, EmailExistException, UsernameExistException, NotAnImageFileException {
-//        if(userinfo.getUsername().equals(username)){
-//            User user = findByUsername(userinfo.getUsername());
-//            saveProfileImage(user, name, profileImage);
-//        }
-//    }
+    /*-----------------------------------------------
+    updateProfilePassword - 유저 비밀번호  업데이트.
+    -----------------------------------------------*/
+    @Override
+    public String updateProfilePassword(UserResponse userinfo, String password){
+        if(userinfo.getUsername().equals(password)){
+            User user = findByUsername(userinfo.getUsername());
+        }
+        return "$";
+    }
 
     /*-----------------------------------------------
     updatePassword - 유저 패스워드 검증
@@ -333,7 +333,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     private String saveProfileImage(User user , String name, MultipartFile profileImage) throws IOException, NotAnImageFileException {
-        if (profileImage.isEmpty()) { // user/home/warine/user/rick
+        if (StringUtils.isNotBlank(profileImage.getOriginalFilename())) { // user/home/warine/user/rick
             if(!Arrays.asList(IMAGE_JPEG_VALUE, IMAGE_PNG_VALUE, IMAGE_GIF_VALUE).contains(profileImage.getContentType())) {
                 throw new NotAnImageFileException(profileImage.getOriginalFilename() + NOT_AN_IMAGE_FILE);
             }

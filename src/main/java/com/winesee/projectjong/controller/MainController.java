@@ -9,18 +9,18 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import javax.servlet.http.HttpServletRequest;
+
 
 @Controller
-@RequiredArgsConstructor
 @RequestMapping("/")
 @Slf4j
 public class MainController {
 
-    private final UserService userService;
-
     @RequestMapping("/")
-    public String main(@AuthenticationPrincipal UserResponse userinfo, Model model){
-        model.addAttribute("userinfo",userinfo);
+    public String main(HttpServletRequest request){
+
+        log.info(request.getRequestURI());
         return "pages/index";
     }
 
