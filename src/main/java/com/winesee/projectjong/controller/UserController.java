@@ -136,9 +136,7 @@ public class UserController {
     mypageGet - View - 프로필 페이지
     -----------------------------------------------*/
     @GetMapping("mypage")
-    public String mypageGet(Model model
-            ,@ModelAttribute("user") UserRequest user, RedirectAttributes rtts){
-        model.addAttribute("thisMypageActive","mypage");
+    public String mypageGet(@ModelAttribute("user") UserRequest user){
         return "pages/mypage/mypage";
     }
 
@@ -147,7 +145,7 @@ public class UserController {
     -----------------------------------------------*/
     @PostMapping("mypage")
     public String updateProfileAuth(){
-        return "pages/mypage/mypage";
+        return "redirect:/account/mypage";
     }
 
     /*-----------------------------------------------
@@ -164,7 +162,6 @@ public class UserController {
     @GetMapping("pass-change")
     public String passChangeGet(Model model
             ,@ModelAttribute("user") UserRequest user){
-        model.addAttribute("thisMypageActive","mypagePasswordChange");
         return "pages/mypage/pass";
     }
 

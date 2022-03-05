@@ -192,12 +192,16 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         // 닉네임이 변경할 닉네임과 다를경우
         if(!userinfo.getName().equals(name)){
             User userSearch = findByName(name);
+            // 유저가 비여있을경우 실행
             if(ObjectUtils.isEmpty(userSearch)){
                 User user = findByUsername(userinfo.getUsername());
                 return saveProfileImage(user, name, profileImage);
             } else {
                 throw new IllegalArgumentException("이미 사용중인 닉네임 입니다.");
             }
+        } else if(ObjectUtils.isNotEmpty(profileImage.getOriginalFilename())) {
+            User userSearch = findByName(name);
+            return saveProfileImage(userSearch, name, profileImage);
         }
         return saveProfileImage(userinfo, name, profileImage);
     }
