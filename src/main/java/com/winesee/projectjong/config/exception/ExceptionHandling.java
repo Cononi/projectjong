@@ -51,8 +51,14 @@ public class ExceptionHandling implements ErrorController {
     @ExceptionHandler(MaxUploadSizeExceededException.class)
     public String maxUploadSizeExceededException(HttpServletRequest request, HttpServletResponse response, RedirectAttributes rtts) throws IOException {
         String referer = request.getHeader("referer");
-        rtts.addFlashAttribute("profileSuccess", true);
         rtts.addFlashAttribute("errorProfileMsg", "해당 사진 용량이 초과 입니다.");
+        return "redirect:"+referer;
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public String IllegalArgumentException(HttpServletRequest request, RedirectAttributes rtts,Exception e) {
+        String referer = request.getHeader("referer");
+        rtts.addFlashAttribute("errorProfileMsg", e.getMessage());
         return "redirect:"+referer;
     }
 

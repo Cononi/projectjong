@@ -5,7 +5,6 @@
 <head>
     <title>와린이- 회원가입</title>
 </head>
-
 <th:block layout:fragment="content">
     <div class="row h-100">
         <div class="col-lg-5 col-12">
@@ -16,10 +15,9 @@
                 <h1 class="auth-title">Sign Up</h1>
                 <p class="auth-subtitle mb-3">회원 정보를 입력해주세요.</p>
                 <form autocomplete="off" th:action="@{/account/register}" th:object="${user}" method="post">
-                    <div class="form-group position-relative has-icon-left" th:classappend="${username} ? 'mb-10' : ''">
+                    <div class="form-group position-relative has-icon-left">
                         <input type="text" class="form-control form-control-xl form-user-input" placeholder="Username"
-                            th:field="*{username}" th:errorclass="is-invalid"
-                            th:classappend="${usernamein} ? is-valid : ''">
+                            th:field="*{username}" th:errorclass="is-invalid" required>
                         <div class="form-control-icon">
                             <i class="bi bi-person"></i>
                         </div>
@@ -32,7 +30,7 @@
                     </div>
                     <div class="form-group position-relative has-icon-left" th:classappend="${password} ? 'mb-10' : ''">
                         <input type="password" class="form-control form-control-xl form-user-input"
-                            placeholder="Password" th:field="*{password}" th:errorclass="is-invalid">
+                            placeholder="Password" th:field="*{password}" th:errorclass="is-invalid" required>
                         <div class="form-control-icon">
                             <i class="bi bi-shield-lock"></i>
                         </div>
@@ -56,7 +54,7 @@
                     </div>
                     <div class="form-group position-relative has-icon-left" th:classappend="${name} ? 'mb-10' : ''">
                         <input type="text" class="form-control form-control-xl form-user-input" placeholder="NickName"
-                            th:field="*{name}" th:errorclass="is-invalid" th:classappend="${namein} ? is-valid : ''">
+                            th:field="*{name}" th:errorclass="is-invalid" required>
                         <div class="form-control-icon">
                             <i class="bi bi-aspect-ratio"></i>
                         </div>
@@ -69,7 +67,7 @@
                     </div>
                     <div class="form-group position-relative has-icon-left" th:classappend="${email} ? 'mb-10' : ''">
                         <input type="text" class="form-control form-control-xl form-user-input" placeholder="Email"
-                            th:field="*{email}" th:errorclass="is-invalid" th:classappend="${emailin} ? is-valid : ''">
+                            th:field="*{email}" th:errorclass="is-invalid" required>
                         <div class="form-control-icon">
                             <i class="bi bi-envelope"></i>
                         </div>
@@ -80,7 +78,7 @@
                             </span>
                         </div>
                     </div>
-                    <span>이메일 인증은 필수 입니다. <br> 꼭 인증가능한 이메일을 신중히 입력해 주십시요.</span>
+                    <p class="mt-10">이메일 인증은 필수 입니다. <br> 꼭 인증가능한 이메일을 신중히 입력해 주십시요.</p>
                     <button class="btn btn-primary btn-block btn-lg shadow-lg mt-3" type="button" disabled=""
                         hidden="true" id="btn-signon">
                         <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
@@ -106,3 +104,13 @@
 </th:block>
 
 </html>
+<script th:inline="javascript">
+    let regInputLoop = [[${ regInputLoop }]];
+    if (regInputLoop == true) {
+        let inputList = document.querySelectorAll("input.form-user-input");
+        inputList.forEach(e => {
+            e.focus();
+        });
+        inputList[4].blur();
+    }
+</script>

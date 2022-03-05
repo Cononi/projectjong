@@ -70,7 +70,7 @@ public interface UserService {
      * @return UserResponse
      * @throws IOException IO관련 익셉션
      */
-    String updateProfile(UserResponse userinfo, String username, String name, String email,MultipartFile profileImage) throws IOException, UserNotFoundException, EmailExistException, UsernameExistException, NotAnImageFileException;
+    String updateProfile(UserResponse userinfo, String name,MultipartFile profileImage) throws IOException, UserNotFoundException, EmailExistException, UsernameExistException, NotAnImageFileException;
 
     /**
      * 유저 삭제
@@ -89,6 +89,7 @@ public interface UserService {
 
     String userCheck(String username, String uri) throws UserNotFoundException, EmailExistException, UsernameExistException;
 
+    // 보류 JS에서 처리 가능함.
     Errors userValidateCheck(Errors errors, UserRequest user);
 
     List<String> emailConfirm(String email, String authId, String authKey) throws MessagingException;

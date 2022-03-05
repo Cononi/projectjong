@@ -4,6 +4,7 @@ import com.winesee.projectjong.domain.user.Role;
 import com.winesee.projectjong.domain.user.User;
 import lombok.Builder;
 import lombok.Getter;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -32,25 +33,15 @@ public class UserRequest {
     @NotBlank(message = "이메일은 필수 입력입니다.")
     @Email(message="이메일 형식에 맞게 입력해주시기 바랍니다.")
     private String email;
-    private Boolean isActive;
-    private Boolean isNonLocked;
-    private Boolean isEmailEnabled;
-    private LocalDateTime lastLoginDate; // 마지막 로그인 시간
-    private Role roles;
-    private String profileImageUrl;
+    private MultipartFile profileImage;
 
     @Builder
-    public UserRequest(String name, String username, String password, String email, Boolean isActive, Boolean isNonLocked, Boolean isEmailEnabled, LocalDateTime lastLoginDate, Role roles, String profileImageUrl) {
+    public UserRequest(String name, String username, String password, String email, MultipartFile profileImage) {
         this.name = name;
         this.username = username;
         this.password = password;
         this.email = email;
-        this.isActive = isActive;
-        this.isNonLocked = isNonLocked;
-        this.isEmailEnabled = isEmailEnabled;
-        this.lastLoginDate = lastLoginDate;
-        this.roles = roles;
-        this.profileImageUrl = profileImageUrl;
+        this.profileImage = profileImage;
     }
 
     public User toEntity() {
@@ -59,12 +50,6 @@ public class UserRequest {
                 .username(username)
                 .password(password)
                 .email(email)
-                .isActive(isActive)
-                .isNonLocked(isNonLocked)
-                .isEmailEnabled(isEmailEnabled)
-                .lastLoginDate(lastLoginDate)
-                .roles(roles)
-                .profileImageUrl(profileImageUrl)
                 .build();
     }
 

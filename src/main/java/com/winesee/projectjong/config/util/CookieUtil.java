@@ -7,12 +7,12 @@ import javax.servlet.http.HttpServletRequest;
 @Service
 public class CookieUtil {
 
-    public Cookie createCookie(String cookieName, String value){
+    public Cookie createCookie(String cookieName, String value, String path){
         Cookie token = new Cookie(cookieName,value);
         token.setHttpOnly(true);
         token.setSecure(false);
         token.setMaxAge(24*60*60);
-        token.setPath("/");
+        token.setPath(path);
         return token;
     }
 

@@ -62,10 +62,10 @@ let main = {
                 }
             });
         });
-        $('#btn-sign').on('click', function () {
+        $('#btn-sign').on('click', function (e) {
             let list = $('input[class*=form-user-input]')
             let count = new Array()
-            $.each(list, function (value) {
+            $.each(list, function (i, value) {
                 if ($(this).val().length == 0) {
                     _this.msg($(this).nextAll('div').children('span'), value, false);
                     count.push(i);
@@ -77,18 +77,17 @@ let main = {
                         $(this).parent().removeClass('mb-4')
                         $(this).parent().removeClass('mb-10')
                     } else if ($(this).val().length > 0) {
-                        if (list[1].value == list[2].value && valid_data[value.id].test($(this).val()) && i == 2) {
+                        if (list[1].value == list[2].value && valid_data[value.id].test($(this).val()) && value.id == 're-password') {
                             $(this).removeClass('is-invalid')
                             $(this).addClass('is-valid')
                         } else {
                             _this.msg($(this).nextAll('div').children('span'), value, true);
+                            this.focus();
                             count.push(i);
                         }
                     }
                 }
             });
-            // 포커스
-            $(list[count[0]]).trigger('focus');
             if (count.length == 0) {
                 $('#btn-sign').attr('hidden', 'true');
                 $('#btn-signon').removeAttr('hidden');
@@ -108,8 +107,7 @@ let main = {
                             _this.check(this.value, $(this).attr('id'))
                         } else if (_me == this && !valid_data[value.id].test(_me.value)) {
                             _this.msg($(this).nextAll('div').children('span'), value, true);
-                        }
-                        if (_me == this && valid_data[value.id].test(_me.value)) {
+                        } else if (_me == this && valid_data[value.id].test(_me.value)) {
                             // 나중에 통합해서 함수로 관리. 필요
                             $(this).removeClass('is-invalid')
                             $(this).addClass('is-valid')
@@ -154,8 +152,6 @@ let main = {
             $('#' + c).nextAll('div').children('span').text(error.responseJSON.message)
         });
     }
-
 };
-
 
 main.init();

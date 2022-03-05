@@ -30,6 +30,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -112,7 +113,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
      -----------------------------------------------*/
     @Override
     public void register(UserRequest userRequest) throws IOException, UserNotFoundException, EmailExistException, UsernameExistException, MessagingException {
-        validateNewUsernameAndEmail(EMPTY, userRequest.getUsername(), userRequest.getEmail(), userRequest.getName());
         // 계정 생성
         userRepository.save(User.builder()
                 .name(userRequest.getName())
@@ -188,13 +188,18 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     updateProfile - 유저 프로필  업데이트.
     -----------------------------------------------*/
     @Override
-    public String updateProfile(UserResponse userinfo, String username, String name, String email, MultipartFile profileImage) throws IOException, UserNotFoundException, EmailExistException, UsernameExistException, NotAnImageFileException {
-        if(userinfo.getUsername().equals(username)){
-            User user = findByUsername(userinfo.getUsername());
-            return saveProfileImage(user, name, profileImage);
-        } else {
-            return saveProfileImage(userinfo, name, profileImage);
+    public String updateProfile(UserResponse userinfo, String name, MultipartFile profileImage) throws IOException, UserNotFoundException, EmailExistException, UsernameExistException, NotAnImageFileException {
+        // 닉네임이 변경할 닉네임과 다를경우
+        if(!userinfo.getName().equals(name)){
+            User userSearch = findByName(name);
+            if(ObjectUtils.isEmpty(userSearch)){
+                User user = findByUsername(userinfo.getUsername());
+                return saveProfileImage(user, name, profileImage);
+            } else {
+                throw new IllegalArgumentException("이미 사용중인 닉네임 입니다.");
+            }
         }
+        return saveProfileImage(userinfo, name, profileImage);
     }
 
     /*-----------------------------------------------
@@ -251,24 +256,27 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
 
     /*-----------------------------------------------
-          userCheck - 유저 가입 조회
+          userCheck - Api용 - 사용중인 아이디 조회
     -----------------------------------------------*/
     @Override
     public String userCheck(String username, String uri) throws UserNotFoundException, EmailExistException, UsernameExistException {
         String msg = "";
-        if(uri.equals("/account/find/username/"+username)){
-            validateNewUsernameAndEmail(null,username,null,null);
+        if(uri.equals("/api/find/username/"+username)){
+            validateNewUsernameAndEmail(username,null,null);
             msg= "("+ username +")은 사용가능한 아이디 입니다.";
-        } else if(uri.equals("/account/find/email/"+username)) {
-            validateNewUsernameAndEmail(null,null,username,null);
+        } else if(uri.equals("/api/find/email/"+username)) {
+            validateNewUsernameAndEmail(null,username,null);
             msg= "("+ username +")은 사용가능한 이메일 입니다.";
         } else {
-            validateNewUsernameAndEmail(null,null,null,username);
+            validateNewUsernameAndEmail(null,null,username);
             msg= "("+ username +")은 사용가능한 닉네임 입니다.";
         }
         return msg;
     }
 
+    /*-----------------------------------------------
+      userValidateCheck - 사용중일때 Error 추가.
+    -----------------------------------------------*/
     @Override
     public Errors userValidateCheck(Errors errors, UserRequest user) {
         List<User> findAll = userRepository.findAllByUsernameOrEmailOrName(user.getUsername(), user.getEmail(), user.getName());
@@ -291,34 +299,20 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     #----------------------------------------------------------------------------------------
      */
 
-    private User validateNewUsernameAndEmail(String currentUsername, String newUsername, String newEmail, String newName) throws UserNotFoundException, UsernameExistException, EmailExistException {
-        User userByNewUsername = newUsername != null ? findByUsername(newUsername) : null;
-        User userByNewEmail = newEmail != null ?  findByEmail(newEmail) : null;
-        User userByNewName = newName != null ? findByName(newName) : null;
-        if(StringUtils.isNotBlank(currentUsername)) {
-            User currentUser = findByUsername(currentUsername);
-            if(currentUser == null) {
-                throw new UserNotFoundException(NO_USER_FOUND_BY_USERNAME + currentUsername);
-            }
-            if(userByNewEmail != null && !currentUser.getId().equals(userByNewEmail.getId())){
-                throw new EmailExistException(EMAIL_ALREADY_EXISTS);
-            }
-            if(userByNewName != null && !currentUser.getId().equals(userByNewName.getId())){
-                throw new UsernameExistException(NAME_ALREADY_EXISTS);
-            }
-            return currentUser;
-        } else {
-            if(userByNewUsername != null){
-                throw new UsernameExistException(USERNAME_ALREADY_EXISTS);
-            }
-            if(userByNewEmail != null){
-                throw new EmailExistException(EMAIL_ALREADY_EXISTS);
-            }
-            if(userByNewName != null){
-                throw new UsernameExistException(NAME_ALREADY_EXISTS);
+    private User validateNewUsernameAndEmail(String newUsername, String newEmail, String newName) throws UsernameExistException, EmailExistException {
+        User find = userRepository.findByUsernameOrEmailOrName(newUsername,newEmail,newName);
+            if(ObjectUtils.isNotEmpty(find)){
+                if(find.getUsername().equals(newUsername)){
+                    throw new UsernameExistException(USERNAME_ALREADY_EXISTS);
+                }
+                if(find.getEmail().equals(newEmail)){
+                    throw new EmailExistException(EMAIL_ALREADY_EXISTS);
+                }
+                if(find.getName().equals(newName)){
+                    throw new UsernameExistException(NAME_ALREADY_EXISTS);
+                }
             }
             return null;
-        }
     }
 
     // 비밀번호 암호화
@@ -347,7 +341,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             user.userProfileUpdate(name,setProfileImageUrl(user.getUsername()));
             userRepository.save(user);
             log.info(FILE_SAVED_IN_FILE_SYSTEM + profileImage.getOriginalFilename());
-        } else if(StringUtils.isNotBlank(name)) {
+        } else if(StringUtils.isNotBlank(name) && !name.equals(user.getName())) {
             user.userProfileUpdate(name,user.getProfileImageUrl());
             userRepository.save(user);
         } else {
