@@ -16,6 +16,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.*;
@@ -125,10 +126,17 @@ public class UserController {
             return "redirect:/account/mypage";
         }
 
-        userService.updateProfile(userinfo, user.getName(),user.getProfileImage());
+        UserResponse userChange = userService.updateProfile(userinfo, user.getName(),user.getProfileImage());
         /* 변경된 세션 등록 */
-        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userinfo.getUsername(), session.getAttribute("userProfilePasswordAuth")));
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+        // 현재 사용자 정보를 없애기 위해. LocalThread(한 쓰레드내에 사용되는 공동 저장소) 에 있는 인증주체를 초기화 한다.
+        // 사용자 인증정보인 Principal을 Authentication에서 관리하고 이것을 SecurityContext에서 관리한다. 이것을 총관리하는 주체가 SecurityContextHolder이다.
+        // 그래서 SecurityContextHolder를 선언하면 모든 주체에 접근이 가능하다.
+        // Context란 어떤 행위에 대해 핸들링하기 위한 접근 수단의 의미이다.
+        SecurityContextHolder.clearContext();
+        // Authentication에 유저의 접근 주체 토큰을 새로 생성한다.
+        Authentication newAuthentication = new UsernamePasswordAuthenticationToken(userChange, null, userChange.getAuthorities());
+        // SecurityContextHolder에서 관리하는 접근주체에 새로 생성된 유저의 정보를 담아 저장한다.
+        SecurityContextHolder.getContext().setAuthentication(newAuthentication);
         return "redirect:/account/mypage";
     }
 

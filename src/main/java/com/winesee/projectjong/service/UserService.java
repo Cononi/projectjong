@@ -65,12 +65,12 @@ public interface UserService {
     User findByName(String name);
     /**
      * 유저 프로필 이미지 업데이트
-     * @param username String
+     * @param name String
      * @param profileImage MultipartFile ( jpg타입 )
      * @return UserResponse
      * @throws IOException IO관련 익셉션
      */
-    String updateProfile(UserResponse userinfo, String name,MultipartFile profileImage) throws IOException, UserNotFoundException, EmailExistException, UsernameExistException, NotAnImageFileException;
+    UserResponse updateProfile(UserResponse userinfo, String name,MultipartFile profileImage) throws IOException, UserNotFoundException, EmailExistException, UsernameExistException, NotAnImageFileException;
 
     /**
      * 유저 삭제

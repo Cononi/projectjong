@@ -188,7 +188,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     updateProfile - 유저 프로필  업데이트.
     -----------------------------------------------*/
     @Override
-    public String updateProfile(UserResponse userinfo, String name, MultipartFile profileImage) throws IOException, UserNotFoundException, EmailExistException, UsernameExistException, NotAnImageFileException {
+    public UserResponse updateProfile(UserResponse userinfo, String name, MultipartFile profileImage) throws IOException, UserNotFoundException, EmailExistException, UsernameExistException, NotAnImageFileException {
         // 닉네임이 변경할 닉네임과 다를경우
         if(!userinfo.getName().equals(name)){
             User userSearch = findByName(name);
@@ -330,7 +330,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         return RandomStringUtils.randomNumeric(6);
     }
 
-    private String saveProfileImage(User user , String name, MultipartFile profileImage) throws IOException, NotAnImageFileException {
+    private UserResponse saveProfileImage(User user , String name, MultipartFile profileImage) throws IOException, NotAnImageFileException {
         if (StringUtils.isNotBlank(profileImage.getOriginalFilename())) { // user/home/warine/user/rick
             if(!Arrays.asList(IMAGE_JPEG_VALUE, IMAGE_PNG_VALUE, IMAGE_GIF_VALUE).contains(profileImage.getContentType())) {
                 throw new NotAnImageFileException(profileImage.getOriginalFilename() + NOT_AN_IMAGE_FILE);
@@ -348,10 +348,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         } else if(StringUtils.isNotBlank(name) && !name.equals(user.getName())) {
             user.userProfileUpdate(name,user.getProfileImageUrl());
             userRepository.save(user);
-        } else {
-            return "정보를 수정할 수 없습니다.";
         }
-        return "정보를 수정 완료했습니다.";
+        return new UserResponse(user);
     }
 
     private String setProfileImageUrl(String username) {
