@@ -3,6 +3,7 @@ package com.winesee.projectjong.config.interceptor;
 import com.winesee.projectjong.domain.user.dto.UserResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -68,8 +69,9 @@ public class PassAuthInterceptor implements HandlerInterceptor {
             return false;
         }
 
-        // PUT요청후 쿠키 1초로 변경. ( 변경후 변경 내용을 보여주기 위해 )
-        if(request.getMethod().equals("PUT") && Arrays.stream(request.getCookies()).anyMatch(cookie -> cookie.getName().contains("ppp_at"))){
+        // PUT요청후 에러가 존재하지 않으면 쿠키 1초로 변경. ( 변경후 변경 내용을 보여주기 위해 )
+        if(request.getMethod().equals("PUT") && Arrays.stream(request.getCookies()).anyMatch(cookie -> cookie.getName().contains("ppp_at"))
+        && ObjectUtils.isEmpty(request.getAttribute("errorProfileMsg"))){
             cookieJoinOrCreate(request, response,1,"");
         }
 

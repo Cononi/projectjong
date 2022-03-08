@@ -74,7 +74,10 @@
                                             aria-hidden="true"></span>
                                         <span class="visually-hidden">Loading...</span>
                                     </button>
-                                    <p class="auth-subtitle mb-3" th:text="${errorProfileMsg} ?: ''"></p>
+                                    <div>
+                                        <i th:if="${errorProfileMsg}" class="bi bi-check mb-4"></i>
+                                        <span class="auth-subtitle mb-3" th:text="${errorProfileMsg} ?: ''"></span>
+                                    </div>
                                     <button class="btn btn-primary btn-block btn-lg shadow-lg mt-3" id="btn-sign">
                                         확인</button>
 
@@ -94,7 +97,6 @@
                                         class="form-control form-control-xl" type="password" />
                                         <button class="btn btn-primary btn-block btn-lg shadow-lg mt-3" id="btn-sign">
                                             확인</button>
-                                    </form>
                                 </div>
                             </div>
                         </div>

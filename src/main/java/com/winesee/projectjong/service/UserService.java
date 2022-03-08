@@ -1,11 +1,9 @@
 package com.winesee.projectjong.service;
 
-import com.winesee.projectjong.config.exception.EmailExistException;
-import com.winesee.projectjong.config.exception.NotAnImageFileException;
-import com.winesee.projectjong.config.exception.UserNotFoundException;
-import com.winesee.projectjong.config.exception.UsernameExistException;
+import com.winesee.projectjong.config.exception.*;
 import com.winesee.projectjong.domain.user.Role;
 import com.winesee.projectjong.domain.user.User;
+import com.winesee.projectjong.domain.user.dto.PasswordChangeRequest;
 import com.winesee.projectjong.domain.user.dto.UserRequest;
 import com.winesee.projectjong.domain.user.dto.UserResponse;
 import org.springframework.http.ResponseEntity;
@@ -70,7 +68,7 @@ public interface UserService {
      * @return UserResponse
      * @throws IOException IO관련 익셉션
      */
-    UserResponse updateProfile(UserResponse userinfo, String name,MultipartFile profileImage) throws IOException, UserNotFoundException, EmailExistException, UsernameExistException, NotAnImageFileException;
+    UserResponse updateProfile(UserResponse userinfo, String name,MultipartFile profileImage) throws IOException, NotAnImageFileException, ProfileErrorException;
 
     /**
      * 유저 삭제
@@ -85,7 +83,7 @@ public interface UserService {
 //     * @throws EmailNotFoundException 이메일 익셉션
 //     */
 
-    String updateProfilePassword(UserResponse userinfo, String password);
+    UserResponse updateProfilePassword(UserResponse userinfo, PasswordChangeRequest request) throws ProfileErrorException;
 
     String userCheck(String username, String uri) throws UserNotFoundException, EmailExistException, UsernameExistException;
 

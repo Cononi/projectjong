@@ -55,12 +55,14 @@ public class ExceptionHandling implements ErrorController {
         return "redirect:"+referer;
     }
 
-    @ExceptionHandler(IllegalArgumentException.class)
-    public String IllegalArgumentException(HttpServletRequest request, RedirectAttributes rtts,Exception e) {
+    @ExceptionHandler(ProfileErrorException.class)
+    public String ProfileErrorException(HttpServletRequest request, RedirectAttributes rtts,Exception e) {
         String referer = request.getHeader("referer");
         rtts.addFlashAttribute("errorProfileMsg", e.getMessage());
         return "redirect:"+referer;
     }
+
+
 
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<HttpResponse> badCredentialsException() {

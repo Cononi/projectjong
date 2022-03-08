@@ -168,23 +168,32 @@ public class User extends BaseTime implements Serializable, Principal, UserDetai
     수정이 필요한 메서드.
      */
 
+    // 권한 변경
     public void roleEdit(Role role) {
         this.roles = role;
     }
 
+    // 로그인 갱신
     public void loginDateUpdate(LocalDateTime lastLoginDate){
         this.lastLoginDate = lastLoginDate;
     }
 
+    // 계정 상태 변환
     public void userSecurityLockUpdate(boolean isActive, boolean isNotLocked, Boolean isEmailEnabled){
         this.isActive = isActive;
         this.isNonLocked = isNotLocked;
         this.isEmailEnabled = isEmailEnabled;
     }
 
+    // 프로필 업데이트
     public void userProfileUpdate(String name,String profileImageUrl) {
         this.name = name;
         this.profileImageUrl = profileImageUrl;
+    }
+
+    // 비밀번호 변경
+    public void userPasswordUpdate(String password) {
+        this.password = password;
     }
 
     public void userPaswordReset(String password) {

@@ -25,7 +25,7 @@ public class ProfileRequest {
     private MultipartFile profileImage;
 
     @Builder
-    public ProfileRequest(String name, String username, String email, MultipartFile profileImage) {
+    public ProfileRequest(String name, MultipartFile profileImage) {
         this.name = name;
         this.profileImage = profileImage;
     }

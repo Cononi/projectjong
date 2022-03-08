@@ -1,14 +1,12 @@
 package com.winesee.projectjong.service;
 
-import com.winesee.projectjong.config.exception.EmailExistException;
-import com.winesee.projectjong.config.exception.NotAnImageFileException;
-import com.winesee.projectjong.config.exception.UserNotFoundException;
-import com.winesee.projectjong.config.exception.UsernameExistException;
+import com.winesee.projectjong.config.exception.*;
 import com.winesee.projectjong.domain.redis.EmailCode;
 import com.winesee.projectjong.domain.redis.EmailCodeRepository;
 import com.winesee.projectjong.domain.user.Role;
 import com.winesee.projectjong.domain.user.User;
 import com.winesee.projectjong.domain.user.UserRepository;
+import com.winesee.projectjong.domain.user.dto.PasswordChangeRequest;
 import com.winesee.projectjong.domain.user.dto.UserRequest;
 import com.winesee.projectjong.domain.user.dto.UserResponse;
 import com.winesee.projectjong.service.attempt.LoginAttemptAddressService;
@@ -188,7 +186,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     updateProfile - 유저 프로필  업데이트.
     -----------------------------------------------*/
     @Override
-    public UserResponse updateProfile(UserResponse userinfo, String name, MultipartFile profileImage) throws IOException, UserNotFoundException, EmailExistException, UsernameExistException, NotAnImageFileException {
+    public UserResponse updateProfile(UserResponse userinfo, String name, MultipartFile profileImage) throws IOException, ProfileErrorException, NotAnImageFileException {
         // 닉네임이 변경할 닉네임과 다를경우
         if(!userinfo.getName().equals(name)){
             User userSearch = findByName(name);
@@ -197,7 +195,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
                 User user = findByUsername(userinfo.getUsername());
                 return saveProfileImage(user, name, profileImage);
             } else {
-                throw new IllegalArgumentException("이미 사용중인 닉네임 입니다.");
+                throw new ProfileErrorException(NAME_ALREADY_EXISTS);
             }
         } else if(ObjectUtils.isNotEmpty(profileImage.getOriginalFilename())) {
             User userSearch = findByName(name);
@@ -210,11 +208,22 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     updateProfilePassword - 유저 비밀번호  업데이트.
     -----------------------------------------------*/
     @Override
-    public String updateProfilePassword(UserResponse userinfo, String password){
-        if(userinfo.getUsername().equals(password)){
-            User user = findByUsername(userinfo.getUsername());
+    public UserResponse updateProfilePassword(UserResponse userinfo, PasswordChangeRequest request) throws ProfileErrorException {
+        log.info("비번바까");
+        if(request.getPassword().isEmpty() || request.getConfirmPassword().isEmpty()){
+            throw new ProfileErrorException(NULL_USER_PASSWORD_SUCCESSFULLY);
         }
-        return "$";
+        // 입력받은 패스워드가 검증패스워드와 같으면서 비여있지 않을때 변경실행.
+        if(request.getPassword().equals(request.getConfirmPassword())){
+            // 현재 로그인한 유저의 정보를 가져옴
+            User user = findByUsername(userinfo.getUsername());
+            // 패스워드 변경
+            user.userPasswordUpdate(passwordEncoder.encode(request.getPassword()));
+            // 변경된 정보 저장 및 반환
+            return new UserResponse(userRepository.save(user));
+        } else {
+            throw new ProfileErrorException(NO_USER_PASSWORD_SUCCESSFULLY);
+        }
     }
 
     /*-----------------------------------------------

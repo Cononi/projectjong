@@ -12,7 +12,7 @@ let main = {
                     ? "비밀번호는 8자 이상이어야 하며, 숫자/영문자/특수문자를 모두 포함해야 합니다."
                     : "비밀번호는 필수 입력입니다."
                 break;
-            case 're-password':
+            case 'confirmPassword':
                 msg = is_valid == true
                     ? "검증 비밀번호가 서로 다르거나 형식(8자 이상, 숫자/영문자/특수문자를 모두 포함)에 맞지 않습니다."
                     : "비밀번호 체크 동일여부 체크는 필수입니다."
@@ -43,7 +43,7 @@ let main = {
         let valid_data = {
             "username" : /^[A-Za-z]{1}[A-Za-z0-9]{4,19}$/,
             "password" :  /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,25}$/,
-            "re-password" :  /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,25}$/,
+            "confirmPassword" :  /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,25}$/,
             "name" :  /^[0-9a-zA-Z가-힣]{3,10}$/,
             "email" :  /^[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/i
         };
@@ -77,7 +77,7 @@ let main = {
                         $(this).parent().removeClass('mb-4')
                         $(this).parent().removeClass('mb-10')
                     } else if ($(this).val().length > 0) {
-                        if (list[1].value == list[2].value && valid_data[value.id].test($(this).val()) && value.id == 're-password') {
+                        if (list[1].value == list[2].value && valid_data[value.id].test($(this).val()) && value.id == 'confirmPassword') {
                             $(this).removeClass('is-invalid')
                             $(this).addClass('is-valid')
                         } else {
@@ -93,7 +93,7 @@ let main = {
                 $('#btn-signon').removeAttr('hidden');
             }
         });
-        $('#username, #password, #re-password, #email, #name').on('blur', function () {
+        $('#username, #password, #confirmPassword, #email, #name').on('blur', function () {
             if ($(location).attr('pathname') == "/account/register" || $(location).attr('pathname').indexOf('mypage')) {
                 let list = $('input[class*=form-user-input]')
                 let _me = this;
@@ -103,7 +103,7 @@ let main = {
                             _this.msg($(this).nextAll('div').children('span'), value, false);
                         }
                     } else if (this.value.length > 0) {
-                        if (_me == this && valid_data[value.id].test(_me.value) && value.id != "password" && value.id != 're-password') {
+                        if (_me == this && valid_data[value.id].test(_me.value) && value.id != "password" && value.id != 'confirmPassword') {
                             _this.check(this.value, $(this).attr('id'))
                         } else if (_me == this && !valid_data[value.id].test(_me.value)) {
                             _this.msg($(this).nextAll('div').children('span'), value, true);
