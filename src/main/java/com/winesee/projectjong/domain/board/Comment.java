@@ -2,6 +2,7 @@ package com.winesee.projectjong.domain.board;
 
 import com.winesee.projectjong.domain.basedefault.BaseTime;
 import com.winesee.projectjong.domain.user.User;
+import lombok.Builder;
 import lombok.Getter;
 
 import javax.persistence.*;
@@ -28,4 +29,12 @@ public class Comment extends BaseTime {
     // 작성내용
     private String comment;
 
+
+    @Builder
+    public Comment(Long comments_id, Post post, User user, String comment) {
+        this.comments_id = comments_id;
+        this.post = post;
+        this.user = user;
+        this.comment = comment;
+    }
 }

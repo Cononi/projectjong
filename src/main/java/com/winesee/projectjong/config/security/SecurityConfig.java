@@ -2,7 +2,6 @@ package com.winesee.projectjong.config.security;
 
 import com.winesee.projectjong.config.handler.CustomLoginFailureHandler;
 import com.winesee.projectjong.config.handler.CustomLoginSuccessHandler;
-import com.winesee.projectjong.service.UserService;
 import com.winesee.projectjong.service.attempt.LoginAttemptAddressService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;

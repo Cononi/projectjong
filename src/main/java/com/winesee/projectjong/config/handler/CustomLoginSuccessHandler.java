@@ -1,7 +1,5 @@
 package com.winesee.projectjong.config.handler;
 
-import com.winesee.projectjong.domain.user.dto.UserResponse;
-import com.winesee.projectjong.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;

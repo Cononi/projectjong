@@ -5,7 +5,7 @@ import com.winesee.projectjong.domain.user.dto.PasswordChangeRequest;
 import com.winesee.projectjong.domain.user.dto.ProfileRequest;
 import com.winesee.projectjong.domain.user.dto.UserRequest;
 import com.winesee.projectjong.domain.user.dto.UserResponse;
-import com.winesee.projectjong.service.UserService;
+import com.winesee.projectjong.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
@@ -13,9 +13,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;

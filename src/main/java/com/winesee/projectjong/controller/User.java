@@ -1,20 +1,12 @@
 package com.winesee.projectjong.controller;
 
 import com.winesee.projectjong.config.exception.EmailExistException;
-import com.winesee.projectjong.config.exception.NotAnImageFileException;
 import com.winesee.projectjong.config.exception.UserNotFoundException;
 import com.winesee.projectjong.config.exception.UsernameExistException;
-import com.winesee.projectjong.domain.user.dto.ProfileRequest;
 import com.winesee.projectjong.domain.user.dto.UserRequest;
-import com.winesee.projectjong.domain.user.dto.UserResponse;
-import com.winesee.projectjong.service.UserService;
+import com.winesee.projectjong.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.ObjectUtils;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.*;
@@ -24,12 +16,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 import java.io.IOException;
 import java.util.*;
-
-import static org.springframework.http.MediaType.IMAGE_JPEG_VALUE;
 
 @Controller
 @RequiredArgsConstructor

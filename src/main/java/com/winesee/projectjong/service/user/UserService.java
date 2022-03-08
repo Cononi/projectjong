@@ -1,4 +1,4 @@
-package com.winesee.projectjong.service;
+package com.winesee.projectjong.service.user;
 
 import com.winesee.projectjong.config.exception.*;
 import com.winesee.projectjong.domain.user.Role;

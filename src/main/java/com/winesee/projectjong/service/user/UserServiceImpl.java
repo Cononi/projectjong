@@ -1,4 +1,4 @@
-package com.winesee.projectjong.service;
+package com.winesee.projectjong.service.user;
 
 import com.winesee.projectjong.config.exception.*;
 import com.winesee.projectjong.domain.redis.EmailCode;
@@ -9,7 +9,6 @@ import com.winesee.projectjong.domain.user.UserRepository;
 import com.winesee.projectjong.domain.user.dto.PasswordChangeRequest;
 import com.winesee.projectjong.domain.user.dto.UserRequest;
 import com.winesee.projectjong.domain.user.dto.UserResponse;
-import com.winesee.projectjong.service.attempt.LoginAttemptAddressService;
 import com.winesee.projectjong.service.attempt.LoginAttemptService;
 import com.winesee.projectjong.service.email.MailService;
 import lombok.RequiredArgsConstructor;
@@ -18,23 +17,16 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.mail.MessagingException;
-import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -45,8 +37,6 @@ import java.util.*;
 import static com.winesee.projectjong.config.constant.FileConstant.*;
 import static com.winesee.projectjong.config.constant.UserImplConstant.*;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.*;
 
 @Service
