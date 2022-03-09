@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{layout/default}">
+
+<head>
+    <title>리스트</title>
+</head>
+
+<th:block layout:fragment="content">
+
+    <section id="content-types">
+        <div class="row">
+            <th:block th:each="data, mainIndex : ${wineList}">
+                <div th:if="${mainIndex.count} % 3 == 0" class="col-xl-4 col-md-6 col-sm-12">
+                    <th:block th:each="data, index : ${wineList}">
+                        <div th:if="${mainIndex.count >= index.count && index.count+3 > mainIndex.count}" class="card">
+                            <div class="card-content">
+                                <img src="/assets/images/samples/motorcycle.jpg" class="card-img-top img-fluid"
+                                    alt="singleminded">
+                                <div class="card-body text-center">
+                                    <h5 class="card-title" th:text="${data.displayName}"></h5>
+                                    <h6>4.5</h6>
+                                    <div>
+                                        <i class="bi bi-star"></i>
+                                        <i class="bi bi-star"></i>
+                                        <i class="bi bi-star"></i>
+                                        <i class="bi bi-star"></i>
+                                        <i class="bi bi-star"></i>
+                                    </div>
+                                    <p class="card-text">
+                                        매혹적인 와인
+                                    </p>
+                                </div>
+                            </div>
+                            <button class="btn btn-lg btn-danger">상세 정보</button>
+                        </div>
+                    </th:block>
+                </div>
+            </th:block>
+        </div>
+    </section>
+    <span th:text="${wineList.totalPages}"></span>
+    <span th:text="${wineList.totalElements / 9 % 5}"></span>
+    <span th:text="${wineList.pageable.pageNumber+1 % 5}"></span>
+    <!-- Nav -->
+    <nav aria-label="Page navigation example" 
+    th:with="startPage=${((wineList.pageable.pageNumber) / 5) * 5+1}
+    ,lastPage=${startPage + 5-1}
+    ,maxPage=${lastPage > wineList.totalPages} ? ${wineList.totalPages} : ${lastPage}">
+        <ul class="pagination pagination-danger justify-content-center">
+            <li th:if="${startPage != 1}" class="page-item"><a class="page-link" th:href="@{/wine/}+${startPage-1}">
+                    <span aria-hidden="true"><i class="bi bi-chevron-left"></i></span>
+                </a></li>
+            <th:block th:each="PagesNum : ${#numbers.sequence(startPage,maxPage)}">
+                <li class="page-item" th:classappend="${PagesNum == wineList.pageable.pageNumber+1} ? 'active' : ''"><a class="page-link" th:href="@{/wine/} + ${PagesNum}" th:text="${PagesNum}"></a></li>
+            </th:block>
+            <li th:if="${maxPage == lastPage}" class="page-item"><a class="page-link" th:href="@{/wine/} + ${maxPage+1}">
+                <span aria-hidden="true"><i class="bi bi-chevron-right"></i></span>
+            </a></li>
+        </ul>
+    </nav>
+    <!-- Basic Card types section end -->
+</th:block>
+
+</html>

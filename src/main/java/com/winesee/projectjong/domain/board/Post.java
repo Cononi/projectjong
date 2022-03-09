@@ -18,12 +18,12 @@ public class Post extends BaseTime {
     // 번호
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long post_id;
+    private Long postId;
 
     // 작성자
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user_id;
+    @JoinColumn(name = "userId")
+    private User userId;
 
     // 제목
     @Column(length = 100)
@@ -31,8 +31,11 @@ public class Post extends BaseTime {
 
     // 와인 정보 ( 자동 완성 기능 )
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="wine_id")
-    private Wine wine_id;
+    @JoinColumn(name="wineId")
+    private Wine wineId;
+
+    // 와인 빈티지
+    private int vintage;
 
     // 바디 1-5
     private int bodyCount;
@@ -46,6 +49,9 @@ public class Post extends BaseTime {
     // 가격
     private int price;
 
+    // 최종 점수 ( 1 ~ 100 )
+    private int score;
+
     // 간단한 내용
     @Lob
     private String contents;
@@ -56,15 +62,17 @@ public class Post extends BaseTime {
 
 
     @Builder
-    public Post(Long post_id, User user_id, String title, Wine wine_id, int bodyCount, int sugarCount, int acidityCount, int price, String contents, List<Comment> comments) {
-        this.post_id = post_id;
-        this.user_id = user_id;
+    public Post(Long postId, User userId, String title, Wine wineId, int vintage, int bodyCount, int sugarCount, int acidityCount, int price, int score, String contents, List<Comment> comments) {
+        this.postId = postId;
+        this.userId = userId;
         this.title = title;
-        this.wine_id = wine_id;
+        this.wineId = wineId;
+        this.vintage = vintage;
         this.bodyCount = bodyCount;
         this.sugarCount = sugarCount;
         this.acidityCount = acidityCount;
         this.price = price;
+        this.score = score;
         this.contents = contents;
         this.comments = comments;
     }

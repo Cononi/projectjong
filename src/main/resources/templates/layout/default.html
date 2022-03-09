@@ -12,6 +12,16 @@
         <div id="main" class='layout-navbar'>
             <!-- header -->
             <th:block th:replace="include/header :: headerFragment"></th:block>
+            <div class="row justify-content-md-center">
+                <div class="col-xl-4 col-md-6 col-sm-12">
+                    <form action="#">
+                      <div class="input-group mb-3">
+                        <span class="input-group-text" id="basic-addon1"><i class="bi bi-search"></i></span>
+                        <input type="text" class="form-control" name="ser" placeholder="Recipient's username">
+                      </div>
+                    </form>
+                </div>
+            </div>
             <div id="main-content">
                 <!-- content -->
                 <th:block layout:fragment="content"></th:block>

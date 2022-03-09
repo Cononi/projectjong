@@ -56,10 +56,10 @@ public class PostRequest {
 
     public Post toEntity() {
         return Post.builder()
-                .post_id(post_id)
-                .user_id(user_id)
+                .postId(post_id)
+                .userId(user_id)
                 .title(title)
-                .wine_id(wine_id)
+                .wineId(wine_id)
                 .bodyCount(bodyCount)
                 .sugarCount(sugarCount)
                 .acidityCount(acidityCount)

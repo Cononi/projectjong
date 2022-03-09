@@ -13,17 +13,17 @@ import java.util.List;
 public class PostResponse {
 
     // 번호
-    private Long post_id;
+    private Long postId;
 
     // 작성자
-    private User user_id;
+    private User userId;
 
     // 제목
     private String title;
 
     // 와인 정보 ( 자동 완성 기능 )
 
-    private Wine wine_id;
+    private Wine wineId;
 
     // 바디 1-5
     private int bodyCount;
@@ -46,10 +46,10 @@ public class PostResponse {
 
 
     public PostResponse(Post entity) {
-        this.post_id = entity.getPost_id();
-        this.user_id = entity.getUser_id();
+        this.postId = entity.getPostId();
+        this.userId = entity.getUserId();
         this.title = entity.getTitle();
-        this.wine_id = entity.getWine_id();
+        this.wineId = entity.getWineId();
         this.bodyCount = entity.getBodyCount();
         this.sugarCount = entity.getSugarCount();
         this.acidityCount = entity.getAcidityCount();

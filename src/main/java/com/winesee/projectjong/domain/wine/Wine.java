@@ -15,19 +15,19 @@ public class Wine {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     // 와인 번호
-    private Long wine_id;
+    private Long wineId;
 
     // 와인 라벨 풀네임
-    private String display_name;
+    private String displayName;
 
     // 와인 라벨 한글네임
-    private String display_name_ko;
+    private String displayNameKo;
 
     // 와인 품종 정보
-    private String grape_list;
+    private String grapeList;
 
     // 생산자
-    private String producer_name;
+    private String producerName;
 
     // 와인명
     private String wine;
@@ -40,13 +40,13 @@ public class Wine {
     // 밭
     private String region;
 
-    private String sub_region;
+    private String subRegion;
 
     private String colour;
 
     private String type;
 
-    private String sub_type;
+    private String subType;
 
     private String degignation;
 

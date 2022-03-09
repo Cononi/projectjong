@@ -18,12 +18,12 @@ public class Comment extends BaseTime {
 
     // 연관 게시글
     @ManyToOne
-    @JoinColumn(name = "post_id")
+    @JoinColumn(name = "postId")
     private Post post;
 
     // 작성자
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "userId")
     private User user;
 
     // 작성내용
