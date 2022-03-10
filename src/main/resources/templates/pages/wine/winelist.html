@@ -17,20 +17,21 @@
                             <div class="card-content">
                                 <img src="/assets/images/samples/motorcycle.jpg" class="card-img-top img-fluid"
                                     alt="singleminded">
-                                <div class="card-body text-center">
-                                    <h5 class="card-title" th:text="${data.displayName}"></h5>
-                                    <h6>4.5</h6>
-                                    <div>
-                                        <i class="bi bi-star"></i>
-                                        <i class="bi bi-star"></i>
-                                        <i class="bi bi-star"></i>
-                                        <i class="bi bi-star"></i>
-                                        <i class="bi bi-star"></i>
+                                <th:block th:with="score=${data.averageScore}">
+                                    <div class="card-body text-center">
+                                        <h5 class="card-title" th:text="${data.displayName}"></h5>
+                                        <h6 style='color: #2b68e3' th:text="${score} +' / 100'"></h6>
+                                        <div>
+                                            <th:block th:each="starScore : ${#numbers.sequence(1,5)}">
+                                                <!-- 별처리 해야댐 .-->
+                                                <i style='color: #4249a9' th:class="'bi ' + (${score / 20 >= starScore} ? 'bi-star-fill' : (${(score % 20 != 0) && ((score / 20)+1) ==  starScore} ? 'bi-star-half' : bi-star))+ ' fs-5'"></i>
+                                            </th:block>
+                                        </div>
+                                        <p class="card-text">
+                                            매혹적인 와인
+                                        </p>
                                     </div>
-                                    <p class="card-text">
-                                        매혹적인 와인
-                                    </p>
-                                </div>
+                                </th:block>
                             </div>
                             <button class="btn btn-lg btn-danger">상세 정보</button>
                         </div>
@@ -39,27 +40,27 @@
             </th:block>
         </div>
     </section>
-    <span th:text="${wineList.totalPages}"></span>
-    <span th:text="${wineList.totalElements / 9 % 5}"></span>
-    <span th:text="${wineList.pageable.pageNumber+1 % 5}"></span>
     <!-- Nav -->
-    <nav aria-label="Page navigation example" 
-    th:with="startPage=${((wineList.pageable.pageNumber) / 5) * 5+1}
+    <nav aria-label="Page navigation example" th:with="startPage=${((wineList.pageable.pageNumber) / 5) * 5+1}
     ,lastPage=${startPage + 5-1}
     ,maxPage=${lastPage > wineList.totalPages} ? ${wineList.totalPages} : ${lastPage}">
         <ul class="pagination pagination-danger justify-content-center">
-            <li th:if="${startPage != 1}" class="page-item"><a class="page-link" th:href="@{/wine/}+${startPage-1}">
+            <li th:if="${startPage != 1}" class="page-item"><a class="page-link" th:href="@{/wine(attr=${search.attr},type=${search.type},query=${search.query},page=${startPage-1})}">
                     <span aria-hidden="true"><i class="bi bi-chevron-left"></i></span>
                 </a></li>
-            <th:block th:each="PagesNum : ${#numbers.sequence(startPage,maxPage)}">
-                <li class="page-item" th:classappend="${PagesNum == wineList.pageable.pageNumber+1} ? 'active' : ''"><a class="page-link" th:href="@{/wine/} + ${PagesNum}" th:text="${PagesNum}"></a></li>
+            
+            <th:block th:if="${wineList.totalElements != 0}" th:each="PagesNum : ${#numbers.sequence(startPage,maxPage)}">
+                <li class="page-item" th:classappend="${PagesNum == wineList.pageable.pageNumber+1} ? 'active' : ''"><a
+                        class="page-link" th:href="@{/wine(attr=${search.attr},type=${search.type},query=${search.query},page=${PagesNum})}" th:text="${PagesNum}"></a></li>
             </th:block>
-            <li th:if="${maxPage == lastPage}" class="page-item"><a class="page-link" th:href="@{/wine/} + ${maxPage+1}">
-                <span aria-hidden="true"><i class="bi bi-chevron-right"></i></span>
-            </a></li>
+            <li th:if="${maxPage == lastPage}" class="page-item"><a class="page-link"
+                    th:href="@{/wine(attr=${search.attr},type=${search.type},query=${search.query},page=${maxPage+1})}">
+                    <span aria-hidden="true"><i class="bi bi-chevron-right"></i></span>
+                </a></li>
         </ul>
     </nav>
     <!-- Basic Card types section end -->
 </th:block>
+
 
 </html>

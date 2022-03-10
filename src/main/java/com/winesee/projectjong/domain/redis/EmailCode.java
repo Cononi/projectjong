@@ -1,6 +1,7 @@
 package com.winesee.projectjong.domain.redis;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.data.redis.core.RedisHash;
 

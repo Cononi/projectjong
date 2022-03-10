@@ -41,6 +41,8 @@ dependencies {
 	// Test
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
+	testImplementation 'org.junit.jupiter:junit-jupiter-api'
+	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
 
 	// auth, collections 라이브러리 확장
 	implementation group: 'com.google.guava', name: 'guava', version: '30.1.1-jre'

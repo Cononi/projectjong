@@ -5,6 +5,12 @@
 <th:block th:replace="include/head :: cssFragment"></th:block>
 
 <body>
+    <form id='searchForms' th:action="@{/wine}" method="get">
+        <input type='hidden' name='attr' value='displayName'>
+        <input type='hidden' name='type' value='equals'>
+        <input type='hidden' id="query" name='query' th:value='${search != null} ? ${search.page} : value'>
+        <input type='hidden' id='page' name='page' th:value='${search != null} ? ${search.page} : 1'>
+    </form>
     <div id="app">
          <!-- 공통 sidebar -->
         <th:block th:replace="include/sidebar :: sidebarFragment"></th:block>
@@ -12,17 +18,17 @@
         <div id="main" class='layout-navbar'>
             <!-- header -->
             <th:block th:replace="include/header :: headerFragment"></th:block>
-            <div class="row justify-content-md-center">
-                <div class="col-xl-4 col-md-6 col-sm-12">
-                    <form action="#">
-                      <div class="input-group mb-3">
-                        <span class="input-group-text" id="basic-addon1"><i class="bi bi-search"></i></span>
-                        <input type="text" class="form-control" name="ser" placeholder="Recipient's username">
-                      </div>
-                    </form>
-                </div>
-            </div>
             <div id="main-content">
+                <div class="row justify-content-md-center">
+                    <div class="col-xl-4 col-md-6 col-sm-12">
+                        <form onsubmit="submitForm(event)"  id="searchForm">
+                          <div class="input-group mb-3">
+                            <span class="input-group-text" id="basic-addon1"><i class="bi bi-search"></i></span>
+                            <input type="text" class="form-control" onkeyup="enterkey(event)" id="queryName" name="queryname" placeholder="와인 이름">
+                          </div>
+                        </form>
+                    </div>
+                </div>
                 <!-- content -->
                 <th:block layout:fragment="content"></th:block>
                 <!-- footer -->
@@ -33,4 +39,18 @@
         <th:block th:replace="include/script :: scriptFragment"></th:block>
     </div>
 </body>
+<script th:inline="javascript">
+    let searchForm = document.getElementById("searchForms");
+
+    function submitForm(event){
+        event.preventDefault();
+    }
+
+    function enterkey(event) {
+        if (window.event.keyCode == 13) {
+            document.getElementById("query").value = document.getElementById("queryName").value
+            searchForm.submit();
+        }
+    }
+</script>
 </html>

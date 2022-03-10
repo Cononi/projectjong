@@ -284,11 +284,11 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     public Errors userValidateCheck(Errors errors, UserRequest user) {
         List<User> findAll = userRepository.findAllByUsernameOrEmailOrName(user.getUsername(), user.getEmail(), user.getName());
         for(User find : findAll){
-            if(user.getUsername().equals(find.getUsername())){
+            if(user.getUsername().equalsIgnoreCase(find.getUsername())){
                 errors.rejectValue("username","username.error","해당 아이디는 이미 사용중 입니다.");
-            } else if(user.getEmail().equals(find.getEmail())){
+            } else if(user.getEmail().equalsIgnoreCase(find.getEmail())){
                 errors.rejectValue("email","email.error", "해당 이메일은 이미 사용중 입니다.");
-            } else if(user.getName().equals(find.getName())){
+            } else if(user.getName().equalsIgnoreCase(find.getName())){
                 errors.rejectValue("name","name.error", "해당 닉네임은 이미 사용중 입니다.");
             }
         }
@@ -305,13 +305,13 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     private User validateNewUsernameAndEmail(String newUsername, String newEmail, String newName) throws UsernameExistException, EmailExistException {
         User find = userRepository.findByUsernameOrEmailOrName(newUsername,newEmail,newName);
             if(ObjectUtils.isNotEmpty(find)){
-                if(find.getUsername().equals(newUsername)){
+                if(find.getUsername().equalsIgnoreCase(newUsername)){
                     throw new UsernameExistException(USERNAME_ALREADY_EXISTS);
                 }
-                if(find.getEmail().equals(newEmail)){
+                if(find.getEmail().equalsIgnoreCase(newEmail)){
                     throw new EmailExistException(EMAIL_ALREADY_EXISTS);
                 }
-                if(find.getName().equals(newName)){
+                if(find.getName().equalsIgnoreCase(newName)){
                     throw new UsernameExistException(NAME_ALREADY_EXISTS);
                 }
             }

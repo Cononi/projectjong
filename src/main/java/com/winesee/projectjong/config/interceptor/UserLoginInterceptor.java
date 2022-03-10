@@ -2,6 +2,7 @@ package com.winesee.projectjong.config.interceptor;
 
 import com.winesee.projectjong.config.util.CookieUtil;
 import com.winesee.projectjong.domain.user.dto.UserResponse;
+import com.winesee.projectjong.domain.wine.Search;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;

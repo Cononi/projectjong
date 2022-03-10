@@ -32,7 +32,7 @@ public class Wine {
     // 와인명
     private String wine;
 
-    // 생산나라
+    // 생산나라20
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "country")
     private Country country;
@@ -57,4 +57,6 @@ public class Wine {
     // 알콜 도수
     private int alcohol;
 
+    // 최종 토탈 점수
+    private int averageScore;
 }

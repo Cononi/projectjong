@@ -5,6 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -15,7 +16,8 @@ import java.util.TimeZone;
 import static com.winesee.projectjong.config.constant.FileConstant.USER_FOLDER;
 
 
-@ComponentScan()
+//@ComponentScan()
+//@ComponentScan(basePackages = {"com.winesee.projectjong.domain.redis"})
 @SpringBootApplication
 @EnableJpaAuditing // JPA Auditing 활성화
 public class ProjectjongApplication {
@@ -35,4 +37,5 @@ public class ProjectjongApplication {
 	PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
+
 }
