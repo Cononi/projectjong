@@ -14,7 +14,7 @@ public class Comment extends BaseTime {
     // 코멘트 id
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long comments_id;
+    private Long commentsId;
 
     // 연관 게시글
     @ManyToOne
@@ -31,8 +31,8 @@ public class Comment extends BaseTime {
 
 
     @Builder
-    public Comment(Long comments_id, Post post, User user, String comment) {
-        this.comments_id = comments_id;
+    public Comment(Long commentsId, Post post, User user, String comment) {
+        this.commentsId = commentsId;
         this.post = post;
         this.user = user;
         this.comment = comment;

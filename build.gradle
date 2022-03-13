@@ -52,6 +52,14 @@ dependencies {
 	// mail
 	implementation group: 'com.sun.mail', name: 'javax.mail', version: '1.6.2'
 	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-mail', version: '2.6.4'
+
+	// log
+	implementation (
+			'ch.qos.logback:logback-classic:1.2.11',
+			'ch.qos.logback:logback-core:1.2.11',
+	)
+	// cache
+	implementation 'org.springframework.boot:spring-boot-starter-cache'
 }
 test {
 	useJUnitPlatform()

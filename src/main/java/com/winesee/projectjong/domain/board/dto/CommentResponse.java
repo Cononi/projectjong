@@ -11,7 +11,7 @@ public class CommentResponse {
 
 
     // 코멘트 번호
-    private Long comments_id;
+    private Long commentsId;
 
     // 연관 게시글
     private Post post;
@@ -23,7 +23,7 @@ public class CommentResponse {
     private String comment;
 
     public CommentResponse(Comment entity) {
-        this.comments_id = entity.getComments_id();
+        this.commentsId = entity.getCommentsId();
         this.post = entity.getPost();
         this.user = entity.getUser();
         this.comment = entity.getComment();

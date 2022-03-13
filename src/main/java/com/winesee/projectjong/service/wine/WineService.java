@@ -7,6 +7,6 @@ import org.springframework.data.domain.Page;
 public interface WineService {
 
     // 모든 와인 정보 가져오기
-    Page<Wine> wineAll(Search search);
+    Page<Wine> wineAll(Search search) throws IllegalAccessException;
 
 }

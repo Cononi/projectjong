@@ -17,26 +17,19 @@ public class WineSpecification implements Specification<Wine> {
     @Override
     public Predicate toPredicate(Root<Wine> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
 
-        // ~보다 크다 <
-        if(criteria.getCondition().equalsIgnoreCase("up")){
-            return builder.greaterThanOrEqualTo(
-                    root.<String> get(criteria.getKey()), criteria.getValue().toString());
-            // ~보다 작다 >
-        }else if(criteria.getCondition().equalsIgnoreCase("down")){
-            return builder.lessThanOrEqualTo(
-                    root.<String> get(criteria.getKey()), criteria.getValue().toString());
-            // ~와 같을경우
-        }else if(criteria.getCondition().equalsIgnoreCase("equals")){
-            // 해당 타입이 String 이면서
-            if (root.get(criteria.getKey()).getJavaType() == String.class) {
-                // ~가 포함되어있다.
-                return builder.like(
-                        root.<String>get(criteria.getKey()), "%" + criteria.getValue() + "%");
-            } else {
-                // ~와 같다.
+        switch (criteria.getCondition()) {
+            case "equals" : // 문자열 길이와 크기가 같다.
                 return builder.equal(root.get(criteria.getKey()), criteria.getValue());
-            }
+            case "greaterthan" : // 크다
+                return builder.greaterThan(root.<String> get(criteria.getKey()), criteria.getValue().toString());
+            case "lessthan" : // 작다
+                return builder.lessThan(root.<String> get(criteria.getKey()), criteria.getValue().toString());
+            case "like" : // 내용이 완전히 같다.
+                return builder.like(root.<String> get(criteria.getKey()), criteria.getKey());
+            case "contains" : // 포함
+                return builder.like(root.<String> get(criteria.getKey()), "%" + criteria.getValue().toString() + "%");
+            default:
+                return null;
         }
-        return null;
     }
 }

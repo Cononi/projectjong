@@ -4,13 +4,12 @@ import com.winesee.projectjong.domain.board.Post;
 import lombok.Getter;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.Serializable;
 
 @Entity
 @Getter
 @Table(name="wine")
-public class Wine {
+public class Wine implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,7 +33,7 @@ public class Wine {
 
     // 생산나라20
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "country")
+    @JoinColumn(name = "country", referencedColumnName="countryId")
     private Country country;
 
     // 밭
@@ -53,6 +52,8 @@ public class Wine {
     private String classification;
 
     private String wineImageUrl;
+
+    private String contents;
 
     // 알콜 도수
     private int alcohol;

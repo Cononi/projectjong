@@ -40,7 +40,7 @@ public class WineRepositoryTest {
         // Given : 테스트에서 구체화하고자 하는 행동을 시작하기 전에 테스트 상태를 설명하는 부분
         // 필터
         WineSpecification spec =
-                new WineSpecification(new SearchCriteria("displayName", "equals", "krug"));
+                new WineSpecification(new SearchCriteria("displayName", "contains", "krug"));
         // 페이징
         Pageable pageable = PageRequest.of(0, 5, Sort.Direction.DESC, "displayName");
 
@@ -52,7 +52,7 @@ public class WineRepositoryTest {
         // 케이스 내용 확인용.
         wine.forEach(c -> System.out.println(c.getDisplayName()));
         // 결과
-        assertTrue(wine.iterator().next().getDisplayName().toUpperCase().contains("krug".toUpperCase()));
+        assertTrue(wine.iterator().next().getDisplayName().toLowerCase().contains("krug".toLowerCase()));
     }
 
 }
