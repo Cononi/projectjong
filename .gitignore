@@ -48,6 +48,9 @@ MANIFEST.MF
 _site/
 activemq-data
 manifest.yml
+.log
+.xml
+/log
 
 ### SETTING ###
 *.yml

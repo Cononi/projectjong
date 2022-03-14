@@ -24,7 +24,7 @@
                         <form class="input-group mb-3">
                             <label class="shadow-sm btn btn-secondary" for="queryInfoName"><b>검색어</b></label>
                             <input type="text" class="form-control" name='queryname' id="queryInfoName"
-                               autocomplete="off" th:value="${search != null} ? ${search.query}">
+                                autocomplete="off" th:value="${search != null} ? ${search.query}">
                         </form>
                         <div class="input-group mb-2" data-toggle="buttons">
                             <label class="shadow-sm input-group-text"><b>검색 조건</b></label>
@@ -35,6 +35,7 @@
                             <input type="radio" class="btn-check" name="attr" id="attrOption2" autocomplete="off"
                                 value="contents" th:checked="${search != null && search.attr == 'contents'} ? ${true}">
                             <label class="btn btn-outline-success" for="attrOption2">내용</label>
+                            <button type="button" onClick="deselect()">해제</button>
                         </div>
                         <div class="input-group mb-2">
                             <label class="shadow-sm input-group-text"><b>와인 색상</b></label>
@@ -70,8 +71,8 @@
                         <!-- 나라 처리 .-->
                         <div class="input-group mb-2">
                             <label class="shadow-sm input-group-text"><b>나라 </b></label>
-                            <input type="text" class="form-control basicAutoComplete" id="country2" autocomplete="on" name="country"
-                                th:value="1">
+                            <input type="text" class="form-control basicAutoComplete" id="country2" autocomplete="on"
+                                name="country" th:value="1">
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -98,17 +99,24 @@
         SearchInfoController()
 
         const field = document.querySelector('.basicAutoComplete')
-    const ac = new Autocomplete(field, {
-        data: [{label: "I'm a label", value: 200}],
-        maximumItems: 5,
-        threshold: 1,
-        onSelectItem: ({label, value}) => {
-            console.log("user selected:", label, value);
+        const ac = new Autocomplete(field, {
+            data: [{ label: "I'm a label", value: 200 }],
+            maximumItems: 5,
+            threshold: 1,
+            onSelectItem: ({ label, value }) => {
+                console.log("user selected:", label, value);
+            }
+        });
+        ac.setData([
+            { label: 'France', value: 'JFK' },
+            { label: '와린', value: '와린' },
+        ]);
+        function deselect() {
+            console.log("zz")
+            var fruit = document.getElementsByName("attr");
+            fruit.forEach(e => 
+            e.checked = false)
         }
-    });
-    ac.setData([
-    {label: 'France', value: 'JFK'},
-    {label: '와린', value: '와린'},
-]);
+
     </script>
 </th:block>
