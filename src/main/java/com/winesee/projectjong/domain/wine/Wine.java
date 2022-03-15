@@ -5,6 +5,7 @@ import lombok.Getter;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Objects;
 
 @Entity
 @Getter
@@ -60,4 +61,19 @@ public class Wine implements Serializable {
 
     // 최종 토탈 점수
     private int averageScore;
+
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof Wine)) {
+            return false;
+        }
+        Wine input = (Wine) obj;
+        return this.toString().equals(input.toString());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(this.toString());
+    }
 }

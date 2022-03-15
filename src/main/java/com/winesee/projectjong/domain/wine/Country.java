@@ -15,4 +15,7 @@ public class Country implements Serializable {
     private Long countryId;
 
     private String country;
+
+    @Column(name="country_ko")
+    private String countryKo;
 }

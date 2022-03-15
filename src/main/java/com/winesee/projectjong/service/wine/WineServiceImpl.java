@@ -40,13 +40,17 @@ public class WineServiceImpl implements WineService {
         for(Field fld : fields) {
             fld.setAccessible(true);
             if(fld.getName().equals("attr") && !ObjectUtils.isEmpty(fld.get(search))) {
-                builder.with(search.getAttr(), search.getType(), search.getQuery());
+                if(ObjectUtils.isEmpty(search.getQuery())){
+                    builder.with(search.getAttr(), search.getType(), "");
+                }else {
+                    builder.with(search.getAttr(), search.getType(), search.getQuery());
+                }
             } else if (fld.getName().equals("country") && !ObjectUtils.isEmpty(fld.get(search))){
-                log.info(fld.getName());
-//                log.info((String) fld.get(search));
                 builder.with(fld.getName(), "equals", fld.get(search));
             } else if (fld.getName().equals("alcohol") && !ObjectUtils.isEmpty(fld.get(search))) {
                 builder.with(fld.getName(), "equals", fld.get(search));
+//            } else if (fld.getName().equals("type") && !ObjectUtils.isEmpty(fld.get(search))) {
+//                builder.with("displayName", search.getType(), "");
             } else if(!fld.getName().equals("type") && !fld.getName().equals("query") && !fld.getName().equals("alcohol")
                     && !fld.getName().equals("country") && !fld.getName().equals("page") && !fld.getName().equals("keyword")){
                 if(!ObjectUtils.isEmpty(fld.get(search))){
@@ -57,7 +61,6 @@ public class WineServiceImpl implements WineService {
                 valueSet.append(fld.getName()).append("=").append(fld.get(search)).append("&");
             }
         }
-        List<Country> ls = countryRepository.findAll();
         search.SearchKeyword(valueSet.substring(0,valueSet.lastIndexOf("=")+1));
         log.info("알려진 문자 : " + search.getKeyword());
 //        UserSpecificationsBuilder builder = new UserSpecificationsBuilder();
@@ -70,6 +73,8 @@ public class WineServiceImpl implements WineService {
         return wineRepository.findAll(spec,pageable);
     }
 
-
-
+    @Override
+    public List<Country> wineCountryResult() {
+        return countryRepository.findAll();
+    }
 }
