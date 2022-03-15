@@ -35,14 +35,10 @@ class Autocomplete {
       }
     });
 
-    dropdown.addEventListener('keyup', (e) => {
-      console.log(e.target);
-    })
-
     field.addEventListener('keyup', () => {
       if (this.options.onInput)
         this.options.onInput(this.field.value);
-      if (this.field.value.length != 0)
+      if (this.field.value.length > 0 && this.field.value != null)
         this.renderIfNeeded();
       else
         this.dropdown.hide();

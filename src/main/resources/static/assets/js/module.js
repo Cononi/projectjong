@@ -95,6 +95,13 @@ function SearchInfoController() {
         }))
     }
 
+    function modalForm(){
+        const modalFormInput = document.getElementById("modalInputCheck")
+        modalFormInput.addEventListener('click', () => {
+            searchMainForm.submit()
+        })
+    }
+
 
     // 상세 검색 속성 체크
     function searchConditonCheck() {
@@ -213,7 +220,8 @@ function SearchInfoController() {
         check: searchConditonCheck(),
         deselect: deselect(),
         searchCountryFetch: searchCountryFetch(),
-        spanTypeCreateList: spanTypeCreateList()
+        spanTypeCreateList: spanTypeCreateList(),
+        modalForm:  modalForm()
     }
 }
 
