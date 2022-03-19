@@ -31,4 +31,9 @@ public class Wine {
         model.addAttribute("wineList",wineService.wineAll(search));
         return "pages/wine/winelist";
     }
+
+    @GetMapping(value = "wine/{page}/{index}")
+    public String wineListMain(@PathVariable("page") String page, @PathVariable("index") String index){
+        return "pages/wine/wineinfo";
+    }
 }

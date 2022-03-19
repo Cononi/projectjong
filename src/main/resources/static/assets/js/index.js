@@ -1,4 +1,5 @@
 let main = {
+    
     msg: function (msg_box_id, msg_id, is_valid) {
         let msg = ""
         switch (msg_id.id) {

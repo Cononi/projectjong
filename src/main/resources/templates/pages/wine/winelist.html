@@ -4,7 +4,7 @@
 
 <head>
     <title>리스트</title>
-    <link rel="stylesheet" href="/assets/css/pages/search.css">
+    <link rel="stylesheet" href="/assets/css/pages/wineboard.css">
 </head>
 
 
@@ -12,9 +12,9 @@
     <section id="content-types">
         <div class="container py-2">
             <div class="row justify-content-center">
-                <th:block th:each="data : ${wineList}">
+                <th:block th:each="data, index : ${wineList}">
                     <div class="col-12 col-lg-4">
-                        <div class="card box-shadow mx-auto my-5" style="width: 18rem;">
+                        <div class="card box-shadow mx-auto my-5" th:id="${data.wineId}" style="width: 18rem;">
                             <img src="/assets/images/samples/krug.jpg" class="card-img-top" alt="...">
                             <th:block th:with="score=${data.averageScore}">
                                 <div class="card-body">
@@ -27,12 +27,26 @@
                                         </th:block>
                                     </div>
                                     <h5 class="card-title" th:text="${data.displayName}"></h5>
+                                    <h6 class="card-sub-title" th:text="${data.displayNameKo}"></h6>
                                     <hr>
                                     <p class="card-text">매혹적인 와인</p>
                                 </div>
                             </th:block>
                         </div>
                     </div>
+                </th:block>
+                <th:block th:if="${wineList.totalPages == 0}">
+                    <section class="section">
+                        <div class="card">
+                            <div class="card-header">
+                                <h4 class="card-title">메세지</h4>
+                            </div>
+                            <div class="card-body">
+                                <h6 th:utext="${!#lists.isEmpty(wineList.totalPages == 0)} ? '해당 검색 내용이 존재하지 않습니다.'">
+                                </h6>
+                            </div>
+                        </div>
+                    </section>
                 </th:block>
             </div>
     </section>
@@ -57,10 +71,10 @@
                 </a></li>
         </ul>
     </nav>
-    <script th:inline="javascript">  //type을 module로 해야만 해당 코드가 동작한다.
+    <script th:inline="javascript">
         function callLinkChange(num) {
-            let href = [[${search.keyword}]]
-            location.href ="/wine?"+href+num
+            let href = [[${ search.keyword }]]
+            location.href = "/wine?" + href + num
         }
     </script>
 </th:block>

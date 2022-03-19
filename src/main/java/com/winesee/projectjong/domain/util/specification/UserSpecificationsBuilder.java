@@ -2,12 +2,14 @@ package com.winesee.projectjong.domain.util.specification;
 
 import com.winesee.projectjong.domain.wine.Wine;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor
+@Slf4j
 public class UserSpecificationsBuilder {
     private final List<SearchCriteria> params = new ArrayList<>();
 

@@ -74,15 +74,16 @@ function SearchInfoController() {
 
         // 데이타 이름변환
         const searchSpanList = document.querySelector('#searchSpanList')
-        searchSpanList.querySelectorAll('span b').forEach(e => {
-            parserCountryList.forEach(country => {
-                if (country.value == e.innerText) {
-                    e.innerText = country.label
-                    field.value = country.label
-                    return;
-                }
-            })
-        });
+        if (searchSpanList)
+            searchSpanList.querySelectorAll('span b').forEach(e => {
+                parserCountryList.forEach(country => {
+                    if (country.value == e.innerText) {
+                        e.innerText = country.label
+                        field.value = country.label
+                        return;
+                    }
+                })
+            });
     }
 
 
@@ -95,7 +96,7 @@ function SearchInfoController() {
         }))
     }
 
-    function modalForm(){
+    function modalForm() {
         const modalFormInput = document.getElementById("modalInputCheck")
         modalFormInput.addEventListener('click', () => {
             searchMainForm.submit()
@@ -132,7 +133,7 @@ function SearchInfoController() {
             children.forEach(e => {
                 if (e.value && e.name != "type" && e.name != "page" && e.name != "query") {
                     let spanTypeCreate = document.createElement("span");
-                    spanTypeCreate.setAttribute("class", "shadow-sm mx-1 input-group-text col-auto py-1")
+                    spanTypeCreate.setAttribute("class", "shadow-sm mx-1 input-group-text bg-white col-auto py-1 fw-bold")
                     spanTypeCreate.innerText = typeInputCheck(e)
                     searchSpanList.prepend(spanTypeCreate);
                 }
@@ -221,12 +222,19 @@ function SearchInfoController() {
         deselect: deselect(),
         searchCountryFetch: searchCountryFetch(),
         spanTypeCreateList: spanTypeCreateList(),
-        modalForm:  modalForm()
+        modalForm: modalForm()
     }
 }
-
-
 
 export { SearchInfoController }
 
 
+//----------------------------------------------------------------//
+
+function itemDivIndexController(){
+
+    return {
+    }
+}
+
+export { itemDivIndexController }

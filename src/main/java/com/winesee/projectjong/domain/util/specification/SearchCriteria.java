@@ -3,7 +3,6 @@ package com.winesee.projectjong.domain.util.specification;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-@AllArgsConstructor
 @Getter
 public class SearchCriteria {
     // 컬럼명
@@ -12,4 +11,10 @@ public class SearchCriteria {
     private String condition;
     // 값
     private Object value;
+
+    public SearchCriteria(String key, String condition, Object value) {
+        this.key = key;
+        this.condition = condition;
+        this.value = value;
+    }
 }

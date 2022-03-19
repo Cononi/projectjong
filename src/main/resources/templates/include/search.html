@@ -98,13 +98,13 @@
                     data-bs-target="#searchmodal">상세</button>
             </form>
             <div class="col-md-auto">
-                <div th:if="${search != null}" class="row justify-content-md-center" id="searchSpanList">
+                <div th:if="${search != null}" class="row justify-content-center" id="searchSpanList">
                 </div>
             </div>
         </div>
     </div>
     <script th:inline="javascript" type="module">  //type을 module로 해야만 해당 코드가 동작한다.
-        import { SearchInfoController } from './assets/js/module.js';
+        import { SearchInfoController } from '../assets/js/module.js';
         SearchInfoController()
     </script>
 </th:block>
