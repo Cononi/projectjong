@@ -2,8 +2,7 @@
 <th:block th:fragment="searchFragment">
     <div class="row justify-content-md-center">
         <form id='searchForms' th:action="@{/wine}" method="get" accept-charset="utf-8">
-            <input type='hidden' id="attr" name='attr' th:value='${search} ? ${search.attr} : displayName'>
-            <input type='hidden' id="type" name='type' th:value='contains'>
+            <input type='hidden' id="attr" name='attr' th:value='${search} ? ${search.attr}'>
             <input type='hidden' id="colour" name='colour' th:value="${search} ? ${search.colour}">
             <input type='hidden' id="subType" name='subType' th:value="${search} ? ${search.subType}">
             <input type='hidden' id="alcohol" name='alcohol' th:value="${search} ? ${search.alcohol}">
@@ -24,14 +23,14 @@
                         <form class="input-group mb-3">
                             <label class="shadow-sm btn btn-secondary" for="queryInfoName"><b>검색어</b></label>
                             <input type="text" class="form-control" name='queryInput' id="queryInfoName"
-                                autocomplete="off" th:value="${search != null} ? ${search.query}">
+                                autocomplete="off" th:value="${search != null} ? ${search.query}" placeholder="영문명 또는 한글명">
                         </form>
                         <div class="input-group mb-2" data-toggle="buttons">
                             <label class="shadow-sm input-group-text"><b>검색 조건</b></label>
                             <input type="radio" class="btn-check" name="attr" id="attrOption1" autocomplete="off"
-                                value="displayName"
-                                th:checked="${search != null && search.attr == 'displayName'} ? ${true}">
-                            <label class="shadow-sm btn btn-outline-success" for="attrOption1">이름</label>
+                                value="producerName"
+                                th:checked="${search != null && search.attr == 'producerName'} ? ${true}">
+                            <label class="shadow-sm btn btn-outline-success" for="attrOption1">생산자</label>
                             <input type="radio" class="btn-check" name="attr" id="attrOption2" autocomplete="off"
                                 value="contents" th:checked="${search != null && search.attr == 'contents'} ? ${true}">
                             <label class="btn btn-outline-success" for="attrOption2">내용</label>
@@ -78,7 +77,7 @@
                             <!-- <input type="text" class="form-control" name="queryInput" id="queryInput"
                                 th:value="${search != null} ? ${search.query}" placeholder="" autocomplete="off"> -->
                         </div>
-                        <button class="shadow-sm btn btn-primary" type="button" id="none">전체 초기화</button>
+                        <button class="shadow-sm btn btn-primary" type="button" id="none">초기화</button>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
@@ -93,7 +92,7 @@
             <form class="input-group mb-3">
                 <label class="shadow-sm input-group-text" for="queryInput"><b>검색어</b></label>
                 <input type="text" class="shadow-sm form-control" id="queryInput" name="queryInput"
-                    th:value="${search != null} ? ${search.query}" autocomplete="off">
+                    th:value="${search != null} ? ${search.query}" autocomplete="off" placeholder="영문명 또는 한글명">
                 <button type="button" class="shadow-sm btn btn-success input-group-text" data-bs-toggle="modal"
                     data-bs-target="#searchmodal">상세</button>
             </form>

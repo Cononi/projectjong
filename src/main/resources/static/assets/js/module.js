@@ -15,12 +15,13 @@ function SearchInfoController() {
         const queryInput = document.getElementById("query")
         // let boolCheck = false
         document.querySelectorAll("input[name=queryInput]").forEach(querys =>
-            querys.addEventListener('keypress', function () {
+            querys.addEventListener('keyup', function () {
                 if (querys.value.length > 0) {
                     queryInput.value = querys.value;
                     queryInput.removeAttribute('disabled')
                 } else {
                     queryInput.value = "";
+                    queryInput.setAttribute("disabled", "disabled")
                 }
             }))
     }
@@ -150,17 +151,26 @@ function SearchInfoController() {
         내부 변수 모집
     */
     // 체크 인풋
+    const inputPlaceHolderText = document.getElementById("queryInfoName") 
     const searchCheck = function searchChecked(id, value) {
+        let holderMsg = ""
         children.forEach(child => {
             if (child.id == id) {
                 child.value = value;
                 child.removeAttribute("disabled")
+                if(child.value == "producerName"){
+                    holderMsg = "영문명으로 생산자 입력"
+                }
+                if(child.value == "contents"){
+                    holderMsg = "와인 내용으로 검색"
+                }
+                inputPlaceHolderText.placeholder = holderMsg
             }
         })
     }
 
 
-    // 타입 추론
+    // 타입 도출
     const field = document.getElementById('countryInput')
     const typeInputCheck = (type) => {
         let valueLabel
@@ -183,8 +193,8 @@ function SearchInfoController() {
                     valueLabel = "로제"
                 break
             case "attr":
-                if (type.value == "displayName")
-                    valueLabel = "이름"
+                if (type.value == "producerName")
+                    valueLabel = "생산자"
                 else if (type.value == "contents")
                     valueLabel = "내용"
                 break
@@ -208,9 +218,10 @@ function SearchInfoController() {
             e.checked = false
         });
         children.forEach(e => { // 메인 초기화
-            if (e.name != 'type' && e.name != 'attr' && e.name != 'page') {
+            if (e.name != 'type' && e.name != 'page') {
                 e.value = "";
                 e.setAttribute('disabled', 'disabled')
+                inputPlaceHolderText.placeholder = "영문명 또는 한글명"
             }
         });
     }

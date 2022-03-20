@@ -26,8 +26,12 @@ public class UserSpecificationsBuilder {
 
         Specification<Wine> result = new WineSpecification(params.get(0));
 
-        for (int i = 1; i < params.size(); i++) {
-            result = Specification.where(result).and(new WineSpecification(params.get(i)));
+        if(params.size() == 1){
+            result = Specification.where(result);
+        } else {
+            for (int i = 1; i < params.size(); i++) {
+                result = Specification.where(result).and(new WineSpecification(params.get(i)));
+            }
         }
 
         return result;

@@ -6,6 +6,7 @@ import com.winesee.projectjong.domain.wine.Search;
 import com.winesee.projectjong.service.wine.WineService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -28,6 +29,8 @@ public class Wine {
 
     @GetMapping(value = "wine")
     public String wineListMain(@ModelAttribute Search search, Model model) throws IllegalAccessException {
+        if(StringUtils.isBlank(search.getQuery()))
+            return "pages/message/search-message";
         model.addAttribute("wineList",wineService.wineAll(search));
         return "pages/wine/winelist";
     }

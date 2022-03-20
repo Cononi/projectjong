@@ -8,6 +8,7 @@ import com.winesee.projectjong.domain.util.specification.WineSpecification;
 import com.winesee.projectjong.domain.wine.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.tomcat.util.security.Escape;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
@@ -22,6 +23,7 @@ import org.springframework.util.ReflectionUtils;
 import javax.transaction.Transactional;
 import java.lang.reflect.Field;
 import java.util.List;
+import java.util.regex.Pattern;
 
 @Slf4j
 @Service
@@ -37,25 +39,23 @@ public class WineServiceImpl implements WineService {
         UserSpecificationsBuilder builder = new UserSpecificationsBuilder();
         Field[] fields = search.getClass().getDeclaredFields();
         StringBuilder valueSet = new StringBuilder("");
+
+//        if(search.getAttr() != null) builder.with(search.getAttr(), "contains", search.getQuery());
+//        if(search.getColour() != null) builder.with("colour", "contains", search.getColour());
+//        if(search.getSubType() != null) builder.with("subType", "contains", search.getSubType());
+//        if(search.getAlcohol() != null) builder.with("alcohol", "equals", search.getAlcohol());
+//        if(search.getCountry() != null) builder.with("country", "equals", search.getCountry());
+
         for(Field fld : fields) {
             fld.setAccessible(true);
-            if(fld.getName().equals("attr") && !ObjectUtils.isEmpty(fld.get(search))) {
-                if(ObjectUtils.isEmpty(search.getQuery())){
-                    builder.with(search.getAttr(), search.getType(), "");
-                }else {
-                    builder.with(search.getAttr(), search.getType(), search.getQuery());
-                }
-            } else if (fld.getName().equals("country") && !ObjectUtils.isEmpty(fld.get(search))){
+            if(fld.getName().equals("query") && StringUtils.isBlank(search.getAttr())){
+                if(isAlphaNumeric(search.getQuery())) builder.with("displayName", "contains", search.getQuery());
+                else builder.with("displayNameKo", "contains", search.getQuery());
+            } else if(fld.getName().equals("attr") && StringUtils.isNotBlank(search.getQuery()) && StringUtils.isNotBlank(search.getAttr())) {
+                builder.with(search.getAttr(), "contains", search.getQuery());
+            } else if(!ObjectUtils.isEmpty(fld.get(search)) && !fld.getName().equals("page")
+                    && !fld.getName().equals("keyword") && !fld.getName().equals("query")) {
                 builder.with(fld.getName(), "equals", fld.get(search));
-            } else if (fld.getName().equals("alcohol") && !ObjectUtils.isEmpty(fld.get(search))) {
-                builder.with(fld.getName(), "equals", fld.get(search));
-//            } else if (fld.getName().equals("type") && !ObjectUtils.isEmpty(fld.get(search))) {
-//                builder.with("displayName", search.getType(), "");
-            } else if(!fld.getName().equals("type") && !fld.getName().equals("query") && !fld.getName().equals("alcohol")
-                    && !fld.getName().equals("country") && !fld.getName().equals("page") && !fld.getName().equals("keyword")){
-                if(!ObjectUtils.isEmpty(fld.get(search))){
-                    builder.with(fld.getName(), search.getType(), fld.get(search));
-                }
             }
             if(!ObjectUtils.isEmpty(fld.get(search))){
                 valueSet.append(fld.getName()).append("=").append(fld.get(search)).append("&");
@@ -63,12 +63,7 @@ public class WineServiceImpl implements WineService {
         }
         search.SearchKeyword(valueSet.substring(0,valueSet.lastIndexOf("=")+1));
         log.info("알려진 문자 : " + search.getKeyword());
-//        UserSpecificationsBuilder builder = new UserSpecificationsBuilder();
-//        Pattern pattern = Pattern.compile("(\\w+?)(=)(\\w+?)&");
-//        Matcher matcher = pattern.matcher(search.getAttr() + "&");
         Specification<Wine> spec = builder.build();
-//        WineSpecification spec =
-//                new WineSpecification(new SearchCriteria());
         Pageable pageable = PageRequest.of(search.getPage()-1,9);
         return wineRepository.findAll(spec,pageable);
     }
@@ -76,5 +71,10 @@ public class WineServiceImpl implements WineService {
     @Override
     public List<Country> wineCountryResult() {
         return countryRepository.findAll();
+    }
+
+    // 영문인지 검사.
+    private boolean isAlphaNumeric(String str) {
+        return Pattern.matches("[a-zA-Z0-9]*$", str);
     }
 }
