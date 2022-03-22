@@ -6,6 +6,7 @@ import com.winesee.projectjong.domain.util.specification.SearchCriteria;
 import com.winesee.projectjong.domain.util.specification.UserSpecificationsBuilder;
 import com.winesee.projectjong.domain.util.specification.WineSpecification;
 import com.winesee.projectjong.domain.wine.*;
+import com.winesee.projectjong.domain.wine.dto.WineResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -35,7 +36,7 @@ public class WineServiceImpl implements WineService {
     private final CountryRepository countryRepository;
 
     @Override
-    public Page<Wine> wineAll(Search search) throws IllegalAccessException {
+    public Page<WineResponse> wineAll(Search search) throws IllegalAccessException {
         UserSpecificationsBuilder builder = new UserSpecificationsBuilder();
         Field[] fields = search.getClass().getDeclaredFields();
         StringBuilder valueSet = new StringBuilder("");
@@ -65,7 +66,12 @@ public class WineServiceImpl implements WineService {
         log.info("알려진 문자 : " + search.getKeyword());
         Specification<Wine> spec = builder.build();
         Pageable pageable = PageRequest.of(search.getPage()-1,9);
-        return wineRepository.findAll(spec,pageable);
+        return wineRepository.findAll(spec,pageable).map(WineResponse::new);
+    }
+
+    @Override
+    public WineResponse wineGet(Long id) {
+        return new WineResponse(wineRepository.findById(id).orElseThrow(() -> new NullPointerException("존재하지 않음")));
     }
 
     @Override
@@ -75,6 +81,7 @@ public class WineServiceImpl implements WineService {
 
     // 영문인지 검사.
     private boolean isAlphaNumeric(String str) {
-        return Pattern.matches("[a-zA-Z0-9]*$", str);
+        return Pattern.matches("[a-zA-Z0-9,() ]*$", str);
     }
+
 }

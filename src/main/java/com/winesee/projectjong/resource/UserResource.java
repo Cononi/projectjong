@@ -43,16 +43,16 @@ import static org.springframework.http.MediaType.IMAGE_JPEG_VALUE;
 public class UserResource {
     private final UserService userService;
 
-    @GetMapping("users")
-    public ResponseEntity<List<UserResponse>> getUsers() {
-        return ResponseEntity.ok().body(userService.getUsers());
-    }
+//    @GetMapping("users")
+//    public ResponseEntity<List<UserResponse>> getUsers() {
+//        return ResponseEntity.ok().body(userService.getUsers());
+//    }
 
-    @GetMapping("delete/{user}")
-    public ResponseEntity<?> ss(@PathVariable("user") long num) throws  IOException {
-        userService.deleteUser(num);
-        return new ResponseEntity<>("완료", OK);
-    }
+//    @GetMapping("delete/{user}")
+//    public ResponseEntity<?> ss(@PathVariable("user") long num) throws  IOException {
+//        userService.deleteUser(num);
+//        return new ResponseEntity<>("완료", OK);
+//    }
 
 //    @PostMapping("/user/register")
 //    public ResponseEntity<UserResponse> register(@RequestBody UserRequest userRequest) throws  IOException {

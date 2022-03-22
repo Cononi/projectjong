@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{layout/default}">
+
+<head>
+    <title>테이스팅 노트</title>
+    <link rel="stylesheet" href="/assets/css/pages/stat.css">
+</head>
+<th:block layout:fragment="content">
+
+    <body>
+        <div class="page-heading">
+            <div class="page-title">
+                <div class="col-12 mt-4 order-md-1 order-last text-center">
+                    <h2>Tasting Notes</h2>
+                    <p class="text-subtitle text-muted">입력하세요</p>
+                </div>
+            </div>
+            <div class="col-sm-12" th:with="info=${wineInfo}">
+                <span th:data-columns="${info.wineId}"></span>
+                <div class="row g-0">
+                    <div class="card box-shadow shadow-lg mx-auto my-4 bg-light" style="width: 23rem;">
+                        <img src="/assets/images/samples/krug.jpg" class="card-img-top" alt="...">
+                        <div class="card-text bg-white card-img-bottom">
+                            <div class="card-body">
+                                <!-- 타이틀 -->
+                                <h5 class="card-title-3 text-dark" th:text="${info.displayName}"></h5>
+                                <h6 class="card-sub-title" th:text="${info.displayNameKo}"></h6>
+                                <hr>
+                                <p class="card-text text-black bg-light shadow-sm py-2 px-2">
+                                    <!-- 생산자 -->
+                                    <i class="fa-solid fa-house my-2 mx-2 fa-fw" style="color: forestgreen;"></i>
+                                    <b th:text="${info.producerName}"></b>
+                                </p>
+                                <p class="card-text text-black bg-light shadow-sm py-2 px-2">
+                                    <!-- 나라 -->
+                                    <i class="fa-solid fa-map my-2 mx-2 fa-fw" style="color: crimson;"></i>
+                                    <b th:text="${info.country.country}"></b>
+                                </p>
+                                <p class="card-text text-black bg-light shadow-sm py-2 px-2">
+                                    <!-- 위치 -->
+                                    <i class="fa-solid h5 fa-location-dot my-2 mx-2 fa-fw" style="color: crimson;"></i>
+                                    <b th:text="${info.region}"></b>
+                                    <i th:if="${info.subRegion != ''}" class="fa-solid fa-angle-right fa-fw fa-lg"
+                                        style="color: crimson;"></i>
+                                    <b th:text="${info.subRegion}"></b>
+                                </p>
+                                <p class="card-text text-black bg-light shadow-sm py-2 px-2">
+                                    <!-- 종류 -->
+                                    <i class="fa-solid h5 fa-wine-bottle my-2 mx-2 fa-fw" style="color: chocolate"></i>
+                                    <b th:text="${info.colour}"></b>
+                                    <i th:if="${!#strings.contains(info.subType,'Still')}"
+                                        class="fa-solid fa-angle-right fa-fw fa-lg" style="color: crimson;"></i>
+                                    <b th:if="${!#strings.contains(info.subType,'Still')}"
+                                        th:text="${info.subType}"></b>
+                                    <i th:if="${info.designation != '' && info.designation != NULL}"
+                                        class="fa-solid fa-angle-right fa-fw fa-lg" style="color: crimson;"></i>
+                                    <b th:if="${info.designation != ''}" th:text="${info.designation}"></b>
+                                    <i th:if="${info.classification != '' && info.classification != NULL}"
+                                        class="fa-solid fa-angle-right fa-fw fa-lg" style="color: crimson;"></i>
+                                    <b th:text="${info.classification}"></b>
+                                </p>
+                                <p class="card-text text-black bg-light shadow-sm py-2 px-2">
+                                    <!-- 포도 -->
+                                    <i class="fa-solid h5 fa-wine-glass my-2 mx-2 fa-fw" style="color: blueviolet"></i>
+                                    <b th:text="${info.grapeList}"></b>
+                                </p>
+                                <p class="card-text text-black bg-light shadow-sm py-2 px-2">
+                                    <!-- 도수 -->
+                                    <i class="fa-solid h5 fa-droplet my-2 mx-2 fa-fw" style="color: cornflowerblue"></i>
+                                    <b th:text="${info.alcohol}"></b>
+                                </p>
+                                <p class="card-text"></p>
+                                <!-- <p class="card-text"><small class="text-muted">Last updated 3 mins
+                                                ago</small></p> -->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card box-shadow shadow-lg mx-auto my-4 bg-white col-md-7">
+                        <div class="card">
+                            <div class="card-body">
+                                <!-- 타이틀 -->
+                                <div class="form-group">
+                                    <label for="tastingTitle">제목</label>
+                                    <input type="text" class="form-control" id="tastingTitle" placeholder="제목을 입력해 주세요">
+                                </div>
+                                <!-- 한줄평 -->
+                                <div class="form-group mb-3">
+                                    <label for="exampleFormControlTextarea1" class="form-label">한줄평</label>
+                                    <textarea class="form-control" id="tastingContents" rows="6"></textarea>
+                                </div>
+                                <!-- 세부 내용 -->
+                                <div class="row g-0">
+                                    <div class="col-md-6 mt-4">
+                                        <div class="form-group">
+                                            <label for="tastingVintage">빈티지</label>
+                                            <small class="text-muted">Ex) 2021 ( 숫자만 입력 가능 )</small>
+                                            <input type="text" class="form-control" id="tastingVintage">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="tastingAlcohol">알콜 도수</label>
+                                            <small class="text-muted">Ex) 15 ( 숫자만 입력 가능 )</small>
+                                            <input type="text" class="form-control" id="tastingAlcohol">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="tastingPrice">구매 가격</label>
+                                            <small class="text-muted">Ex) 15000 ( 숫자만 입력 가능 )</small>
+                                            <input type="text" id="tastingPrice" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="card-text px-0 text-center">
+                                            <div class="starPoint py-2 px-2">
+                                                <h5 class="card-title text-dark">산도</h5>
+                                                <input type="radio" name="acidityEat" value="5" id="acidityEat1"><label
+                                                    for="acidityEat1">⭐</label>
+                                                <input type="radio" name="acidityEat" value="4" id="acidityEat2"><label
+                                                    for="acidityEat2">⭐</label>
+                                                <input type="radio" name="acidityEat" value="3" id="acidityEat3"><label
+                                                    for="acidityEat3">⭐</label>
+                                                <input type="radio" name="acidityEat" value="2" id="acidityEat4"><label
+                                                    for="acidityEat4">⭐</label>
+                                                <input type="radio" name="acidityEat" value="1" id="acidityEat5"><label
+                                                    for="acidityEat5">⭐</label>
+                                            </div>
+                                        </div>
+                                        <div class="card-text px-0 text-center">
+                                            <div class="starPoint py-2 px-2">
+                                                <h5 class="card-title text-dark">바디감</h5>
+                                                <input type="radio" name="bodyEat" value="5" id="bodyEat1"><label
+                                                    for="bodyEat1">⭐</label>
+                                                <input type="radio" name="bodyEat" value="4" id="bodyEat2"><label
+                                                    for="bodyEat2">⭐</label>
+                                                <input type="radio" name="bodyEat" value="3" id="bodyEat3"><label
+                                                    for="bodyEat3">⭐</label>
+                                                <input type="radio" name="bodyEat" value="2" id="bodyEat4"><label
+                                                    for="bodyEat4">⭐</label>
+                                                <input type="radio" name="bodyEat" value="1" id="bodyEat5"><label
+                                                    for="bodyEat5">⭐</label>
+                                            </div>
+                                        </div>
+                                        <div class="card-text px-0 text-center">
+                                            <div class="starPoint py-2 px-2">
+                                                <h5 class="card-title text-dark">당도</h5>
+                                                <input type="radio" name="sugarEat" value="5" id="sugarEat1"><label
+                                                    for="sugarEat1">⭐</label>
+                                                <input type="radio" name="sugarEat" value="4" id="sugarEat2"><label
+                                                    for="sugarEat2">⭐</label>
+                                                <input type="radio" name="sugarEat" value="3" id="sugarEat3"><label
+                                                    for="sugarEat3">⭐</label>
+                                                <input type="radio" name="sugarEat" value="2" id="sugarEat4"><label
+                                                    for="sugarEat4">⭐</label>
+                                                <input type="radio" name="sugarEat" value="1" id="sugarEat5"><label
+                                                    for="sugarEat5">⭐</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- 최종 포인트 -->
+                            <div class="card-text bg-light shadow-sm text-center py-2">
+                                <h5 class="shadow-sm py-2">나의 점수</h5>
+                                <div class="form-group mb-3 mx-4 my-4">
+                                    <input type="range" class="form-range" min="0" max="100" value="0" step="1"
+                                        id="userTotalRagneValue">
+                                </div>
+                                <h5 id="totalCountValue">0 / 100</h5>
+                                <div id="starPointIcon">
+                                    <i style="color: #dc3545" class="bi bi-star fa-2x"></i>
+                                    <i style="color: #dc3545" class="bi bi-star fa-2x"></i>
+                                    <i style="color: #dc3545" class="bi bi-star fa-2x"></i>
+                                    <i style="color: #dc3545" class="bi bi-star fa-2x"></i>
+                                    <i style="color: #dc3545" class="bi bi-star fa-2x"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <button id="tastingBtnSumbit" class="btn btn-xl btn-primary m-md-3">작성 하기</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+    <script>
+        // 기본 문자들
+        const titleValueText = document.getElementById("tastingTitle")
+        const ContentsValueText = document.getElementById("tastingContents")
+        const vintageValueText = document.getElementById("tastingVintage")
+        const alcoholValueText = document.getElementById("tastingAlcohol")
+        const priceValueText = document.getElementById("tastingPrice")
+        const tastingBtnSumbit = document.getElementById("tastingBtnSumbit")
+        const itemIdSet = document.querySelector("span[data-columns]")
+
+        // 토탈 별 체크 레이팅
+        const rangeValueBtt = document.getElementById("userTotalRagneValue")
+        const rangeValueText = document.getElementById("totalCountValue")
+        const starPointIcon = document.querySelectorAll("#starPointIcon i")
+        function totalPointControll() {
+            rangeValueBtt.addEventListener('input', e => (
+                rangeValueText.innerText = e.target.value + " / 100"
+            ))
+            rangeValueBtt.addEventListener('input', (e) => {
+                let rangeV = e.target.value / 20
+                for (i = starPointIcon.length; 0 <= i; i--) {
+                    if (Math.floor(rangeV) > i)
+                        starPointIcon[i].classList = "bi bi-star-fill fa-2x"
+                    else if (rangeV >= i + 0.5)
+                        starPointIcon[i].classList = "bi bi-star-half fa-2x"
+                    else if (i != 0)
+                        starPointIcon[i - 1].classList = "bi bi-star fa-2x"
+                }
+            })
+        }
+
+        // 별 체크 레이팅
+        const acidityRate = document.getElementsByName("acidityEat")
+        const bodyRate = document.getElementsByName("bodyEat")
+        const sugarRate = document.getElementsByName("sugarEat")
+        let acidityRateVal = ""
+        let bodyRateVal = ""
+        let sugaRateVal = ""
+        function tastingRateStarPoint() {
+            acidityRate.forEach(e => e.addEventListener('click', f => {
+                acidityRateVal = f.target.value
+            }))
+            bodyRate.forEach(e => e.addEventListener('click', f => {
+                bodyRateVal = f.target.value
+            }))
+            sugarRate.forEach(e => e.addEventListener('click', f => {
+                sugaRateVal = f.target.value
+            }))
+        }
+        tastingBtnSumbit.addEventListener('click', async () => {
+            let user = await tastingPostCall()
+        })
+
+        function tastingPostCall() {
+            let url = '/api/v1/post'
+            return fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    title: titleValueText.value,
+                    contents: ContentsValueText.value,
+                    vintage: vintageValueText.value,
+                    alcohol: alcoholValueText.value,
+                    acidityCount: acidityRateVal,
+                    bodyCount: bodyRateVal,
+                    sugarCount: sugaRateVal,
+                    score: rangeValueBtt.value,
+                    price: priceValueText.value,
+                    wineId: itemIdSet.dataset.columns
+                }),
+            }).then(function (response) {
+                if (!response.ok) {
+                    let error = response
+                    error.then(e =>
+                        console.log(e))
+                } else
+                    return response.json()
+            });
+        }
+        console.log(itemIdSet.dataset.columns)
+        // 리턴
+        tastingRateStarPoint()
+        totalPointControll()
+    </script>
+</th:block>
+
+</html>

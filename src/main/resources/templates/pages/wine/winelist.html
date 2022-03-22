@@ -14,14 +14,14 @@
             <div class="row justify-content-center">
                 <th:block th:each="data, index : ${wineList}">
                     <div class="col-12 col-lg-4">
-                        <div class="card box-shadow mx-auto my-5" th:id="${data.wineId}" style="width: 18rem;">
+                        <div class="card box-shadow mx-auto my-5" th:data-columns="${data.wineId}"
+                            style="width: 18rem;">
                             <img src="/assets/images/samples/krug.jpg" class="card-img-top" alt="...">
                             <th:block th:with="score=${data.averageScore}">
                                 <div class="card-body">
                                     <div>
                                         <h6 style='color: #2b68e3' th:text="${score} +' / 100'"></h6>
                                         <th:block th:each="starScore : ${#numbers.sequence(1,5)}">
-                                            <!-- 별처리 해야댐 .-->
                                             <i style='color: #4249a9'
                                                 th:class="'bi ' + (${score / 20 >= starScore} ? 'bi-star-fill' : (${(score % 20 != 0) && ((score / 20)+1) ==  starScore} ? 'bi-star-half' : bi-star))+ ' fs-5'"></i>
                                         </th:block>
@@ -29,7 +29,7 @@
                                     <h5 class="card-title" th:text="${data.displayName}"></h5>
                                     <h6 class="card-sub-title" th:text="${data.displayNameKo}"></h6>
                                     <hr>
-                                    <p class="card-text">매혹적인 와인</p>
+                                    <p class="card-text"  th:text="${data.contents}">매혹적인 와인</p>
                                 </div>
                             </th:block>
                         </div>
@@ -76,6 +76,13 @@
             let href = [[${ search.keyword }]]
             location.href = "/wine?" + href + num
         }
+
+        const itemDivList = document.querySelectorAll("div[data-columns]")
+        itemDivList.forEach(e =>
+                e.addEventListener('click', () => {
+                    location.href = "/wine/" + [[${wineList.pageable.pageNumber+1}]] + "/" + e.dataset.columns
+                })
+            )
     </script>
 </th:block>
 

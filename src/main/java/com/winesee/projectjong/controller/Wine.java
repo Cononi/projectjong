@@ -4,6 +4,7 @@ import com.winesee.projectjong.domain.util.specification.UserSpecificationsBuild
 import com.winesee.projectjong.domain.util.specification.WineSpecification;
 import com.winesee.projectjong.domain.wine.Search;
 import com.winesee.projectjong.service.wine.WineService;
+import io.lettuce.core.dynamic.annotation.Param;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -35,8 +36,12 @@ public class Wine {
         return "pages/wine/winelist";
     }
 
-    @GetMapping(value = "wine/{page}/{index}")
-    public String wineListMain(@PathVariable("page") String page, @PathVariable("index") String index){
+    @RequestMapping(value = "wine/{page}/{index}")
+    public String wineListMain(Model model, HttpServletRequest request, @PathVariable("page") String page, @PathVariable("index") Long index){
+        String referer = (String)request.getHeader("REFERER");
+        model.addAttribute("wineInfo", wineService.wineGet(index));
+        model.addAttribute("backLink", referer);
+        model.addAttribute("thisPage", page);
         return "pages/wine/wineinfo";
     }
 }

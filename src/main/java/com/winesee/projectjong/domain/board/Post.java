@@ -12,7 +12,6 @@ import java.util.List;
 
 @Entity
 @Getter
-@Table(name="post")
 public class Post extends BaseTime {
 
     // 번호
@@ -35,7 +34,7 @@ public class Post extends BaseTime {
     private Wine wineId;
 
     // 와인 빈티지
-    private int vintage;
+    private String vintage;
 
     // 바디 1-5
     private int bodyCount;
@@ -48,6 +47,9 @@ public class Post extends BaseTime {
 
     // 가격
     private int price;
+
+    // 알콜
+    private int alcohol;
 
     // 최종 점수 ( 1 ~ 100 )
     private int score;
@@ -62,7 +64,7 @@ public class Post extends BaseTime {
 
 
     @Builder
-    public Post(Long postId, User userId, String title, Wine wineId, int vintage, int bodyCount, int sugarCount, int acidityCount, int price, int score, String contents, List<Comment> comments) {
+    public Post(Long postId, User userId, String title, Wine wineId, String vintage, int bodyCount, int sugarCount, int acidityCount, int price, int alcohol, int score, String contents, List<Comment> comments) {
         this.postId = postId;
         this.userId = userId;
         this.title = title;
@@ -72,6 +74,7 @@ public class Post extends BaseTime {
         this.sugarCount = sugarCount;
         this.acidityCount = acidityCount;
         this.price = price;
+        this.alcohol = alcohol;
         this.score = score;
         this.contents = contents;
         this.comments = comments;

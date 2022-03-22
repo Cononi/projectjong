@@ -3,7 +3,7 @@
     layout:decorate="~{layout/default}">
 
 <head>
-    <title>리스트</title>
+    <title>상세 정보</title>
 </head>
 
 
@@ -14,34 +14,163 @@
                 <div class="container">
                     <div class="row">
                         <div class="col-sm-12">
-                            <div class="card mb-3 shadow-lg p-1 mb-2 bg-transparent border border-2 rounded-3">
-                                <div class="row g-0">
-                                    <div class="col-md-5">
-                                        <img src="/assets/images/samples/krug.jpg" class="img-fluid shadow-sm p-2 bg-white rounded rounded-3"
-                                            alt="..." width="385" height="385">
+                            <div th:with="info=${wineInfo}">
+                                <div class="row mx-2">
+                                    <div class="col-auto">
+                                        <button id="tastingGoSumbit" class="btn btn-xl btn-primary">테이스팅 작성</button>
                                     </div>
-                                    <div class="col-md-7">
+                                    <div class="col-auto">
+                                        <a th:href="${#strings.defaultString(backLink,'/wine?query='+wineInfo.displayName+'&page='+thisPage)}"
+                                            class="btn btn-xl btn-primary">목록</a>
+                                    </div>
+                                </div>
+                                <div class="row g-0">
+                                    <div class="card box-shadow shadow-lg mx-auto my-4 bg-light" style="width: 23rem;">
+                                        <img src="/assets/images/samples/krug.jpg" class="card-img-top" alt="...">
+                                        <th:block th:with="score=${info.averageScore}">
+                                            <div class="card-body bg-white card-img-bottom">
+                                                <div class="card-text bg-light shadow-sm text-center py-2">
+                                                    <h5 class="shadow-sm py-2">종합 포인트</h5>
+                                                    <h6 style='color: #dc3545' th:text="${score} +' / 100'"></h6>
+                                                    <th:block th:each="starScore : ${#numbers.sequence(1,5)}">
+                                                        <i style='color: #dc3545'
+                                                            th:class="'bi ' + (${score / 20 >= starScore} ? 'bi-star-fill' : (${(score % 20 != 0) && ((score / 20)+1) ==  starScore} ? 'bi-star-half' : bi-star))+ ' fs-5'"></i>
+                                                    </th:block>
+                                                </div>
+                                            </div>
+                                        </th:block>
+                                    </div>
+                                    <div class="card box-shadow shadow-lg mx-auto my-4 bg-white col-md-7">
                                         <div class="card-body">
-                                            <h2 class="card-title-3">Card title</h3>
-                                            <h5 class="card-sub-title">Card title</h5>
-                                            <p class="card-text">This is a wider card with supporting text below as a
-                                                natural lead-in to additional content. This content is a little bit
+                                            <!-- 타이틀 -->
+                                            <h2 class="card-title-3 text-dark" th:text="${info.displayName}">Card
+                                                title</h2>
+                                            <h5 class="card-sub-title" th:text="${info.displayNameKo}">Card title
+                                            </h5>
+                                            <hr>
+                                            <p class="card-text text-black h6 bg-light shadow-sm py-2 px-2">
+                                                <!-- 생산자 -->
+                                                <i class="fa-solid fa-house h5 my-2 mx-2 fa-fw"
+                                                    style="color: forestgreen;"></i>
+                                                <b th:text="${info.producerName}"></b>
+                                            </p>
+                                            <p class="card-text text-black h6 bg-light shadow-sm py-2 px-2">
+                                                <!-- 나라 -->
+                                                <i class="fa-solid fa-map h5 my-2 mx-2 fa-fw"
+                                                    style="color: crimson;"></i>
+                                                <b th:text="${info.country.country}"></b>
+                                            </p>
+                                            <p class="card-text text-black h6 bg-light shadow-sm py-2 px-2">
+                                                <!-- 위치 -->
+                                                <i class="fa-solid h5 fa-location-dot my-2 mx-2 fa-fw"
+                                                    style="color: crimson;"></i>
+                                                <b th:text="${info.region}"></b>
+                                                <i th:if="${info.subRegion != ''}"
+                                                    class="fa-solid fa-angle-right fa-fw fa-lg"
+                                                    style="color: crimson;"></i>
+                                                <b th:text="${info.subRegion}"></b>
+                                            </p>
+                                            <p class="card-text text-black h6 bg-light shadow-sm py-2 px-2">
+                                                <!-- 종류 -->
+                                                <i class="fa-solid h5 fa-wine-bottle my-2 mx-2 fa-fw"
+                                                    style="color: chocolate"></i>
+                                                <b th:text="${info.colour}"></b>
+                                                <i th:if="${!#strings.contains(info.subType,'Still')}"
+                                                    class="fa-solid fa-angle-right fa-fw fa-lg"
+                                                    style="color: crimson;"></i>
+                                                <b th:if="${!#strings.contains(info.subType,'Still')}"
+                                                    th:text="${info.subType}"></b>
+                                                <i th:if="${info.designation != '' && info.designation != NULL}"
+                                                    class="fa-solid fa-angle-right fa-fw fa-lg"
+                                                    style="color: crimson;"></i>
+                                                <b th:if="${info.designation != ''}" th:text="${info.designation}"></b>
+                                                <i th:if="${info.classification != '' && info.classification != NULL}"
+                                                    class="fa-solid fa-angle-right fa-fw fa-lg"
+                                                    style="color: crimson;"></i>
+                                                <b th:text="${info.classification}"></b>
+                                            </p>
+                                            <p class="card-text text-black h6 bg-light shadow-sm py-2 px-2">
+                                                <!-- 포도 -->
+                                                <i class="fa-solid h5 fa-wine-glass my-2 mx-2 fa-fw"
+                                                    style="color: blueviolet"></i>
+                                                <b th:text="${info.grapeList}"></b>
+                                            </p>
+                                            <p class="card-text text-black h6 bg-light shadow-sm py-2 px-2">
+                                                <!-- 도수 -->
+                                                <i class="fa-solid h5 fa-droplet my-2 mx-2 fa-fw"
+                                                    style="color: cornflowerblue"></i>
+                                                <b th:text="${info.alcohol}"></b>
+                                            </p>
+                                            <p class="card-text" th:text="${info.contents}">This is a wider card
+                                                with supporting text below
+                                                as a
+                                                natural lead-in to additional content. This content is a little
+                                                bit
                                                 longer.</p>
-                                            <p class="card-text"><small class="text-muted">Last updated 3 mins
-                                                    ago</small></p>
+                                            <!-- <p class="card-text"><small class="text-muted">Last updated 3 mins
+                                                        ago</small></p> -->
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-sm">col-sm</div>
-                            <div class="col-sm">col-sm</div>
-                            <div class="col-sm">col-sm</div>
+                        <div class="row-auto">
+                            <div class="col-auto">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h4>Latest Comments</h4>
+                                    </div>
+                                    <div class="table-responsive">
+                                        <table class="table table-hover table-lg">
+                                            <thead>
+                                                <tr>
+                                                    <th>Name</th>
+                                                    <th>Comment</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td class="col-3">
+                                                        <div class="d-flex align-items-center">
+                                                            <div class="avatar avatar-md">
+                                                                <img src="assets/images/faces/5.jpg">
+                                                            </div>
+                                                            <p class="font-bold ms-3 mb-0">Si Cantik</p>
+                                                        </div>
+                                                    </td>
+                                                    <td class="col-auto">
+                                                        <p class=" mb-0">Congratulations on your graduation!</p>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="col-3">
+                                                        <div class="d-flex align-items-center">
+                                                            <div class="avatar avatar-md">
+                                                                <img src="assets/images/faces/2.jpg">
+                                                            </div>
+                                                            <p class="font-bold ms-3 mb-0">Si Ganteng</p>
+                                                        </div>
+                                                    </td>
+                                                    <td class="col-auto">
+                                                        <p class=" mb-0">Wow amazing design! Can you make another
+                                                            tutorial for
+                                                            this design?</p>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
     </section>
+    <script>
+        const itemDivList = document.getElementById("tastingGoSumbit").addEventListener("click", () => {
+            location.href = "/wine/post/" + [[${wineInfo.wineId}]]
+        })
+    </script>
 </th:block>
 
 </html>

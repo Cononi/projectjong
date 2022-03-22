@@ -151,17 +151,17 @@ function SearchInfoController() {
         내부 변수 모집
     */
     // 체크 인풋
-    const inputPlaceHolderText = document.getElementById("queryInfoName") 
+    const inputPlaceHolderText = document.getElementById("queryInfoName")
     const searchCheck = function searchChecked(id, value) {
         let holderMsg = ""
         children.forEach(child => {
             if (child.id == id) {
                 child.value = value;
                 child.removeAttribute("disabled")
-                if(child.value == "producerName"){
+                if (child.value == "producerName") {
                     holderMsg = "영문명으로 생산자 입력"
                 }
-                if(child.value == "contents"){
+                if (child.value == "contents") {
                     holderMsg = "와인 내용으로 검색"
                 }
                 inputPlaceHolderText.placeholder = holderMsg
@@ -242,10 +242,20 @@ export { SearchInfoController }
 
 //----------------------------------------------------------------//
 
-function itemDivIndexController(){
+function tastingPostSubmitContents() {
+
+    const itemDivList = document.getElementById("userTotalRagneValue")
+    function totalPointControll() {
+        itemDivList.forEach(e =>
+            e.addEventListener('click', item => {
+                console.log(item)
+            })
+        )
+    }
 
     return {
+        totalPointControll : totalPointControll()
     }
 }
 
-export { itemDivIndexController }
+export { tastingPostSubmitContents }
