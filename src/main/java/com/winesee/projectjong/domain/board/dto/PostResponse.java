@@ -1,5 +1,6 @@
 package com.winesee.projectjong.domain.board.dto;
 
+import com.winesee.projectjong.domain.basedefault.BaseTime;
 import com.winesee.projectjong.domain.board.Comment;
 import com.winesee.projectjong.domain.board.Post;
 import com.winesee.projectjong.domain.user.User;
@@ -8,6 +9,7 @@ import com.winesee.projectjong.domain.wine.Wine;
 import com.winesee.projectjong.domain.wine.dto.WineResponse;
 import lombok.Getter;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,6 +57,8 @@ public class PostResponse {
     // 덧글
     private List<Comment> comments = new ArrayList<>();
 
+    private LocalDateTime modifieDate;
+
 
     public PostResponse(Post entity) {
         this.postId = entity.getPostId();
@@ -70,5 +74,6 @@ public class PostResponse {
         this.score = entity.getScore();
         this.contents = entity.getContents();
         this.comments = entity.getComments();
+        this.modifieDate = entity.getModifieDate();
     }
 }

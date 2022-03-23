@@ -126,7 +126,7 @@
                                         </div>
                                         <div class="card-text px-0 text-center">
                                             <div class="starPoint py-2 px-2">
-                                                <h5 class="card-title text-dark">바디감</h5>
+                                                <h5 class="card-title text-dark">바디</h5>
                                                 <input type="radio" name="bodyEat" value="5" id="bodyEat1"><label
                                                     for="bodyEat1">⭐</label>
                                                 <input type="radio" name="bodyEat" value="4" id="bodyEat2"><label
@@ -180,89 +180,9 @@
             </div>
         </div>
     </body>
-    <script>
-        // 기본 문자들
-        const titleValueText = document.getElementById("tastingTitle")
-        const ContentsValueText = document.getElementById("tastingContents")
-        const vintageValueText = document.getElementById("tastingVintage")
-        const alcoholValueText = document.getElementById("tastingAlcohol")
-        const priceValueText = document.getElementById("tastingPrice")
-        const tastingBtnSumbit = document.getElementById("tastingBtnSumbit")
-        const itemIdSet = document.querySelector("span[data-columns]")
-
-        // 토탈 별 체크 레이팅
-        const rangeValueBtt = document.getElementById("userTotalRagneValue")
-        const rangeValueText = document.getElementById("totalCountValue")
-        const starPointIcon = document.querySelectorAll("#starPointIcon i")
-        function totalPointControll() {
-            rangeValueBtt.addEventListener('input', e => (
-                rangeValueText.innerText = e.target.value + " / 100"
-            ))
-            rangeValueBtt.addEventListener('input', (e) => {
-                let rangeV = e.target.value / 20
-                for (i = starPointIcon.length; 0 <= i; i--) {
-                    if (Math.floor(rangeV) > i)
-                        starPointIcon[i].classList = "bi bi-star-fill fa-2x"
-                    else if (rangeV >= i + 0.5)
-                        starPointIcon[i].classList = "bi bi-star-half fa-2x"
-                    else if (i != 0)
-                        starPointIcon[i - 1].classList = "bi bi-star fa-2x"
-                }
-            })
-        }
-
-        // 별 체크 레이팅
-        const acidityRate = document.getElementsByName("acidityEat")
-        const bodyRate = document.getElementsByName("bodyEat")
-        const sugarRate = document.getElementsByName("sugarEat")
-        let acidityRateVal = ""
-        let bodyRateVal = ""
-        let sugaRateVal = ""
-        function tastingRateStarPoint() {
-            acidityRate.forEach(e => e.addEventListener('click', f => {
-                acidityRateVal = f.target.value
-            }))
-            bodyRate.forEach(e => e.addEventListener('click', f => {
-                bodyRateVal = f.target.value
-            }))
-            sugarRate.forEach(e => e.addEventListener('click', f => {
-                sugaRateVal = f.target.value
-            }))
-        }
-        tastingBtnSumbit.addEventListener('click', async () => {
-            let user = await tastingPostCall()
-        })
-
-        function tastingPostCall() {
-            let url = '/api/v1/post'
-            return fetch(url, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    title: titleValueText.value,
-                    contents: ContentsValueText.value,
-                    vintage: vintageValueText.value,
-                    alcohol: alcoholValueText.value,
-                    acidityCount: acidityRateVal,
-                    bodyCount: bodyRateVal,
-                    sugarCount: sugaRateVal,
-                    score: rangeValueBtt.value,
-                    price: priceValueText.value,
-                    wineId: itemIdSet.dataset.columns
-                }),
-            }).then(function (response) {
-                if (!response.ok) {
-                    let error = response
-                    error.then(e =>
-                        console.log(e))
-                } else
-                    return response.json()
-            });
-        }
-        console.log(itemIdSet.dataset.columns)
-        // 리턴
-        tastingRateStarPoint()
-        totalPointControll()
+    <script th:inline="javascript" type="module">
+        import { tastingPostSubmitContents } from '/assets/js/module.js';
+        tastingPostSubmitContents()
     </script>
 </th:block>
 

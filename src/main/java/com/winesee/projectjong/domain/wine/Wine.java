@@ -2,6 +2,7 @@ package com.winesee.projectjong.domain.wine;
 
 import com.winesee.projectjong.domain.board.Post;
 import lombok.Getter;
+import org.springframework.data.domain.Page;
 
 import javax.persistence.*;
 import java.io.Serializable;

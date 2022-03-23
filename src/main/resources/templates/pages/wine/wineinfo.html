@@ -15,15 +15,6 @@
                     <div class="row">
                         <div class="col-sm-12">
                             <div th:with="info=${wineInfo}">
-                                <div class="row mx-2">
-                                    <div class="col-auto">
-                                        <button id="tastingGoSumbit" class="btn btn-xl btn-primary">테이스팅 작성</button>
-                                    </div>
-                                    <div class="col-auto">
-                                        <a th:href="${#strings.defaultString(backLink,'/wine?query='+wineInfo.displayName+'&page='+thisPage)}"
-                                            class="btn btn-xl btn-primary">목록</a>
-                                    </div>
-                                </div>
                                 <div class="row g-0">
                                     <div class="card box-shadow shadow-lg mx-auto my-4 bg-light" style="width: 23rem;">
                                         <img src="/assets/images/samples/krug.jpg" class="card-img-top" alt="...">
@@ -101,14 +92,16 @@
                                                     style="color: cornflowerblue"></i>
                                                 <b th:text="${info.alcohol}"></b>
                                             </p>
-                                            <p class="card-text" th:text="${info.contents}">This is a wider card
-                                                with supporting text below
-                                                as a
-                                                natural lead-in to additional content. This content is a little
-                                                bit
-                                                longer.</p>
-                                            <!-- <p class="card-text"><small class="text-muted">Last updated 3 mins
-                                                        ago</small></p> -->
+                                            <p class="card-text" th:text="${info.contents}">contents</p>
+                                            <div class="row">
+                                                <th:block sec:authorize="isAuthenticated()" th:with="auth=${userinfo}">
+                                                    <button id="tastingGoSumbit"
+                                                        class="btn btn-primary col-md-auto my-1 mx-md-1">테이스팅
+                                                        작성</button>
+                                                </th:block>
+                                                <a th:href="${#strings.defaultString(backLink,'/wine?query='+wineInfo.displayName+'&page='+thisPage)}"
+                                                    class="btn btn-primary col-md-auto my-1 mx-md-1">목록</a>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -118,47 +111,21 @@
                             <div class="col-auto">
                                 <div class="card">
                                     <div class="card-header">
-                                        <h4>Latest Comments</h4>
+                                        <h4>Latest Tasting Note</h4>
                                     </div>
                                     <div class="table-responsive">
-                                        <table class="table table-hover table-lg">
+                                        <table class="table table-hover">
                                             <thead>
                                                 <tr>
                                                     <th>Name</th>
-                                                    <th>Comment</th>
+                                                    <th>Title</th>
                                                 </tr>
                                             </thead>
-                                            <tbody>
-                                                <tr>
-                                                    <td class="col-3">
-                                                        <div class="d-flex align-items-center">
-                                                            <div class="avatar avatar-md">
-                                                                <img src="assets/images/faces/5.jpg">
-                                                            </div>
-                                                            <p class="font-bold ms-3 mb-0">Si Cantik</p>
-                                                        </div>
-                                                    </td>
-                                                    <td class="col-auto">
-                                                        <p class=" mb-0">Congratulations on your graduation!</p>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="col-3">
-                                                        <div class="d-flex align-items-center">
-                                                            <div class="avatar avatar-md">
-                                                                <img src="assets/images/faces/2.jpg">
-                                                            </div>
-                                                            <p class="font-bold ms-3 mb-0">Si Ganteng</p>
-                                                        </div>
-                                                    </td>
-                                                    <td class="col-auto">
-                                                        <p class=" mb-0">Wow amazing design! Can you make another
-                                                            tutorial for
-                                                            this design?</p>
-                                                    </td>
-                                                </tr>
+                                            <tbody id="userTastingTableBody">
                                             </tbody>
                                         </table>
+                                        <nav id="wineInfoPagelistNavBar" aria-label="Page navigation example">
+                                        </nav>
                                     </div>
                                 </div>
                             </div>
@@ -166,10 +133,16 @@
                     </div>
                 </div>
     </section>
-    <script>
-        const itemDivList = document.getElementById("tastingGoSumbit").addEventListener("click", () => {
-            location.href = "/wine/post/" + [[${wineInfo.wineId}]]
-        })
+    <script th:inline="javascript" type="module">
+        import { postListWineTasting } from '/assets/js/module.js';
+        let data = document.getElementById('usernamekkjj') != null ?
+            document.getElementById('usernamekkjj').dataset.columnNum : 1;
+        postListWineTasting(data, [[${ wineInfo.wineId }]])
+        if ([[${ userinfo }]]) {
+            const itemDivList = document.getElementById("tastingGoSumbit").addEventListener("click", () => {
+                location.href = "/post/" + [[${ wineInfo.wineId }]]
+            })
+        }
     </script>
 </th:block>
 

@@ -4,12 +4,13 @@ import com.winesee.projectjong.domain.wine.Country;
 import com.winesee.projectjong.domain.wine.Wine;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
 import java.io.Serializable;
 
 @Getter
-@RequiredArgsConstructor
+@NoArgsConstructor
 public class WineResponse implements Serializable {
 
     // 와인 번호

@@ -63,7 +63,6 @@ public class WineServiceImpl implements WineService {
             }
         }
         search.SearchKeyword(valueSet.substring(0,valueSet.lastIndexOf("=")+1));
-        log.info("알려진 문자 : " + search.getKeyword());
         Specification<Wine> spec = builder.build();
         Pageable pageable = PageRequest.of(search.getPage()-1,9);
         return wineRepository.findAll(spec,pageable).map(WineResponse::new);

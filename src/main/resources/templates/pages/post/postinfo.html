@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{layout/default}">
+
+<head>
+    <title>테이스팅 노트</title>
+    <link rel="stylesheet" href="/assets/css/pages/stat.css">
+</head>
+<th:block layout:fragment="content">
+
+    <body>
+        <div class="page-heading" th:with="info=${postInfo},wine=${postInfo.wineId}">
+            <div class="page-title">
+                <div class="col-12 mt-4 order-md-1 order-last text-center">
+                    <h2 th:text="${info.userId} + '의 Tasting Notes'">Tasting Notes</h2>
+                    <p class="text-subtitle text-muted"><b th:text="${wine.displayName}"></b></p>
+                </div>
+            </div>
+            <div class="col-sm-12">
+                <span th:data-columns="${wine.wineId}"></span>
+                <div class="row g-0">
+                    <div class="card box-shadow shadow-lg mx-auto my-4 bg-light" style="width: 23rem;">
+                        <img src="/assets/images/samples/krug.jpg" class="card-img-top" alt="...">
+                        <div class="card-text bg-white card-img-bottom h-100">
+                            <div class="card-body">
+                                <!-- 타이틀 -->
+                                <h5 class="card-title-3 text-dark" th:text="${wine.displayName}"></h5>
+                                <h6 class="card-sub-title" th:text="${wine.displayNameKo}"></h6>
+                                <hr>
+                                <p class="card-text text-black bg-light shadow-sm py-2 px-2">
+                                    <!-- 생산자 -->
+                                    <i class="fa-solid fa-house my-2 mx-2 fa-fw" style="color: forestgreen;"></i>
+                                    <b th:text="${wine.producerName}"></b>
+                                </p>
+                                <p class="card-text text-black bg-light shadow-sm py-2 px-2">
+                                    <!-- 나라 -->
+                                    <i class="fa-solid fa-map my-2 mx-2 fa-fw" style="color: crimson;"></i>
+                                    <b th:text="${wine.country.country}"></b>
+                                </p>
+                                <p class="card-text text-black bg-light shadow-sm py-2 px-2">
+                                    <!-- 위치 -->
+                                    <i class="fa-solid h5 fa-location-dot my-2 mx-2 fa-fw" style="color: crimson;"></i>
+                                    <b th:text="${wine.region}"></b>
+                                    <i th:if="${wine.subRegion != ''}" class="fa-solid fa-angle-right fa-fw fa-lg"
+                                        style="color: crimson;"></i>
+                                    <b th:text="${wine.subRegion}"></b>
+                                </p>
+                                <p class="card-text text-black bg-light shadow-sm py-2 px-2">
+                                    <!-- 종류 -->
+                                    <i class="fa-solid h5 fa-wine-bottle my-2 mx-2 fa-fw" style="color: chocolate"></i>
+                                    <b th:text="${wine.colour}"></b>
+                                    <i th:if="${!#strings.contains(wine.subType,'Still')}"
+                                        class="fa-solid fa-angle-right fa-fw fa-lg" style="color: crimson;"></i>
+                                    <b th:if="${!#strings.contains(wine.subType,'Still')}"
+                                        th:text="${wine.subType}"></b>
+                                    <i th:if="${wine.designation != '' && wine.designation != NULL}"
+                                        class="fa-solid fa-angle-right fa-fw fa-lg" style="color: crimson;"></i>
+                                    <b th:if="${wine.designation != ''}" th:text="${wine.designation}"></b>
+                                    <i th:if="${wine.classification != '' && wine.classification != NULL}"
+                                        class="fa-solid fa-angle-right fa-fw fa-lg" style="color: crimson;"></i>
+                                    <b th:text="${wine.classification}"></b>
+                                </p>
+                                <p class="card-text text-black bg-light shadow-sm py-2 px-2">
+                                    <!-- 포도 -->
+                                    <i class="fa-solid h5 fa-wine-glass my-2 mx-2 fa-fw" style="color: blueviolet"></i>
+                                    <b th:text="${wine.grapeList}"></b>
+                                </p>
+                                <p class="card-text text-black bg-light shadow-sm py-2 px-2">
+                                    <!-- 도수 -->
+                                    <i class="fa-solid h5 fa-droplet my-2 mx-2 fa-fw" style="color: cornflowerblue"></i>
+                                    <b th:text="${wine.alcohol}"></b>
+                                </p>
+                                <p class="card-text"></p>
+                                <!-- <p class="card-text"><small class="text-muted">Last updated 3 mins
+                                                ago</small></p> -->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card box-shadow shadow-lg mx-auto my-4 bg-white col-md-7">
+                        <div class="card h-100">
+                            <!-- 타이틀 -->
+                            <div class="card-header">
+                                <h2 id="tastingTitle" th:text="${info.title}"></h2>
+                                <h6 class="text-subtitle text-muted"
+                                    th:text="'작성일 : ' + ${#temporals.format(info.modifieDate, 'yyyy-MM-dd HH:mm:ss')}">
+                                </h6>
+                            </div>
+                            <div class="card-body">
+                                <!-- 한줄평 -->
+                                <div class="form-group mb-3">
+                                    <div style="white-space:pre-wrap;" th:text="${info.contents}">
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- 최종 포인트 -->
+                            <!-- 세부 내용 -->
+                            <div class="row g-0 justify-content-center text-center">
+                                <div class="col-md-5 card-text py-4">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover">
+                                            <thead>
+                                                <th>
+                                                    <h5>Cate</h5>
+                                                </th>
+                                                <th>
+                                                    <h5>Value</h5>
+                                                </th>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td class="col-3"><b>Vintage</b></td>
+                                                    <td class="col-3"><b th:text="${info.vintage} + ' 년'">vin</b>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="col-3"><b>Alcohol</b></td>
+                                                    <td class="col-3"><b th:text="${info.alcohol} + ' 도'">alc</b>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="col-3"><b>Price</b></td>
+                                                    <td class="col-3"><b th:text="${info.price} + '원'">prc</b></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="col-md-auto">
+                                    <div class="recent-message d-flex px-4 py-3 justify-content-center">
+                                        <h5 class="mx-2 mt-2">산도</h5>
+                                        <div class="name ms-1">
+                                            <div class="starPointInfo">
+                                                <th:block th:each="num : ${#numbers.sequence(1,5)}">
+                                                    <i th:classappend="${info.acidityCount >= num} ? checked">⭐</i>
+                                                </th:block>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="recent-message d-flex px-4 py-3 justify-content-center">
+                                        <h5 class="mx-2 mt-2">바디</h5>
+                                        <div class="name ms-1">
+                                            <div class="starPointInfo">
+                                                <th:block th:each="num : ${#numbers.sequence(1,5)}">
+                                                    <i th:classappend="${info.bodyCount >= num} ? checked">⭐</i>
+                                                </th:block>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="recent-message d-flex px-4 py-3 justify-content-center">
+                                        <h5 class="mx-2 mt-2">당도</h5>
+                                        <div class="name ms-1">
+                                            <div class="starPointInfo">
+                                                <th:block th:each="num : ${#numbers.sequence(1,5)}">
+                                                    <i th:classappend="${info.sugarCount >= num} ? checked">⭐</i>
+                                                </th:block>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-text bg-light shadow-sm text-center mx-3 py-2">
+                                <h5 class="shadow-sm py-2">평가 점수</h5>
+                                <h5 id="totalCountValue" th:text="${info.score} + ' / 100'">0 / 100</h5>
+                                <th:block th:each="starScore : ${#numbers.sequence(1,5)}">
+                                    <i style='color: #dc3545'
+                                        th:class="'bi ' + (${info.score / 20 >= starScore} ? 'bi-star-fill' : (${(info.score % 20 != 0) && ((info.score / 20)+1) ==  starScore} ? 'bi-star-half' : bi-star))+ ' fa-2x'"></i>
+                                </th:block>
+                            </div>
+                        </div>
+                        <button id="tastingBtnSumbit" class="btn btn-xl btn-primary m-md-3">작성 하기</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</th:block>
+
+</html>

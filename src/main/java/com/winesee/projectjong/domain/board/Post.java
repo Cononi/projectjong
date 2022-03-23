@@ -5,6 +5,7 @@ import com.winesee.projectjong.domain.user.User;
 import com.winesee.projectjong.domain.wine.Wine;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -12,6 +13,8 @@ import java.util.List;
 
 @Entity
 @Getter
+@Table(name="post")
+@NoArgsConstructor
 public class Post extends BaseTime {
 
     // 번호

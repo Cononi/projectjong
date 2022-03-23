@@ -244,18 +244,148 @@ export { SearchInfoController }
 
 function tastingPostSubmitContents() {
 
-    const itemDivList = document.getElementById("userTotalRagneValue")
+    // 기본 문자들
+    const titleValueText = document.getElementById("tastingTitle")
+    const ContentsValueText = document.getElementById("tastingContents")
+    const vintageValueText = document.getElementById("tastingVintage")
+    const alcoholValueText = document.getElementById("tastingAlcohol")
+    const priceValueText = document.getElementById("tastingPrice")
+    const tastingBtnSumbit = document.getElementById("tastingBtnSumbit")
+    const itemIdSet = document.querySelector("span[data-columns]")
+
+    // 토탈 별 체크 레이팅
+    const rangeValueBtt = document.getElementById("userTotalRagneValue")
+    const rangeValueText = document.getElementById("totalCountValue")
+    const starPointIcon = document.querySelectorAll("#starPointIcon i")
     function totalPointControll() {
-        itemDivList.forEach(e =>
-            e.addEventListener('click', item => {
-                console.log(item)
-            })
-        )
+        rangeValueBtt.addEventListener('input', e => (
+            rangeValueText.innerText = e.target.value + " / 100"
+        ))
+        rangeValueBtt.addEventListener('input', (e) => {
+            let rangeV = e.target.value / 20
+            for (i = starPointIcon.length; 0 <= i; i--) {
+                if (Math.floor(rangeV) > i)
+                    starPointIcon[i].classList = "bi bi-star-fill fa-2x"
+                else if (rangeV >= i + 0.5)
+                    starPointIcon[i].classList = "bi bi-star-half fa-2x"
+                else if (i != 0)
+                    starPointIcon[i - 1].classList = "bi bi-star fa-2x"
+            }
+        })
     }
 
+    // 별 체크 레이팅
+    const acidityRate = document.getElementsByName("acidityEat")
+    const bodyRate = document.getElementsByName("bodyEat")
+    const sugarRate = document.getElementsByName("sugarEat")
+    let acidityRateVal = ""
+    let bodyRateVal = ""
+    let sugaRateVal = ""
+    function tastingRateStarPoint() {
+        acidityRate.forEach(e => e.addEventListener('click', f => {
+            acidityRateVal = f.target.value
+        }))
+        bodyRate.forEach(e => e.addEventListener('click', f => {
+            bodyRateVal = f.target.value
+        }))
+        sugarRate.forEach(e => e.addEventListener('click', f => {
+            sugaRateVal = f.target.value
+        }))
+    }
+    tastingBtnSumbit.addEventListener('click', async () => {
+        let numberInfo = await tastingPostCall()
+        location.href = "/post/info/" + numberInfo
+    })
+
+    function tastingPostCall() {
+        let url = '/api/v1/post'
+        return fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                title: titleValueText.value,
+                contents: ContentsValueText.value,
+                vintage: vintageValueText.value,
+                alcohol: alcoholValueText.value,
+                acidityCount: acidityRateVal,
+                bodyCount: bodyRateVal,
+                sugarCount: sugaRateVal,
+                score: rangeValueBtt.value,
+                price: priceValueText.value,
+                wineId: itemIdSet.dataset.columns
+            }),
+        }).then(function (response) {
+            if (!response.ok) {
+                let error = response
+                error.then(e =>
+                    console.log(e))
+            } else
+                return response.json()
+        });
+    }
+    // 리턴
+    tastingRateStarPoint()
+    totalPointControll()
+
     return {
-        totalPointControll : totalPointControll()
+        totalPointControll: totalPointControll(),
+        tastingRateStarPoint: tastingRateStarPoint()
     }
 }
 
 export { tastingPostSubmitContents }
+
+
+export async function postListWineTasting(page, id) {
+    let url = '/api/v1/post/' + page + '/list/' + id
+    return await fetch(url)
+        .then(e => e.json())
+        .then(json => {
+            console.log(json)
+            const tableBodyEl = document.getElementById("userTastingTableBody")
+            const tableTrEl = document.createElement("tr")
+            for (i = 0; i < json.content.length; i++) {
+                tableTrEl.innerHTML = `
+                    <td data-columnNum="`+ json.content[i].postId + `" class="col-md-3">
+                        <div class="d-flex align-items-center">
+                            <div class="avatar avatar-md">
+                                <img src="`+ json.content[i].userProfileImgUrl + `">
+                            </div>
+                            <p class="font-bold ms-3 mb-0">`+ json.content[i].userId + `</p>
+                        </div>
+                    </td>
+                    <td class="col-md-9">
+                        <p class=" mb-0">`+ json.content[i].title + `</p>
+                    </td>
+                `
+                tableBodyEl.appendChild(tableTrEl.cloneNode(true));
+            }
+            const tableNav = document.getElementById("wineInfoPagelistNavBar")
+            const tableNavUl = document.createElement("ul")
+            tableNavUl.setAttribute('class', 'pagination pagination-danger justify-content-center')
+
+            let firstpage = ((json.pageable.pageNumber / 5) * 5+1)
+            if(firstpage > 5){
+                tableNavUl.innerHTML = `
+                <li class="page-item"><a class="page-link" data-columnNum=`+ firstpage +`><span aria-hidden="true"><i
+                            class="bi bi-chevron-left"></i></span></a></li>
+                `
+            }
+            for (i = 0; i < json.totalPages; i++) {
+                tableNavUl.innerHTML += `
+                <li class="page-item"><a class="page-link">1</a></li>
+                `
+            }
+
+            tableNavUl.innerHTML += `
+            <li class="page-item">
+            <a class="page-link">
+                <span aria-hidden="true">
+                    <i class="bi bi-chevron-right"></i></span></a>
+            </li>
+            `
+            tableNav.appendChild(tableNavUl)
+        });
+}
+
+
