@@ -134,10 +134,8 @@
                 </div>
     </section>
     <script th:inline="javascript" type="module">
-        import { postListWineTasting } from '/assets/js/module.js';
-        let data = document.getElementById('usernamekkjj') != null ?
-            document.getElementById('usernamekkjj').dataset.columnNum : 1;
-        postListWineTasting(data, [[${ wineInfo.wineId }]])
+        import { usertest } from '/assets/js/module.js';
+        usertest([[${ wineInfo.wineId }]])
         if ([[${ userinfo }]]) {
             const itemDivList = document.getElementById("tastingGoSumbit").addEventListener("click", () => {
                 location.href = "/post/" + [[${ wineInfo.wineId }]]

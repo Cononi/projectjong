@@ -37,7 +37,6 @@ public class Wine {
         log.info(referer);
         if(referer != null){
             if(referer.contains("wine?")) {
-                log.info("통과");
                 model.addAttribute("backLink", referer);
             }
         }
