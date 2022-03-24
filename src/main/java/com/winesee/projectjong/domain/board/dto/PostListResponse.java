@@ -1,5 +1,6 @@
 package com.winesee.projectjong.domain.board.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.winesee.projectjong.domain.board.Comment;
 import com.winesee.projectjong.domain.board.Post;
 import com.winesee.projectjong.domain.wine.dto.WineResponse;
@@ -29,6 +30,7 @@ public class PostListResponse {
 
     private Long wineId;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
     private LocalDateTime modifieDate;
 
 

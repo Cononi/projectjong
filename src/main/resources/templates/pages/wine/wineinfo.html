@@ -110,18 +110,15 @@
                         <div class="row-auto">
                             <div class="col-auto">
                                 <div class="card">
-                                    <div class="card-header">
-                                        <h4>Latest Tasting Note</h4>
+                                    <div class="card-header bg-light shadow-sm text-center pb-0">
+                                        <h3>Tasting Note</h3>
+                                        <p>클릭시 상세보기 가능</p>
                                     </div>
-                                    <div class="table-responsive">
+                                    <div class="table-hover m-1">
                                         <table class="table table-hover">
-                                            <thead>
-                                                <tr>
-                                                    <th>Name</th>
-                                                    <th>Title</th>
-                                                </tr>
+                                            <thead id="headTasting">
                                             </thead>
-                                            <tbody id="userTastingTableBody">
+                                            <tbody id="userTastingTableBody" style="font-size: 14px;">
                                             </tbody>
                                         </table>
                                         <nav id="wineInfoPagelistNavBar" aria-label="Page navigation example">
@@ -134,8 +131,8 @@
                 </div>
     </section>
     <script th:inline="javascript" type="module">
-        import { usertest } from '/js/module.js';
-        usertest([[${ wineInfo.wineId }]])
+        import { userTastingPostAccess } from '/js/module.js';
+        userTastingPostAccess([[${tastingPage}]] ,[[${ wineInfo.wineId }]])
         if ([[${ userinfo }]]) {
             const itemDivList = document.getElementById("tastingGoSumbit").addEventListener("click", () => {
                 location.href = "/post/" + [[${ wineInfo.wineId }]]

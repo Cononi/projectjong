@@ -14,6 +14,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/")
@@ -25,14 +27,32 @@ public class Post {
 
     @GetMapping("post/{number}")
     public String post(Model model, @PathVariable("number") Long number){
+        // 와인 정보 가져옴.
         WineResponse wine = wineService.wineGet(number);
+        // 와인정보 뿌림.
         model.addAttribute("wineInfo", wine);
         return "/pages/post/post";
     }
 
-    @GetMapping("post/info/{number}")
-    public String info(Model model, @PathVariable("number") Long number){
+    @GetMapping("post/info/{number}/{usePage}")
+    public String info(Model model, HttpServletRequest request, @PathVariable("number") Long number, @PathVariable("usePage") Long usePage){
+        String referer = (String)request.getHeader("REFERER");
         PostResponse post = postService.postGet(number);
+        String backLink ="";
+        // 이전 페이지 정보를 가져옴.
+        if(referer != null){
+            if(referer.contains("wine/")) {
+                backLink = referer.substring(0,referer.lastIndexOf("/"))+"/"+usePage;
+            } else {
+            // 만약 널은 아니지만 사용자가 동일 페이지에서 리다이렉트 했을경우.
+                backLink = "/wine/1/" + post.getWineId().getWineId() + "/" + usePage;
+            }
+        } else {
+            // 만약 사용자가 동일 페이지에서 리다이렉트 했을경우.
+            backLink = "/wine/1/" + post.getWineId().getWineId() + "/" + usePage;
+        }
+        model.addAttribute("backLink",backLink);
+        // 포스트 정보
         model.addAttribute("postInfo", post);
         return "/pages/post/postinfo";
     }

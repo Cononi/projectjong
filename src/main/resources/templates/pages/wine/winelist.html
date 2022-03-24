@@ -80,7 +80,7 @@
         const itemDivList = document.querySelectorAll("div[data-columns]")
         itemDivList.forEach(e =>
                 e.addEventListener('click', () => {
-                    location.href = "/wine/" + [[${wineList.pageable.pageNumber+1}]] + "/" + e.dataset.columns
+                    location.href = "/wine/" + [[${wineList.pageable.pageNumber+1}]] + "/" + e.dataset.columns + "/" + 1
                 })
             )
     </script>

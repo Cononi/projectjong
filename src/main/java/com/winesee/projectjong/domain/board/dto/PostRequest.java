@@ -8,15 +8,17 @@ import com.winesee.projectjong.domain.wine.Wine;
 import com.winesee.projectjong.domain.wine.dto.WineResponse;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
+import java.io.Serializable;
 
 
 @Getter
-
-public class PostRequest {
+@NoArgsConstructor
+public class PostRequest implements Serializable {
 
     // 제목
     @NotBlank(message = "제목 입력은 필수 입니다.")

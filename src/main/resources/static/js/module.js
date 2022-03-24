@@ -294,7 +294,7 @@ function tastingPostSubmitContents() {
     }
     tastingBtnSumbit.addEventListener('click', async () => {
         let numberInfo = await tastingPostCall()
-        location.href = "/post/info/" + numberInfo
+        location.href = "/post/info/" + numberInfo + "/1"
     })
 
     function tastingPostCall() {
@@ -317,9 +317,10 @@ function tastingPostSubmitContents() {
         }).then(function (response) {
             if (!response.ok) {
                 let error = response
-                error.then(e =>
+                error.then(e => {
                     // 오류 처리.
-                    console.log(e))
+                    console.log(e)
+                })
             } else
                 return response.json()
         });
@@ -336,8 +337,9 @@ function tastingPostSubmitContents() {
 
 export { tastingPostSubmitContents }
 
-export function usertest (id) {
-    let data = 1
+
+
+export function userTastingPostAccess(data, id) {
     postListWineTasting(data, id)
 
 }
@@ -351,72 +353,88 @@ async function postListWineTasting(page, id) {
             const tableBodyEl = document.getElementById("userTastingTableBody")
             const tableTrEl = document.createElement("tr")
 
-            removeAllchild(tableBodyEl)
-            for (i = 0; i < json.content.length; i++) {
-                tableTrEl.innerHTML = `
-                    <td class="col-md-3">
-                        <div class="d-flex align-items-center">
-                            <p class="font-bold ms-3 mb-0">`+ json.content[i].userId + `</p>
-                        </div>
-                    </td>
-                    <td class="col-md-9">
-                        <p class=" mb-0">`+ json.content[i].title + `</p>
-                    </td>
-                `
-                tableTrEl.setAttribute('data-columnNum',json.content[i].postId)
-                tableBodyEl.appendChild(tableTrEl.cloneNode(true));
-            }
 
-            tableBodyEl.querySelectorAll('tr[data-columnNum]').forEach(e=>{
-                e.addEventListener('click',() =>{
-                    location.href = "/post/info/" + e.dataset.columnnum
-                })
-            })
-            
-            const tableNav = document.getElementById("wineInfoPagelistNavBar")
-            const tableNavUl = document.createElement("ul")
-            removeAllchild(tableNav)
-            tableNavUl.setAttribute('class', 'pagination pagination-danger justify-content-center')
-            tableNavUl.setAttribute('id', 'navUiTop')
-
-            let firstpage = Math.floor((json.pageable.pageNumber) / 5) * 5 + 1
-            let lastpage = (firstpage + 5)
-            let pageIno = ''
-            let pageLano = ''
-            if(firstpage > 5){
-                pageIno = `<a class="page-link" data-pagenum=`+ (firstpage-1) +`><span aria-hidden="true"><i
-                            class="bi bi-chevron-left"></i></span></a>`
-            }
-            tableNavUl.innerHTML = `
-                <li class="page-item">`+ pageIno +`</li>
-                `
-            if(json.totalElements != 0){
-                let maxPage = lastpage > json.totalPages ? json.totalPages+1 : lastpage
-                for (i = firstpage; i < maxPage; i++) {
-                    let pageActive = ''
-                    if(json.pageable.pageNumber+1 == i){
-                        pageActive = "active"
-                    }
-                    tableNavUl.innerHTML += `
-                    <li class="page-item `+ pageActive +`"><a class="page-link" data-pagenum=`+ (i) +`>`+ i +`</a></li>
+            if (json.totalElements != 0) {
+                removeAllchild(tableBodyEl)
+                for (i = 0; i < json.content.length; i++) {
+                    let numberCount = ((json.totalElements - (json.pageable.pageNumber * 5)) - (i))
+                    tableTrEl.innerHTML = `
+                        <td>
+                            <div class="row justify-content-md-center align-self-center">
+                                <div class="row">
+                                    <b class="col-md-2"><i class="fa-solid fa-book mx-1"></i>`+ numberCount + `</b>
+                                    <p class="col-md-6 font-bold mb-0">`+ (json.content[i].title.slice(0, 40)) + (json.content[i].title.length > 40 ? '...' : '') + `</p>
+                                    <div class="col-md-4">
+                                        <div class="row">
+                                            <p class="col-7 mb-0">`+ json.content[i].userId + `</p>
+                                            <p class="col-5 text-center mb-0">`+ json.content[i].modifieDate + `</p>
+                                        </div>
+                                     </div>
+                                </div>
+                            </div>
+                        </td>
                     `
+                    tableTrEl.setAttribute('data-columnNum', json.content[i].postId)
+                    tableBodyEl.appendChild(tableTrEl.cloneNode(true));
                 }
-            }
-            if(lastpage <= json.totalPages){
-                pageLano = `<a class="page-link" data-pagenum=`+ lastpage +`><span aria-hidden="true">
-                <i class="bi bi-chevron-right"></i></span></a>`
-            }
-            tableNavUl.innerHTML += `
-                <li class="page-item">` + pageLano + `
-                </li>
-                `
-            tableNavUl.querySelectorAll('a[data-pagenum]').forEach(e=> {
-                if(!e.parentElement.classList.contains('active'))
-                e.addEventListener('click', () => {
-                    postListWineTasting(e.dataset.pagenum,id)
+
+                tableBodyEl.querySelectorAll('tr[data-columnNum]').forEach(e => {
+                    e.addEventListener('click', () => {
+                        location.href = "/post/info/" + e.dataset.columnnum +"/" + (json.pageable.pageNumber + 1)
+                    })
                 })
-            })
-            tableNav.appendChild(tableNavUl)
+
+                const tableNav = document.getElementById("wineInfoPagelistNavBar")
+                const tableNavUl = document.createElement("ul")
+                removeAllchild(tableNav)
+                tableNavUl.setAttribute('class', 'pagination pagination-danger justify-content-center')
+                tableNavUl.setAttribute('id', 'navUiTop')
+
+                let firstpage = Math.floor((json.pageable.pageNumber) / 5) * 5 + 1
+                let lastpage = (firstpage + 5)
+                let pageIno = ''
+                let pageLano = ''
+                if (firstpage > 5) {
+                    pageIno = `<a class="page-link" data-pagenum=` + (firstpage - 1) + `><span aria-hidden="true"><i
+                                class="bi bi-chevron-left"></i></span></a>`
+                }
+                tableNavUl.innerHTML = `
+                    <li class="page-item">`+ pageIno + `</li>
+                    `
+                if (json.totalElements != 0) {
+                    let maxPage = lastpage > json.totalPages ? json.totalPages + 1 : lastpage
+                    for (i = firstpage; i < maxPage; i++) {
+                        let pageActive = ''
+                        if (json.pageable.pageNumber + 1 == i) {
+                            pageActive = "active"
+                        }
+                        tableNavUl.innerHTML += `
+                        <li class="page-item `+ pageActive + `"><a class="page-link" data-pagenum=` + (i) + `>` + i + `</a></li>
+                        `
+                    }
+                }
+                if (lastpage <= json.totalPages) {
+                    pageLano = `<a class="page-link" data-pagenum=` + lastpage + `><span aria-hidden="true">
+                    <i class="bi bi-chevron-right"></i></span></a>`
+                }
+                tableNavUl.innerHTML += `
+                    <li class="page-item">` + pageLano + `
+                    </li>
+                    `
+                tableNavUl.querySelectorAll('a[data-pagenum]').forEach(e => {
+                    if (!e.parentElement.classList.contains('active'))
+                        e.addEventListener('click', () => {
+                            postListWineTasting(e.dataset.pagenum, id)
+                        })
+                })
+                tableNav.appendChild(tableNavUl)
+            } else {
+                document.getElementById("headTasting").remove()
+                tableTrEl.innerHTML = `<b>등록된 테이스팅 노트가 없습니다.</b>`
+                tableTrEl.setAttribute('class', "text-center")
+                tableBodyEl.appendChild(tableTrEl)
+            }
+
         });
 }
 

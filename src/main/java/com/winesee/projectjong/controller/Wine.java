@@ -31,16 +31,21 @@ public class Wine {
     }
 
 
-    @RequestMapping(value = "wine/{page}/{index}")
-    public String wineListMain(Model model, HttpServletRequest request, @PathVariable("page") String page, @PathVariable("index") Long index){
+    @RequestMapping(value = "wine/{page}/{index}/{tastingPage}")
+    public String wineListMain(Model model, HttpServletRequest request, @PathVariable("page") String page, @PathVariable("index") Long index,
+                               @PathVariable("tastingPage") Long tastingPage){
         String referer = (String)request.getHeader("REFERER");
-        log.info(referer);
+        // 널이 아닐경우 이전 페이지 정보를 가져옴.
         if(referer != null){
             if(referer.contains("wine?")) {
                 model.addAttribute("backLink", referer);
             }
         }
+        // 테스팅 리스트에 페이징 번호.
+        model.addAttribute("tastingPage",tastingPage);
+        // 와인 정보.
         model.addAttribute("wineInfo", wineService.wineGet(index));
+        // 이전 와인 리스트에 페이지 번호.
         model.addAttribute("thisPage", page);
         return "pages/wine/wineinfo";
     }
