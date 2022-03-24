@@ -112,7 +112,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
                 .isEmailEnabled(false)
                 .lastLoginDate(null)
                 .roles(Role.USER)
-                .profileImageUrl(getTemporaryProfileImageUrl(userRequest.getUsername()))
                 .build());
         // Redis 코드 저장
         EmailCode emailCode = new EmailCode(userRequest.getEmail());
@@ -358,11 +357,11 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
 
-    private String getTemporaryProfileImageUrl(String username) {
-        return ServletUriComponentsBuilder
-                .fromCurrentContextPath()
-                .path(DEFAULT_USER_IMAGE_PATH + username).toUriString();
-    }
+//    private String getTemporaryProfileImageUrl(String username) {
+//        return ServletUriComponentsBuilder
+//                .fromCurrentContextPath()
+//                .path("/assets/images/faces/default.jpg").toString();
+//    }
 
     private void validateLoginAttempt(User user) {
         if(user.getIsNonLocked()) {

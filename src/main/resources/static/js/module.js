@@ -411,6 +411,7 @@ async function postListWineTasting(page, id) {
                 </li>
                 `
             tableNavUl.querySelectorAll('a[data-pagenum]').forEach(e=> {
+                if(!e.parentElement.classList.contains('active'))
                 e.addEventListener('click', () => {
                     postListWineTasting(e.dataset.pagenum,id)
                 })

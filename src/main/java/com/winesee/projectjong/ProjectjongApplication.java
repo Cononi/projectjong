@@ -19,7 +19,7 @@ import static com.winesee.projectjong.config.constant.FileConstant.USER_FOLDER;
 
 //@ComponentScan()
 //@ComponentScan(basePackages = {"com.winesee.projectjong.domain.redis"})
-//@EnableCaching
+@EnableCaching
 @SpringBootApplication
 @EnableJpaAuditing // JPA Auditing 활성화
 public class ProjectjongApplication {

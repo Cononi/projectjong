@@ -134,7 +134,7 @@
                 </div>
     </section>
     <script th:inline="javascript" type="module">
-        import { usertest } from '/assets/js/module.js';
+        import { usertest } from '/js/module.js';
         usertest([[${ wineInfo.wineId }]])
         if ([[${ userinfo }]]) {
             const itemDivList = document.getElementById("tastingGoSumbit").addEventListener("click", () => {

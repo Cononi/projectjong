@@ -66,19 +66,19 @@ public class UserResource {
         return Files.readAllBytes(Paths.get(USER_FOLDER + username + FORWARD_SLASH + fileName));
     }
 
-    @GetMapping(path = "image/profile/{username}", produces = IMAGE_JPEG_VALUE)
-    public byte[] getTempProfileImage(@PathVariable("username") String username) throws IOException {
-        URL url = new URL(TEMP_PROFILE_IMAGE_BASE_URL + username);
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        try(InputStream inputStream = url.openStream()) {
-            int bytesRead;
-            byte[] chunk = new byte[1024];
-            while((bytesRead = inputStream.read(chunk)) > 0) {
-                byteArrayOutputStream.write(chunk, 0, bytesRead); // 0 - 1024 bytes ( 0 - 1024 bytes )
-            }
-        }
-        return byteArrayOutputStream.toByteArray();
-    }
+//    @GetMapping(path = "image/profile/{username}", produces = IMAGE_JPEG_VALUE)
+//    public byte[] getTempProfileImage(@PathVariable("username") String username) throws IOException {
+//        URL url = new URL(TEMP_PROFILE_IMAGE_BASE_URL + username);
+//        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+//        try(InputStream inputStream = url.openStream()) {
+//            int bytesRead;
+//            byte[] chunk = new byte[1024];
+//            while((bytesRead = inputStream.read(chunk)) > 0) {
+//                byteArrayOutputStream.write(chunk, 0, bytesRead); // 0 - 1024 bytes ( 0 - 1024 bytes )
+//            }
+//        }
+//        return byteArrayOutputStream.toByteArray();
+//    }
 
     /*-----------------------------------------------
     getUser - 사용중인 계정 확인

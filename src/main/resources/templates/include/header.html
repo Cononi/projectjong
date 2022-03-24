@@ -40,10 +40,8 @@
                             <a href="#" data-bs-toggle="dropdown" aria-expanded="false">
                                 <div class="user-menu d-flex">
                                     <div class="user-img d-flex align-items-center me-3">
-                                        <div class="avatar avatar-md bg-primary">
-                                            <span class="avatar-content">
-                                                <img th:src="${userinfo.profileImageUrl}">
-                                            </span>
+                                        <div class="avatar avatar-sm bg-primary">
+                                            <img class="img-fluid rounded-circle" th:src="${#strings.defaultString(userinfo.profileImageUrl,'/assets/images/faces/default.jpg')}">
                                         </div>
                                     </div>
                                     <div class="user-name text-end">

@@ -14,8 +14,6 @@ public class Main {
 
     @RequestMapping("/")
     public String main(HttpServletRequest request){
-
-        log.info(request.getRequestURI());
         return "pages/index";
     }
 
