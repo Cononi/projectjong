@@ -257,41 +257,40 @@ function tastingPostSubmitContents() {
     const rangeValueBtt = document.getElementById("userTotalRagneValue")
     const rangeValueText = document.getElementById("totalCountValue")
     const starPointIcon = document.querySelectorAll("#starPointIcon i")
-    function totalPointControll() {
-        rangeValueBtt.addEventListener('input', e => (
-            rangeValueText.innerText = e.target.value + " / 100"
-        ))
-        rangeValueBtt.addEventListener('input', (e) => {
-            let rangeV = e.target.value / 20
-            for (i = starPointIcon.length; 0 <= i; i--) {
-                if (Math.floor(rangeV) > i)
-                    starPointIcon[i].classList = "bi bi-star-fill fa-2x"
-                else if (rangeV >= i + 0.5)
-                    starPointIcon[i].classList = "bi bi-star-half fa-2x"
-                else if (i != 0)
-                    starPointIcon[i - 1].classList = "bi bi-star fa-2x"
-            }
-        })
+
+
+    function rangeInputChange() {
+        rangeValueText.innerText = rangeValueBtt.value + " / 100"
+        let rangeV = rangeValueBtt.value / 20
+        for (i = starPointIcon.length; 0 <= i; i--) {
+            if (Math.floor(rangeV) > i)
+                starPointIcon[i].classList = "bi bi-star-fill fa-2x"
+            else if (rangeV >= i + 0.5)
+                starPointIcon[i].classList = "bi bi-star-half fa-2x"
+            else if (i != 0)
+                starPointIcon[i - 1].classList = "bi bi-star fa-2x"
+        }
     }
+    // 변경시
+    rangeValueBtt.oninput = function () {
+        rangeInputChange()
+    }
+    // 초기값
+    rangeInputChange()
 
     // 별 체크 레이팅
     const acidityRate = document.getElementsByName("acidityEat")
     const bodyRate = document.getElementsByName("bodyEat")
     const sugarRate = document.getElementsByName("sugarEat")
-    let acidityRateVal = ""
-    let bodyRateVal = ""
-    let sugaRateVal = ""
-    function tastingRateStarPoint() {
-        acidityRate.forEach(e => e.addEventListener('click', f => {
-            acidityRateVal = f.target.value
-        }))
-        bodyRate.forEach(e => e.addEventListener('click', f => {
-            bodyRateVal = f.target.value
-        }))
-        sugarRate.forEach(e => e.addEventListener('click', f => {
-            sugaRateVal = f.target.value
-        }))
+    let bodyRateVal = bodyRate.forEach(e => { if (e.checked) return e.value })
+    let sugaRateVal = sugarRate.forEach(e => { if (e.checked) return e.value })
+
+    function rateCheckItem(item){
+        let itemNum = ""
+        item.forEach(e => {if (e.checked) itemNum =  e.value})
+        return itemNum
     }
+
     tastingBtnSumbit.addEventListener('click', async () => {
         let numberInfo = await tastingPostCall()
         location.href = "/post/info/" + numberInfo + "/1"
@@ -307,9 +306,9 @@ function tastingPostSubmitContents() {
                 contents: ContentsValueText.value,
                 vintage: vintageValueText.value,
                 alcohol: alcoholValueText.value,
-                acidityCount: acidityRateVal,
-                bodyCount: bodyRateVal,
-                sugarCount: sugaRateVal,
+                acidityCount: rateCheckItem(acidityRate),
+                bodyCount: rateCheckItem(bodyRate),
+                sugarCount: rateCheckItem(sugarRate),
                 score: rangeValueBtt.value,
                 price: priceValueText.value,
                 wineId: itemIdSet.dataset.columns
@@ -324,14 +323,6 @@ function tastingPostSubmitContents() {
             } else
                 return response.json()
         });
-    }
-    // 리턴
-    tastingRateStarPoint()
-    totalPointControll()
-
-    return {
-        totalPointControll: totalPointControll(),
-        tastingRateStarPoint: tastingRateStarPoint()
     }
 }
 
@@ -380,7 +371,7 @@ async function postListWineTasting(page, id) {
 
                 tableBodyEl.querySelectorAll('tr[data-columnNum]').forEach(e => {
                     e.addEventListener('click', () => {
-                        location.href = "/post/info/" + e.dataset.columnnum +"/" + (json.pageable.pageNumber + 1)
+                        location.href = "/post/info/" + e.dataset.columnnum + "/" + (json.pageable.pageNumber + 1)
                     })
                 })
 
@@ -437,6 +428,38 @@ async function postListWineTasting(page, id) {
 
         });
 }
+
+// 인포
+function postInfoPageFet(){
+    let tastingDeSumbit = document.getElementById("tastingDeSumbit")
+
+    tastingDeSumbit.addEventListener('click', async (e) => {
+        let numberInfo = await infoPostDeCall(e.target.dataset.numbersdata)
+        // 마이페이지 이동.
+        location.href = "/post/info/" + numberInfo + "/1"
+    })
+    
+    function infoPostDeCall(num) {
+        let url = '/api/v1/post'
+        return fetch(url, {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                number : num
+            }),
+        }).then(function (response) {
+            if (!response.ok) {
+                let error = response
+                error.then(e => {
+                })
+            } else
+                return response.json()
+        });
+    }
+}
+
+export {postInfoPageFet}
+
 
 
 // 제거 함수

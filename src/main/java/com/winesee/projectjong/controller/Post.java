@@ -2,6 +2,7 @@ package com.winesee.projectjong.controller;
 
 import com.winesee.projectjong.domain.board.PostRepository;
 import com.winesee.projectjong.domain.board.dto.PostResponse;
+import com.winesee.projectjong.domain.user.dto.UserResponse;
 import com.winesee.projectjong.domain.wine.WineRepository;
 import com.winesee.projectjong.domain.wine.dto.WineRequest;
 import com.winesee.projectjong.domain.wine.dto.WineResponse;
@@ -10,6 +11,7 @@ import com.winesee.projectjong.service.wine.WineService;
 import io.lettuce.core.dynamic.annotation.Param;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -34,8 +36,23 @@ public class Post {
         return "/pages/post/post";
     }
 
+    @GetMapping("post/edit/{number}")
+    public String edit(Model model, @AuthenticationPrincipal UserResponse userinfo, @PathVariable("number") Long number){
+        // 와인 정보 가져옴.
+        PostResponse post = postService.postGet(number);
+        if(userinfo.getId().equals(post.getUserNum())){
+            // 와인정보 뿌림.
+            model.addAttribute("postInfo", post);
+            model.addAttribute("wineInfo",post.getWineId());
+            return "/pages/post/edit";
+        } else {
+            return "redirect:/";
+        }
+    }
+
+
     @GetMapping("post/info/{number}/{usePage}")
-    public String info(Model model, HttpServletRequest request, @PathVariable("number") Long number, @PathVariable("usePage") Long usePage){
+    public String info(@AuthenticationPrincipal UserResponse userinfo, Model model, HttpServletRequest request, @PathVariable("number") Long number, @PathVariable("usePage") Long usePage){
         String referer = (String)request.getHeader("REFERER");
         PostResponse post = postService.postGet(number);
         String backLink ="";

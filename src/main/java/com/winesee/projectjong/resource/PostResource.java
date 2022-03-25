@@ -45,6 +45,25 @@ public class PostResource {
         return new ResponseEntity<>(postService.postCreate(post,user), HttpStatus.OK);
     }
 
+    // 만들어야함 수
+    @PutMapping(value = "v1/post", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> postEdit(@RequestBody @Validated PostRequest post, Errors error, @AuthenticationPrincipal UserResponse user){
+        if(error.hasErrors()) {
+            return new ResponseEntity<>(error.getFieldErrors().stream().collect(Collectors.toMap(
+                    FieldError::getField,
+                    FieldError::getDefaultMessage)
+            ), HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(postService.postCreate(post,user), HttpStatus.OK);
+    }
+
+    // 만들어야함
+    // 모달창 생성후 처리
+    @DeleteMapping(value = "v1/post", produces = MediaType.APPLICATION_JSON_VALUE)
+    public void postDelete(@RequestBody Long number, @AuthenticationPrincipal UserResponse user){
+        postService.postDelete(number, user);
+    }
+
     @GetMapping("v1/post/{pageNum}/list/{wineId}")
     public ResponseEntity<?> list(@PathVariable("pageNum") Integer pageNum, @PathVariable("wineId") Long wineId){
         return new ResponseEntity<>(postService.postListSearch(pageNum-1,wineId),HttpStatus.OK);

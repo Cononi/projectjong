@@ -20,7 +20,8 @@ public interface PostService {
     // 글 작성
     Long postCreate(PostRequest request, UserResponse user);
     // 글 수정
-
+    Long postEdit(PostRequest request, UserResponse user);
     // 글 삭제
+    void postDelete(Long number, UserResponse user);
 
 }

@@ -167,7 +167,11 @@
                                 </th:block>
                             </div>
                         </div>
-                        <a th:href="${backLink}" id="tastingBtnSumbit" class="btn btn-xl btn-primary m-md-3">다른 글 더보기</a>
+                        <th:block sec:authorize="isAuthenticated()">
+                            <a th:if="${#authentication.principal.id == info.userNum}" th:href="'/post/edit/' + ${info.postId}" id="tastingBtnEditSubmit" class="btn btn-xl btn-primary mx-3 my-1">수정</a>
+                            <a th:if="${#authentication.principal.id == info.userNum}" th:href="'/post/edit/' + ${info.postId}" id="tastingBtnEditSubmit" class="btn btn-xl btn-primary mx-3 my-1">삭제</a>
+                        </th:block>
+                        <a th:href="${backLink}" id="tastingBtnSumbit" class="btn btn-xl btn-primary mx-3 my-1">다른 글 더보기</a>
                     </div>
                 </div>
             </div>

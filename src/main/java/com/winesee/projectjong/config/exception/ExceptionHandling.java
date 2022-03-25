@@ -25,6 +25,7 @@ import javax.persistence.NoResultException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 
 import static org.springframework.http.HttpStatus.*;
@@ -46,6 +47,11 @@ public class ExceptionHandling implements ErrorController {
     @ExceptionHandler(DisabledException.class)
     public ResponseEntity<HttpResponse> accountDisabledException(){
         return  createHttpResponse(BAD_REQUEST, ACCOUNT_DISABLED);
+    }
+
+    @ExceptionHandler(NoSuchElementException.class)
+    public String noSuchElementException(){
+        return "redirect:/";
     }
 
     @ExceptionHandler(MaxUploadSizeExceededException.class)

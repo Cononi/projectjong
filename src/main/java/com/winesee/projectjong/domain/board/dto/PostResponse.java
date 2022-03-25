@@ -22,6 +22,9 @@ public class PostResponse {
     // 작성자
     private String userId;
 
+    // 유저번호
+    private Long userNum;
+
     // 제목
     private String title;
 
@@ -63,6 +66,7 @@ public class PostResponse {
     public PostResponse(Post entity) {
         this.postId = entity.getPostId();
         this.userId = entity.getUserId().getName();
+        this.userNum = entity.getUserId().getId();
         this.title = entity.getTitle();
         this.wineId = new WineResponse(entity.getWineId());
         this.vintage = entity.getVintage();

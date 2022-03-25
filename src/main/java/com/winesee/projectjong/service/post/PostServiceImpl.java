@@ -58,4 +58,17 @@ public class PostServiceImpl implements PostService {
     public PostResponse postGet(Long postId) {
         return new PostResponse(postRepository.findById(postId).orElseThrow(() -> new NoSuchElementException("존재하지 않습니다.")));
     }
+
+    @Override
+    public Long postEdit(PostRequest request, UserResponse user) {
+        return null;
+    }
+
+    @Override
+    public void postDelete(Long number, UserResponse user) {
+        Post post = postRepository.getById(number);
+        if(post.getUserId().getId().equals(user.getId())){
+            postRepository.deleteById(number);
+        }
+    }
 }

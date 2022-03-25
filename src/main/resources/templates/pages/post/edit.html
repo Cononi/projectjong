@@ -16,7 +16,7 @@
                     <p class="text-subtitle text-muted">입력하세요</p>
                 </div>
             </div>
-            <th:block th:with="info=${wineInfo}">
+            <th:block th:with="info=${wineInfo},edit=${postInfo}">
                 <div class="col-sm-12">
                     <span th:data-columns="${info.wineId}"></span>
                     <div class="row g-0">
@@ -88,12 +88,13 @@
                                     <div class="form-group">
                                         <label for="tastingTitle">제목</label>
                                         <input type="text" class="form-control" id="tastingTitle"
-                                            placeholder="제목을 입력해 주세요">
+                                            placeholder="제목을 입력해 주세요"
+                                            th:value="${#strings.defaultString(edit.title,'')}">
                                     </div>
                                     <!-- 한줄평 -->
                                     <div class="form-group mb-3">
                                         <label for="exampleFormControlTextarea1" class="form-label">한줄평</label>
-                                        <textarea class="form-control" id="tastingContents" rows="6"></textarea>
+                                        <textarea class="form-control" id="tastingContents" rows="6" th:text="${#strings.defaultString(edit.contents,'')}"></textarea>
                                     </div>
                                     <!-- 세부 내용 -->
                                     <div class="row g-0">
@@ -101,17 +102,17 @@
                                             <div class="form-group">
                                                 <label for="tastingVintage">빈티지</label>
                                                 <small class="text-muted">Ex) 2021 ( 숫자만 입력 가능 )</small>
-                                                <input type="text" class="form-control" id="tastingVintage">
+                                                <input type="text" class="form-control" id="tastingVintage" th:value="${#strings.defaultString(edit.vintage,'')}">
                                             </div>
                                             <div class="form-group">
                                                 <label for="tastingAlcohol">알콜 도수</label>
                                                 <small class="text-muted">Ex) 15 ( 숫자만 입력 가능 )</small>
-                                                <input type="text" class="form-control" id="tastingAlcohol">
+                                                <input type="text" class="form-control" id="tastingAlcohol" th:value="${#strings.defaultString(edit.alcohol,'')}">
                                             </div>
                                             <div class="form-group">
                                                 <label for="tastingPrice">구매 가격</label>
                                                 <small class="text-muted">Ex) 15000 ( 숫자만 입력 가능 )</small>
-                                                <input type="text" id="tastingPrice" class="form-control">
+                                                <input type="text" id="tastingPrice" class="form-control" th:value="${#strings.defaultString(edit.price,'')}">
                                             </div>
                                         </div>
                                         <div class="col-md-6">
@@ -120,7 +121,7 @@
                                                     <h5 class="card-title text-dark">산도</h5>
                                                     <th:block th:each="num: ${#numbers.sequence(5,1)}">
                                                         <input type="radio" name="acidityEat" th:value="${num}"
-                                                            th:id="'acidityEat' + ${num}"><label th:for="'acidityEat' + ${num}">⭐</label>
+                                                            th:id="'acidityEat' + ${num}" th:checked="${num == edit.acidityCount}"><label th:for="'acidityEat' + ${num}">⭐</label>
                                                     </th:block>
                                                 </div>
                                             </div>
@@ -129,7 +130,7 @@
                                                     <h5 class="card-title text-dark">바디</h5>
                                                     <th:block th:each="num: ${#numbers.sequence(5,1)}">
                                                         <input type="radio" name="bodyEat" th:value="${num}"
-                                                            th:id="'bodyEat' + ${num}"><label th:for="'bodyEat' + ${num}">⭐</label>
+                                                            th:id="'bodyEat' + ${num}" th:checked="${num == edit.bodyCount}"><label th:for="'bodyEat' + ${num}">⭐</label>
                                                     </th:block>
                                                 </div>
                                             </div>
@@ -138,7 +139,7 @@
                                                     <h5 class="card-title text-dark">당도</h5>
                                                     <th:block th:each="num: ${#numbers.sequence(5,1)}">
                                                         <input type="radio" name="sugarEat" th:value="${num}"
-                                                            th:id="'sugarEat' + ${num}"><label th:for="'sugarEat' + ${num}">⭐</label>
+                                                            th:id="'sugarEat' + ${num}" th:checked="${num == edit.sugarCount} ? true"><label th:for="'sugarEat' + ${num}">⭐</label>
                                                     </th:block>
                                                 </div>
                                             </div>
@@ -149,7 +150,7 @@
                                 <div class="card-text bg-light shadow-sm text-center py-2">
                                     <h5 class="shadow-sm py-2">나의 점수</h5>
                                     <div class="form-group mb-3 mx-4 my-4">
-                                        <input type="range" class="form-range" min="0" max="100" value="0" step="1"
+                                        <input type="range" class="form-range" min="0" max="100" th:value="${#strings.defaultString(edit.score,'')}" step="1"
                                             id="userTotalRagneValue">
                                     </div>
                                     <h5 id="totalCountValue">0 / 100</h5>
@@ -160,7 +161,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <button id="tastingBtnSumbit" class="btn btn-xl btn-primary m-md-3">작성 하기</button>
+                            <button id="tastingBtnSumbit" class="btn btn-xl btn-primary m-md-3">수정 하기</button>
                         </div>
                     </div>
                 </div>
