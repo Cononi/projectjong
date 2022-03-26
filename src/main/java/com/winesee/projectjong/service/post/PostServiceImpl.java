@@ -39,18 +39,18 @@ public class PostServiceImpl implements PostService {
         // 포스트 작성
         Long postId = postRepository.save(Post.builder()
                 .userId(user)
-                .wineId(wineRepository.getById(request.getWineId()))
-                .title(request.getTitle())
-                .contents(request.getContents())
-                .vintage(request.getVintage())
-                .alcohol(request.getAlcohol())
-                .price(request.getPrice())
-                .acidityCount(request.getAcidityCount())
-                .bodyCount(request.getBodyCount())
-                .sugarCount(request.getSugarCount())
-                .score(request.getScore()).build()).getPostId();
+                .wineId(wineRepository.getById(request.getWinePostData()))
+                .title(request.getTitPostData())
+                .contents(request.getConPostData())
+                .vintage(request.getVinPostData())
+                .alcohol(request.getAciPostData())
+                .price(request.getPriPostData())
+                .acidityCount(request.getAciPostData())
+                .bodyCount(request.getBodyPostData())
+                .sugarCount(request.getSugPostData())
+                .score(request.getScPostData()).build()).getPostId();
         // 와인 스코어 업데이트
-        wineRepository.updateScore(request.getWineId());
+        wineRepository.updateScore(request.getWinePostData());
         return postId;
     }
 
@@ -61,6 +61,19 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public Long postEdit(PostRequest request, UserResponse user) {
+        Post getPost = postRepository.getById(request.getIdPostData());
+        if(getPost.getUserId().getId().equals(user.getId())){
+            getPost.Update(request.getTitPostData(),
+                    request.getVinPostData(),
+                    request.getBodyPostData(),
+                    request.getSugPostData(),
+                    request.getAciPostData(),
+                    request.getPriPostData(),
+                    request.getAlcPostData(),
+                    request.getScPostData(),
+                    request.getConPostData());
+            return postRepository.save(getPost).getPostId();
+        }
         return null;
     }
 

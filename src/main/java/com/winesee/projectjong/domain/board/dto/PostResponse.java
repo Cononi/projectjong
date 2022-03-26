@@ -80,4 +80,5 @@ public class PostResponse {
         this.comments = entity.getComments();
         this.modifieDate = entity.getModifieDate();
     }
+
 }

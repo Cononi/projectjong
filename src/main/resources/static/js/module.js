@@ -242,7 +242,7 @@ export { SearchInfoController }
 
 //----------------------------------------------------------------//
 
-function tastingPostSubmitContents() {
+function tastingPostSubmitContents(methods,postNum) {
 
     // 기본 문자들
     const titleValueText = document.getElementById("tastingTitle")
@@ -282,8 +282,6 @@ function tastingPostSubmitContents() {
     const acidityRate = document.getElementsByName("acidityEat")
     const bodyRate = document.getElementsByName("bodyEat")
     const sugarRate = document.getElementsByName("sugarEat")
-    let bodyRateVal = bodyRate.forEach(e => { if (e.checked) return e.value })
-    let sugaRateVal = sugarRate.forEach(e => { if (e.checked) return e.value })
 
     function rateCheckItem(item){
         let itemNum = ""
@@ -299,19 +297,20 @@ function tastingPostSubmitContents() {
     function tastingPostCall() {
         let url = '/api/v1/post'
         return fetch(url, {
-            method: 'POST',
+            method: methods,
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                title: titleValueText.value,
-                contents: ContentsValueText.value,
-                vintage: vintageValueText.value,
-                alcohol: alcoholValueText.value,
-                acidityCount: rateCheckItem(acidityRate),
-                bodyCount: rateCheckItem(bodyRate),
-                sugarCount: rateCheckItem(sugarRate),
-                score: rangeValueBtt.value,
-                price: priceValueText.value,
-                wineId: itemIdSet.dataset.columns
+                idPostData: postNum,
+                titPostData: titleValueText.value,
+                conPostData: ContentsValueText.value,
+                vinPostData: vintageValueText.value,
+                alcPostData: alcoholValueText.value,
+                aciPostData: rateCheckItem(acidityRate),
+                bodyPostData: rateCheckItem(bodyRate),
+                sugPostData: rateCheckItem(sugarRate),
+                scPostData: rangeValueBtt.value,
+                priPostData: priceValueText.value,
+                winePostData: itemIdSet.dataset.columns
             }),
         }).then(function (response) {
             if (!response.ok) {
@@ -447,7 +446,8 @@ export function postInfoPageFet(num,pages){
         }).then(function (response) {
             if (!response.ok) {
                 let error = response
-                error.then(e => {
+                error.then(() => {
+                    location.href = pages
                 })
             }
         });

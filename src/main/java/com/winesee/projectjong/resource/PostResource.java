@@ -33,6 +33,7 @@ public class PostResource {
 
     private final PostService postService;
 
+    // 저장
     @PostMapping(value = "v1/post", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> postCreate(@RequestBody @Validated PostRequest post, Errors error, @AuthenticationPrincipal UserResponse user){
 
@@ -45,7 +46,7 @@ public class PostResource {
         return new ResponseEntity<>(postService.postCreate(post,user), HttpStatus.OK);
     }
 
-    // 만들어야함 수
+    // 수정
     @PutMapping(value = "v1/post", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> postEdit(@RequestBody @Validated PostRequest post, Errors error, @AuthenticationPrincipal UserResponse user){
         if(error.hasErrors()) {
@@ -54,11 +55,11 @@ public class PostResource {
                     FieldError::getDefaultMessage)
             ), HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>(postService.postCreate(post,user), HttpStatus.OK);
+        return new ResponseEntity<>(postService.postEdit(post,user), HttpStatus.OK);
     }
 
-    // 만들어야함
-    // 모달창 생성후 처리
+
+    // 삭제.
     @DeleteMapping(value = "v1/post/{number}", produces = MediaType.APPLICATION_JSON_VALUE)
     public void postDelete(@PathVariable Long number, @AuthenticationPrincipal UserResponse user){
         postService.postDelete(number, user);

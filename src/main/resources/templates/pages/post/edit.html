@@ -165,13 +165,13 @@
                         </div>
                     </div>
                 </div>
+                <script th:inline="javascript" type="module">
+                    import { tastingPostSubmitContents } from '/js/module.js';
+                    tastingPostSubmitContents("PUT",[[${postInfo.postId}]])
+                </script>
             </th:block>
         </div>
     </body>
-    <script th:inline="javascript" type="module">
-        import { tastingPostSubmitContents } from '/js/module.js';
-        tastingPostSubmitContents()
-    </script>
 </th:block>
 
 </html>

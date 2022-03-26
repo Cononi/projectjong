@@ -82,4 +82,16 @@ public class Post extends BaseTime {
         this.contents = contents;
         this.comments = comments;
     }
+
+    public void Update(String title, String vintage, int bodyCount, int sugarCount, int acidityCount, int price, int alcohol, int score, String contents) {
+        this.title = title;
+        this.vintage = vintage;
+        this.bodyCount = bodyCount;
+        this.sugarCount = sugarCount;
+        this.acidityCount = acidityCount;
+        this.price = price;
+        this.alcohol = alcohol;
+        this.score = score;
+        this.contents = contents;
+    }
 }
