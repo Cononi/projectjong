@@ -167,14 +167,38 @@
                                 </th:block>
                             </div>
                         </div>
-                        <th:block sec:authorize="isAuthenticated()">
-                            <a th:if="${#authentication.principal.id == info.userNum}" th:href="'/post/edit/' + ${info.postId}" id="tastingBtnEditSubmit" class="btn btn-xl btn-primary mx-3 my-1">수정</a>
-                            <a th:if="${#authentication.principal.id == info.userNum}" th:href="'/post/edit/' + ${info.postId}" id="tastingBtnEditSubmit" class="btn btn-xl btn-primary mx-3 my-1">삭제</a>
-                        </th:block>
-                        <a th:href="${backLink}" id="tastingBtnSumbit" class="btn btn-xl btn-primary mx-3 my-1">다른 글 더보기</a>
+                            <div class="row justify-content-center mb-3">
+                                <th:block sec:authorize="isAuthenticated()">
+                                    <a th:if="${#authentication.principal.id == info.userNum}" th:href="'/post/edit/' + ${info.postId}" id="tastingBtnEditSubmit" class="btn btn-primary mx-1 my-1 col-3">수정</a>
+                                    <button th:if="${#authentication.principal.id == info.userNum}" type="button" class="btn btn-primary mx-1 my-1 col-3" data-bs-toggle="modal" data-bs-target="#delPostModalCenter">삭제</button>
+                                    <!-- MoLine -->
+                            <div class="modal fade" id="delPostModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered modal-dialog-centered modal-dialog-scrollable" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalCenterTitle">글을 삭제하시겠습니까?
+                                            </h5>
+                                            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                                <i data-feather="x"></i>
+                                            </button>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                                            <button type="button" class="btn btn-primary" id="delCheckBtt" data-bs-dismiss="modal">확인</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                                </th:block>
+                                <a th:href="${backLink}" id="tastingBtnSumbit" class="btn btn-primary mx-1 my-1 col-3">다른 글</a>
+                            </div>
                     </div>
                 </div>
             </div>
+            <script th:inline="javascript" type="module">
+                import {postInfoPageFet} from '/js/module.js';
+                postInfoPageFet([[${info.postId}]], [[${backLink}]])
+            </script>
         </div>
     </body>
 </th:block>

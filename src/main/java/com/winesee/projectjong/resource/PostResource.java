@@ -59,8 +59,8 @@ public class PostResource {
 
     // 만들어야함
     // 모달창 생성후 처리
-    @DeleteMapping(value = "v1/post", produces = MediaType.APPLICATION_JSON_VALUE)
-    public void postDelete(@RequestBody Long number, @AuthenticationPrincipal UserResponse user){
+    @DeleteMapping(value = "v1/post/{number}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public void postDelete(@PathVariable Long number, @AuthenticationPrincipal UserResponse user){
         postService.postDelete(number, user);
     }
 

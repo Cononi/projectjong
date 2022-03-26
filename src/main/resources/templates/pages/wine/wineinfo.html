@@ -93,14 +93,13 @@
                                                 <b th:text="${info.alcohol}"></b>
                                             </p>
                                             <p class="card-text" th:text="${info.contents}">contents</p>
-                                            <div class="row">
+                                            <div class="row justify-content-center mb-3">
                                                 <th:block sec:authorize="isAuthenticated()" th:with="auth=${userinfo}">
                                                     <button id="tastingGoSumbit"
-                                                        class="btn btn-primary col-md-auto my-1 mx-md-1">테이스팅
-                                                        작성</button>
+                                                        class="btn btn-primary col-5 mx-1 my-1">노트 작성</button>
                                                 </th:block>
                                                 <a th:href="${#strings.defaultString(backLink,'/wine?query='+wineInfo.displayName+'&page='+thisPage)}"
-                                                    class="btn btn-primary col-md-auto my-1 mx-md-1">목록</a>
+                                                    class="btn btn-primary col-5 mx-1 my-1">목록</a>
                                             </div>
                                         </div>
                                     </div>

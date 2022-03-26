@@ -430,35 +430,29 @@ async function postListWineTasting(page, id) {
 }
 
 // 인포
-function postInfoPageFet(){
-    let tastingDeSumbit = document.getElementById("tastingDeSumbit")
+export function postInfoPageFet(num,pages){
+    let tastingDeSumbit = document.getElementById("delCheckBtt")
 
-    tastingDeSumbit.addEventListener('click', async (e) => {
-        let numberInfo = await infoPostDeCall(e.target.dataset.numbersdata)
-        // 마이페이지 이동.
-        location.href = "/post/info/" + numberInfo + "/1"
+    tastingDeSumbit.addEventListener('click', async () => {
+        await infoPostDeCall()
+        // 마페로감
+        location.href = pages
     })
     
-    function infoPostDeCall(num) {
-        let url = '/api/v1/post'
-        return fetch(url, {
+    function infoPostDeCall() {
+        let url = '/api/v1/post/' + num
+        fetch(url, {
             method: 'DELETE',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                number : num
-            }),
         }).then(function (response) {
             if (!response.ok) {
                 let error = response
                 error.then(e => {
                 })
-            } else
-                return response.json()
+            }
         });
     }
 }
-
-export {postInfoPageFet}
 
 
 
