@@ -16,7 +16,11 @@ import java.util.List;
 @Repository
 public interface PostRepository extends JpaRepository<Post, Long> {
 
-    Page<Post> findAllBywineId(Wine wineId, Pageable pageable);
+    @EntityGraph(attributePaths = {"userId"})
+    Page<Post> findAllByWineId(Wine wineId, Pageable pageable);
+
+    @EntityGraph(attributePaths = {"userId"})
+    Page<Post> findAllByUserIdAndWineId(User user, Wine wineId, Pageable pageable);
 
 //    // 내가 작성한 와인 리스트 보여주기
 //    @EntityGraph(attributePaths = {"userId","wineId.country"})

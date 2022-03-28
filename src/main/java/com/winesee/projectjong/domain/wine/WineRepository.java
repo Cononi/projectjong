@@ -17,6 +17,9 @@ public interface WineRepository extends JpaRepository<Wine, Long>, JpaSpecificat
 
     Page<Wine> findAll(Specification specification, Pageable pageable);
 
+    @EntityGraph(attributePaths = {"country"})
+    Wine findByWineId(Long id);
+
     // 와인 업데이트
     @Modifying
     @Query(

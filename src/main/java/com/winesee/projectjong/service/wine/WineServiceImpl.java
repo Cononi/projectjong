@@ -63,7 +63,7 @@ public class WineServiceImpl implements WineService {
 
     @Override
     public WineResponse wineGet(Long id) {
-        return new WineResponse(wineRepository.findById(id).orElseThrow(() -> new NullPointerException("존재하지 않음")));
+        return new WineResponse(wineRepository.findByWineId(id));
     }
 
     @Override

@@ -1,31 +1,22 @@
 package com.winesee.projectjong.resource;
 
-import com.winesee.projectjong.domain.board.Post;
 import com.winesee.projectjong.domain.board.dto.PostRequest;
-import com.winesee.projectjong.domain.board.dto.PostResponse;
 import com.winesee.projectjong.domain.user.dto.UserResponse;
-import com.winesee.projectjong.domain.wine.Country;
 import com.winesee.projectjong.service.post.PostService;
-import com.winesee.projectjong.service.wine.WineService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.support.DefaultMessageSourceResolvable;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.util.ObjectUtils;
 import org.springframework.validation.Errors;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.List;
+import javax.servlet.http.HttpServletRequest;
 import java.util.stream.Collectors;
 
 @RestController
@@ -38,27 +29,36 @@ public class PostResource {
 
     // 저장
     @PostMapping(value = "v1/post", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> postCreate(@RequestBody @Validated PostRequest post, Errors error, @AuthenticationPrincipal UserResponse user){
-
-        if(error.hasErrors()) {
-            return new ResponseEntity<>(error.getFieldErrors().stream().collect(Collectors.toMap(
-                    FieldError::getField,
-                    FieldError::getDefaultMessage)
-            ), HttpStatus.BAD_REQUEST);
+    public ResponseEntity<?> postCreate(HttpServletRequest request, @RequestBody @Validated PostRequest post, Errors error, @AuthenticationPrincipal UserResponse user){
+        if(request.getSession().getAttribute(user.getUsername()).equals(true)){
+            if(error.hasErrors()) {
+                return new ResponseEntity<>(error.getFieldErrors().stream().collect(Collectors.toMap(
+                        FieldError::getField,
+                        FieldError::getDefaultMessage)
+                ), HttpStatus.BAD_REQUEST);
+            }
+            request.getSession().setAttribute(user.getUsername(),false);
+            return new ResponseEntity<>(postService.postCreate(post,user), HttpStatus.OK);
+        } else {
+            return null;
         }
-        return new ResponseEntity<>(postService.postCreate(post,user), HttpStatus.OK);
     }
 
     // 수정
     @PutMapping(value = "v1/post", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> postEdit(@RequestBody @Validated PostRequest post, Errors error, @AuthenticationPrincipal UserResponse user){
-        if(error.hasErrors()) {
-            return new ResponseEntity<>(error.getFieldErrors().stream().collect(Collectors.toMap(
-                    FieldError::getField,
-                    FieldError::getDefaultMessage)
-            ), HttpStatus.BAD_REQUEST);
+    public ResponseEntity<?> postEdit(HttpServletRequest request, @RequestBody @Validated PostRequest post, Errors error, @AuthenticationPrincipal UserResponse user){
+        if(request.getSession().getAttribute(user.getUsername()).equals(true)){
+            if(error.hasErrors()) {
+                return new ResponseEntity<>(error.getFieldErrors().stream().collect(Collectors.toMap(
+                        FieldError::getField,
+                        FieldError::getDefaultMessage)
+                ), HttpStatus.BAD_REQUEST);
+            }
+            request.getSession().setAttribute(user.getUsername(),false);
+            return new ResponseEntity<>(postService.postEdit(post,user), HttpStatus.OK);
+            } else {
+                return null;
         }
-        return new ResponseEntity<>(postService.postEdit(post,user), HttpStatus.OK);
     }
 
 
@@ -79,6 +79,13 @@ public class PostResource {
     public ResponseEntity<?> accountPostList(@AuthenticationPrincipal UserResponse user, @PathVariable("pageNum") Integer pageNum){
         return new ResponseEntity<>(postService.myPostWineList(user,pageNum-1),HttpStatus.OK);
     }
+
+    // 내가 작성한 와인 포스팅 목록
+    @GetMapping("v1/post/{pageNum}/wine/{wineId}")
+    public ResponseEntity<?> accountPostMyList(@AuthenticationPrincipal UserResponse user,@PathVariable("pageNum") Integer pageNum, @PathVariable("wineId") Long wineId){
+        return new ResponseEntity<>(postService.postMyListSearch(user,pageNum-1,wineId),HttpStatus.OK);
+    }
+
 
 
 }

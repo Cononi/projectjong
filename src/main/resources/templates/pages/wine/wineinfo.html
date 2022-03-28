@@ -131,7 +131,7 @@
     </section>
     <script th:inline="javascript" type="module">
         import { postListWineTasting } from '/js/module.js';
-        postListWineTasting([[${tastingPage}]] ,[[${ wineInfo.wineId }]])
+        postListWineTasting([[${tastingPage}]] ,[[${ wineInfo.wineId }]], 'list')
         if ([[${ userinfo }]]) {
             const itemDivList = document.getElementById("tastingGoSumbit").addEventListener("click", () => {
                 location.href = "/post/" + [[${ wineInfo.wineId }]]

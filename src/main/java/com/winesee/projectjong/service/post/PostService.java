@@ -4,6 +4,7 @@ package com.winesee.projectjong.service.post;
 import com.winesee.projectjong.domain.board.dto.PostListResponse;
 import com.winesee.projectjong.domain.board.dto.PostRequest;
 import com.winesee.projectjong.domain.board.dto.PostResponse;
+import com.winesee.projectjong.domain.user.User;
 import com.winesee.projectjong.domain.user.dto.UserResponse;
 import com.winesee.projectjong.domain.wine.dto.WineMyPostResponse;
 import com.winesee.projectjong.domain.wine.dto.WineResponse;
@@ -13,6 +14,9 @@ public interface PostService {
 
     // 게시글 목록 가져오기 AllList
     Page<PostListResponse> postListSearch(int pageCount, Long wineId);
+
+    // 1개의 와인에 대해 내가 작성한 게시글 목록 가져오기 AllList
+    Page<PostListResponse> postMyListSearch(UserResponse user, int pageCount, Long wineId);
 
     // 글 보여주기
     PostResponse postGet(Long postId);

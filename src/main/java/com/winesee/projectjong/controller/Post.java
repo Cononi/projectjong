@@ -60,6 +60,8 @@ public class Post {
         if(referer != null){
             if(referer.contains("wine/")) {
                 backLink = referer.substring(0,referer.lastIndexOf("/"))+"/"+usePage;
+            } else if(referer.contains("account/tasting")) {
+                backLink = "/account/tasting";
             } else {
             // 만약 널은 아니지만 사용자가 동일 페이지에서 리다이렉트 했을경우.
                 backLink = "/wine/1/" + post.getWineId().getWineId() + "/" + usePage;

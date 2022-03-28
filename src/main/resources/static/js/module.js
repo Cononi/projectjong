@@ -289,9 +289,11 @@ function tastingPostSubmitContents(methods, postNum) {
         return itemNum
     }
 
-    tastingBtnSumbit.addEventListener('click', async () => {
+    tastingBtnSumbit.addEventListener('click', async (e) => {
+        // e.target.setAttribute("disabled", "disabled")
         let numberInfo = await tastingPostCall()
-        location.href = "/post/info/" + numberInfo + "/1"
+        if (numberInfo != null)
+            location.href = "/post/info/" + numberInfo + "/1"
     })
 
     function tastingPostCall() {
@@ -320,23 +322,65 @@ function tastingPostSubmitContents(methods, postNum) {
                     console.log(e)
                 })
             } else
+                console.log(response)
+            if (response.url.includes('/login')) {
+                location.href = "/account/login";
+            } else {
                 return response.json()
+            }
         });
     }
 }
 
 export { tastingPostSubmitContents }
 
+// 삭처리
+export function postInfoPageFet(num, pages) {
+    let tastingDeSumbit = document.getElementById("delCheckBtt")
+
+    tastingDeSumbit.addEventListener('click', async () => {
+        await infoPostDeCall()
+        // 마페로감
+        location.href = pages
+    })
+
+    function infoPostDeCall() {
+        let url = '/api/v1/post/' + num
+        fetch(url, {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+        }).then(function (response) {
+            if (!response.ok) {
+                let error = response
+                error.then(() => {
+                    location.href = pages
+                })
+            } else {
+                formExpCheck(response)
+            }
+        });
+    }
+}
+
+// 만료첵
+function formExpCheck(e) {
+    if (e.url.includes('/login')) {
+        location.href = "/account/login"
+    } else {
+        return e.json()
+    }
+}
 
 
-// 테이스팅 페이지
-async function postListWineTasting(page, id) {
-    let url = '/api/v1/post/' + page + '/list/' + id
+// 테이스팅 페이지 ( 중복해서 쓰임으로 url 전달을 수정하도록 해야함.)
+async function postListWineTasting(page, id, link) {
+    let url = '/api/v1/post/' + page + '/' + link + '/' + id
     return await fetch(url)
         .then(e => e.json())
         .then(json => {
             const tableBodyEl = document.getElementById("userTastingTableBody")
             const tableTrEl = document.createElement("tr")
+
 
             if (json.totalElements != 0) {
                 removeAllchild(tableBodyEl)
@@ -358,13 +402,21 @@ async function postListWineTasting(page, id) {
                             </div>
                         </td>
                     `
+                    console.log(json.content[i])
+                    // 번호 등록
                     tableTrEl.setAttribute('data-columnNum', json.content[i].postId)
+                    // 공동
                     tableBodyEl.appendChild(tableTrEl.cloneNode(true));
                 }
-
-                pageNavDataSet("tr[data-columnNum]", 'wineInfoPagelistNavBar', tableBodyEl, postListWineTasting, id, json)
+                // 컨텐츠 이동
+                tableBodyEl.querySelectorAll('tr[data-columnNum]').forEach(e => { // 공통
+                    e.addEventListener('click', () => {
+                        location.href = "/post/info/" + e.dataset.columnnum + "/" + (json.pageable.pageNumber + 1)
+                    })
+                })
+                pageNavDataSet('wineInfoPagelistNavBar', postListWineTasting, id, json, link)
             } else {
-                createNoneMessageAllchild(document.getElementById("headTasting"),tableTrEl,tableBodyEl, `<b>등록된 테이스팅 노트가 없습니다.</b>`)
+                createNoneMessageAllchild(document.getElementById("headTasting"), tableTrEl, tableBodyEl, `<b>등록된 테이스팅 노트가 없습니다.</b>`)
             }
 
         });
@@ -374,27 +426,43 @@ async function postListWineTasting(page, id) {
 async function postListMyTasting(num) {
     let url = '/api/v1/account/post/wine/' + num
     return await fetch(url)
-        .then(e => e.json())
+        .then(e => formExpCheck(e))
         .then(json => {
             const tastingDivEl = document.getElementById("mytastingDiv")
             const tastingDivCard = document.createElement("div")
+            const tastingMessageDiv = document.getElementById("sectiontastingMassage")
+
             if (json.totalElements != 0) {
                 tastingDivCard.setAttribute("class", "card box-shadow mx-1 my-3 text-center")
                 tastingDivCard.setAttribute("style", "width: 9em; height: 12em;")
+                tastingDivCard.setAttribute("data-bs-toggle", "modal")
+                tastingDivCard.setAttribute("data-bs-target", "#itemBoardModalList")
+
                 removeAllchild(tastingDivEl)
+                if (tastingMessageDiv != null) {
+                    tastingMessageDiv.remove()
+                }
                 for (let i = 0; i < json.numberOfElements; i++) {
                     tastingDivCard.innerHTML = `
                 <img src="/assets/images/samples/krug.jpg" class="card-img-top" alt="...">
-                <p class="card-text mt-3 py-2 h6 small">`+ (json.content[i].displayNameKo.substring(0, 20)) + (json.content[i].displayNameKo.length > 40 ? '...' : '') + `</p>
+                <p class="card-text mt-3 py-2 h6 small">`+ (json.content[i].displayNameKo.substring(0, 20)) + (json.content[i].displayNameKo.length > 20 ? '...' : '') + `</p>
                 `
-                    tastingDivCard.setAttribute("data-columnNum", json.content[i].postId)
+                    // 번호
+                    tastingDivCard.setAttribute("data-columnNum", json.content[i].wineId)
+                    //  공동
                     tastingDivEl.appendChild(tastingDivCard.cloneNode(true));
                 }
-                pageNavDataSet("div[data-columnNum]", 'tastingPageList', tastingDivEl, postListMyTasting, 0, json)
-            }else {
-                createNoneMessageAllchild(document.getElementById("topContentBody"),tastingDivCard,tastingDivEl, `<b>지금 바로 포스팅을 작성해보세요!.</b>`)
+                // 컨텐츠 이동
+                tastingDivEl.querySelectorAll('div[data-columnNum]').forEach(e => { // 공통
+                    e.addEventListener('click', () => {
+                        postListWineTasting(1 , e.dataset.columnnum, 'wine')
+                    })
+                })
+                pageNavDataSet('tastingPageList', postListMyTasting, 0, json)
+            } else {
+                createNoneMessageAllchild(document.getElementById("topContentBody"), tastingDivCard, document.getElementById("testingMassage"), `<b>지금 바로 포스팅을 작성해보세요!.</b>`)
             }
-        });
+        })
 }
 
 export { postListWineTasting, postListMyTasting }
@@ -402,13 +470,8 @@ export { postListWineTasting, postListMyTasting }
 
 
 // 공동 페이지 (테이블 data-columnNum, 페이징 data-pagenum)
-function pageNavDataSet(MainElDataSet, MainELId, MainEl, customerData, ItemPageId, json) { //MainElDataSet (테이블 데이터 셋), MainElId (메인 El Id), MainEl (메인 El), customerData (객체 전달),ItemPageId(페이지 아이템 관련)  json(Json데이터)
+function pageNavDataSet(MainELId, customerData, ItemPageId, json, link) { //MainElDataSet (테이블 데이터 셋), MainElId (메인 El Id), MainEl (메인 El), customerData (객체 전달),ItemPageId(페이지 아이템 관련)  json(Json데이터)
 
-    MainEl.querySelectorAll(MainElDataSet).forEach(e => { // 공통
-        e.addEventListener('click', () => {
-            location.href = "/post/info/" + e.dataset.columnnum + "/" + (json.pageable.pageNumber + 1)
-        })
-    })
     // 페이징
     const tableNav = document.getElementById(MainELId) // 공통
     const tableNavUl = document.createElement("ul")
@@ -450,43 +513,18 @@ function pageNavDataSet(MainElDataSet, MainELId, MainEl, customerData, ItemPageI
     tableNavUl.querySelectorAll('a[data-pagenum]').forEach(e => {
         if (!e.parentElement.classList.contains('active'))
             e.addEventListener('click', () => {
-                if(customerData.length == 2)
-                    customerData(e.dataset.pagenum, ItemPageId) // 공통
-                else 
+                if (customerData.length == 3)
+                    customerData(e.dataset.pagenum, ItemPageId, link) // 공통
+                else
                     customerData(e.dataset.pagenum)
             })
     })
     tableNav.appendChild(tableNavUl)
 }
 
-// 삭처리
-export function postInfoPageFet(num, pages) {
-    let tastingDeSumbit = document.getElementById("delCheckBtt")
-
-    tastingDeSumbit.addEventListener('click', async () => {
-        await infoPostDeCall()
-        // 마페로감
-        location.href = pages
-    })
-
-    function infoPostDeCall() {
-        let url = '/api/v1/post/' + num
-        fetch(url, {
-            method: 'DELETE',
-            headers: { 'Content-Type': 'application/json' },
-        }).then(function (response) {
-            if (!response.ok) {
-                let error = response
-                error.then(() => {
-                    location.href = pages
-                })
-            }
-        });
-    }
-}
 
 // 추가 함수
-function createNoneMessageAllchild(topBody, center,parent, ment){ // 메인,중앙,부모
+function createNoneMessageAllchild(topBody, center, parent, ment) { // 메인,중앙,부모
     topBody.remove()
     center.innerHTML = ment
     center.setAttribute('class', "text-center my-4")

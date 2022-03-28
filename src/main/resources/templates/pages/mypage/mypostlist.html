@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="/assets/css/pages/wineboard.css">
 </head>
 
-
 <th:block layout:fragment="content">
     <section id="content-types">
         <div class="container py-2">
@@ -21,61 +20,63 @@
             </div>
             <div id="topContentBody">
                 <div class="row justify-content-center" id="mytastingDiv">
-                    <!-- <th:block th:if="${wineList.totalPages == 0}"> -->
-                    <!-- </th:block> -->
                 </div>
             </div>
             <nav id="tastingPageList" aria-label="Page navigation" class="my-4">
             </nav>
-            <section class="section">
+            <section class="section" id="sectiontastingMassage">
                 <!-- 조건 처리 -->
                 <div class="card">
-                    <div class="card-header">
+                    <div class="card-header" id="testingMassage">
                         <h4 class="card-title">메세지</h4>
                     </div>
                     <div class="card-body">
-                        <!-- <h6 th:utext="${!#lists.isEmpty(wineList.totalPages == 0)} ? '해당 검색 내용이 존재하지 않습니다.'"> -->
-                        </h6>
                     </div>
                 </div>
             </section>
     </section>
-    <!-- Nav -->
-    <!-- <nav aria-label="Page navigation example" th:with="startPage=${((wineList.pageable.pageNumber) / 5) * 5+1}
-    ,lastPage=${startPage + 5-1}
-    ,maxPage=${lastPage > wineList.totalPages} ? ${wineList.totalPages} : ${lastPage}">
-        <ul class="pagination pagination-danger justify-content-center">
-            <li class="page-item"><a th:if="${startPage > 5}" class="page-link"
-                    th:href="'javascript:callLinkChange(' + ${startPage-1} + ')'">
-                    <span aria-hidden="true"><i class="bi bi-chevron-left"></i></span>
-                </a></li>
-            <th:block th:if="${wineList.totalElements != 0}"
-                th:each="PagesNum : ${#numbers.sequence(startPage,maxPage)}">
-                <li class="page-item" th:classappend="${PagesNum == wineList.pageable.pageNumber+1} ? 'active' : ''"><a
-                        class="page-link" th:href="'javascript:callLinkChange(' + ${PagesNum} + ')'"
-                        text="${PagesNum}"></a></li>
-            </th:block>
-            <li class="page-item"><a th:if="${lastPage < wineList.totalPages}" class="page-link"
-                    th:href="'javascript:callLinkChange(' + ${maxPage+1} + ')'">
-                    <span aria-hidden="true"><i class="bi bi-chevron-right"></i></span>
-                </a></li>
-        </ul>
-    </nav> -->
+
+
+    <!--Disabled Backdrop Modal -->
+    <div class="modal fade text-left" id="itemBoardModalList" tabindex="-1" role="dialog"
+        aria-labelledby="myModalLabel4" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="myModalLabel4">Tasting Note List</h4>
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                        <i data-feather="x"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row-auto">
+                        <div class="col-auto">
+                            <div class="card">
+                                <div class="table-hover m-1">
+                                    <table class="table table-hover">
+                                        <thead id="headTasting">
+                                        </thead>
+                                        <tbody id="userTastingTableBody" style="font-size: 14px;">
+                                        </tbody>
+                                    </table>
+                                    <nav id="wineInfoPagelistNavBar" aria-label="Page navigation example">
+                                    </nav>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary ml-1" data-bs-dismiss="modal">
+                        <span>닫기</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
     <script th:inline="javascript" type="module">
-        import {postListMyTasting} from '/js/module.js';
-
+        import { postListMyTasting, postListWineTasting } from '/js/module.js';
         postListMyTasting(1)
-        // function callLinkChange(num) {
-        //     let href = [search.keyword]
-        //     location.href = "/wine?" + href + num
-        // }
-
-        // const itemDivList = document.querySelectorAll("div[data-columns]")
-        // itemDivList.forEach(e =>
-        //         e.addEventListener('click', () => {
-        //             location.href = "/wine/" + [[wineList.pageable.pageNumber+1]] + "/" + e.dataset.columns + "/" + 1
-        //         })
-        //     )
     </script>
 </th:block>
 

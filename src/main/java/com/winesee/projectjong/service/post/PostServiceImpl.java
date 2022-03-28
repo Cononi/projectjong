@@ -9,7 +9,6 @@ import com.winesee.projectjong.domain.user.UserRepository;
 import com.winesee.projectjong.domain.user.dto.UserResponse;
 import com.winesee.projectjong.domain.wine.WineRepository;
 import com.winesee.projectjong.domain.wine.dto.WineMyPostResponse;
-import com.winesee.projectjong.domain.wine.dto.WineResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -29,12 +28,17 @@ public class PostServiceImpl implements PostService {
 
     private final PostRepository postRepository;
     private final WineRepository wineRepository;
-    private final UserRepository userRepository;
 
     @Override
     public Page<PostListResponse> postListSearch(int pageCount, Long wineId) {
         Pageable pageable = PageRequest.of(pageCount,5, Sort.by("modifieDate").descending());
-        return postRepository.findAllBywineId(wineRepository.getById(wineId),pageable).map(PostListResponse::new);
+        return postRepository.findAllByWineId(wineRepository.getById(wineId),pageable).map(PostListResponse::new);
+    }
+
+    @Override
+    public Page<PostListResponse> postMyListSearch(UserResponse user, int pageCount, Long wineId) {
+        Pageable pageable = PageRequest.of(pageCount,5, Sort.by("modifieDate").descending());
+        return postRepository.findAllByUserIdAndWineId(user,wineRepository.getById(wineId),pageable).map(PostListResponse::new);
     }
 
     @Override

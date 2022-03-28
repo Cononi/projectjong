@@ -37,6 +37,8 @@ public class UserLoginInterceptor implements HandlerInterceptor {
             UserResponse userinfo = (UserResponse) authentication.getPrincipal();
             request.setAttribute("userinfo",userinfo);
         }
+        // 연속 요청 방지 세션 삭제
+        request.getSession().removeAttribute(authentication.getName());
         return true;
     }
 
