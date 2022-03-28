@@ -1,5 +1,8 @@
 package com.winesee.projectjong.domain.wine.dto;
 
+import com.winesee.projectjong.domain.basedefault.BaseTime;
+import com.winesee.projectjong.domain.board.Post;
+import com.winesee.projectjong.domain.board.dto.PostResponse;
 import com.winesee.projectjong.domain.wine.Country;
 import com.winesee.projectjong.domain.wine.Wine;
 import lombok.AllArgsConstructor;
@@ -8,9 +11,9 @@ import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 @Getter
-@NoArgsConstructor
 public class WineResponse implements Serializable {
 
     // 와인 번호
@@ -67,6 +70,8 @@ public class WineResponse implements Serializable {
     // 최종 토탈 점수
     private int averageScore;
 
+    private LocalDateTime modifieDate;
+
     public WineResponse(Wine entity) {
         this.wineId = entity.getWineId();
         this.displayName = entity.getDisplayName();
@@ -87,4 +92,27 @@ public class WineResponse implements Serializable {
         this.alcohol = entity.getAlcohol();
         this.averageScore = entity.getAverageScore();
     }
+
+    public WineResponse(Post entity){
+        this.wineId = entity.getWineId().getWineId();
+        this.displayName = entity.getWineId().getDisplayName();
+        this.displayNameKo = entity.getWineId().getDisplayNameKo();
+        this.grapeList = entity.getWineId().getGrapeList();
+        this.producerName = entity.getWineId().getProducerName();
+        this.wine = entity.getWineId().getWine();
+        this.country = entity.getWineId().getCountry();
+        this.region = entity.getWineId().getRegion();
+        this.subRegion = entity.getWineId().getSubRegion();
+        this.colour = entity.getWineId().getColour();
+        this.type = entity.getWineId().getType();
+        this.subType = entity.getWineId().getSubType();
+        this.designation = entity.getWineId().getDesignation();
+        this.classification = entity.getWineId().getClassification();
+        this.wineImageUrl = entity.getWineId().getWineImageUrl();
+        this.contents = entity.getContents();
+        this.alcohol = entity.getAlcohol();
+        this.averageScore = entity.getWineId().getAverageScore();
+        this.modifieDate = entity.getModifieDate();
+    }
+
 }

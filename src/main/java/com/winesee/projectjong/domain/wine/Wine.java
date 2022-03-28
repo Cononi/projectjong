@@ -1,16 +1,25 @@
 package com.winesee.projectjong.domain.wine;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.winesee.projectjong.domain.board.Comment;
 import com.winesee.projectjong.domain.board.Post;
+import com.winesee.projectjong.domain.user.User;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.BatchSize;
 import org.springframework.data.domain.Page;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
 @Getter
 @Table(name="wine")
+@NoArgsConstructor
 public class Wine implements Serializable {
 
     @Id
@@ -34,7 +43,7 @@ public class Wine implements Serializable {
     private String wine;
 
     // 생산나라20
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "country", referencedColumnName="countryId")
     private Country country;
 

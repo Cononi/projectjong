@@ -1,25 +1,18 @@
 package com.winesee.projectjong.service.wine;
 
 
-import com.winesee.projectjong.controller.User;
-import com.winesee.projectjong.domain.util.specification.SearchCriteria;
 import com.winesee.projectjong.domain.util.specification.UserSpecificationsBuilder;
-import com.winesee.projectjong.domain.util.specification.WineSpecification;
 import com.winesee.projectjong.domain.wine.*;
 import com.winesee.projectjong.domain.wine.dto.WineResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.tomcat.util.security.Escape;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
-import org.springframework.util.ReflectionUtils;
 
 import javax.transaction.Transactional;
 import java.lang.reflect.Field;

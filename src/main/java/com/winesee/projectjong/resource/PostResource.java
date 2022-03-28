@@ -10,6 +10,9 @@ import com.winesee.projectjong.service.wine.WineService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -65,8 +68,17 @@ public class PostResource {
         postService.postDelete(number, user);
     }
 
+    // 와인 상세페이지에서 사람들이 작성한 와인 테스팅
     @GetMapping("v1/post/{pageNum}/list/{wineId}")
     public ResponseEntity<?> list(@PathVariable("pageNum") Integer pageNum, @PathVariable("wineId") Long wineId){
         return new ResponseEntity<>(postService.postListSearch(pageNum-1,wineId),HttpStatus.OK);
     }
+
+    // 내가 작성한 와인 포스팅 목록
+    @GetMapping("v1/account/post/wine/{pageNum}")
+    public ResponseEntity<?> accountPostList(@AuthenticationPrincipal UserResponse user, @PathVariable("pageNum") Integer pageNum){
+        return new ResponseEntity<>(postService.myPostWineList(user,pageNum-1),HttpStatus.OK);
+    }
+
+
 }

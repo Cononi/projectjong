@@ -242,7 +242,7 @@ export { SearchInfoController }
 
 //----------------------------------------------------------------//
 
-function tastingPostSubmitContents(methods,postNum) {
+function tastingPostSubmitContents(methods, postNum) {
 
     // 기본 문자들
     const titleValueText = document.getElementById("tastingTitle")
@@ -283,9 +283,9 @@ function tastingPostSubmitContents(methods,postNum) {
     const bodyRate = document.getElementsByName("bodyEat")
     const sugarRate = document.getElementsByName("sugarEat")
 
-    function rateCheckItem(item){
+    function rateCheckItem(item) {
         let itemNum = ""
-        item.forEach(e => {if (e.checked) itemNum =  e.value})
+        item.forEach(e => { if (e.checked) itemNum = e.value })
         return itemNum
     }
 
@@ -329,11 +329,6 @@ export { tastingPostSubmitContents }
 
 
 
-export function userTastingPostAccess(data, id) {
-    postListWineTasting(data, id)
-
-}
-
 // 테이스팅 페이지
 async function postListWineTasting(page, id) {
     let url = '/api/v1/post/' + page + '/list/' + id
@@ -342,7 +337,6 @@ async function postListWineTasting(page, id) {
         .then(json => {
             const tableBodyEl = document.getElementById("userTastingTableBody")
             const tableTrEl = document.createElement("tr")
-
 
             if (json.totalElements != 0) {
                 removeAllchild(tableBodyEl)
@@ -368,68 +362,105 @@ async function postListWineTasting(page, id) {
                     tableBodyEl.appendChild(tableTrEl.cloneNode(true));
                 }
 
-                tableBodyEl.querySelectorAll('tr[data-columnNum]').forEach(e => {
-                    e.addEventListener('click', () => {
-                        location.href = "/post/info/" + e.dataset.columnnum + "/" + (json.pageable.pageNumber + 1)
-                    })
-                })
-
-                const tableNav = document.getElementById("wineInfoPagelistNavBar")
-                const tableNavUl = document.createElement("ul")
-                removeAllchild(tableNav)
-                tableNavUl.setAttribute('class', 'pagination pagination-danger justify-content-center')
-                tableNavUl.setAttribute('id', 'navUiTop')
-
-                let firstpage = Math.floor((json.pageable.pageNumber) / 5) * 5 + 1
-                let lastpage = (firstpage + 5)
-                let pageIno = ''
-                let pageLano = ''
-                if (firstpage > 5) {
-                    pageIno = `<a class="page-link" data-pagenum=` + (firstpage - 1) + `><span aria-hidden="true"><i
-                                class="bi bi-chevron-left"></i></span></a>`
-                }
-                tableNavUl.innerHTML = `
-                    <li class="page-item">`+ pageIno + `</li>
-                    `
-                if (json.totalElements != 0) {
-                    let maxPage = lastpage > json.totalPages ? json.totalPages + 1 : lastpage
-                    for (i = firstpage; i < maxPage; i++) {
-                        let pageActive = ''
-                        if (json.pageable.pageNumber + 1 == i) {
-                            pageActive = "active"
-                        }
-                        tableNavUl.innerHTML += `
-                        <li class="page-item `+ pageActive + `"><a class="page-link" data-pagenum=` + (i) + `>` + i + `</a></li>
-                        `
-                    }
-                }
-                if (lastpage <= json.totalPages) {
-                    pageLano = `<a class="page-link" data-pagenum=` + lastpage + `><span aria-hidden="true">
-                    <i class="bi bi-chevron-right"></i></span></a>`
-                }
-                tableNavUl.innerHTML += `
-                    <li class="page-item">` + pageLano + `
-                    </li>
-                    `
-                tableNavUl.querySelectorAll('a[data-pagenum]').forEach(e => {
-                    if (!e.parentElement.classList.contains('active'))
-                        e.addEventListener('click', () => {
-                            postListWineTasting(e.dataset.pagenum, id)
-                        })
-                })
-                tableNav.appendChild(tableNavUl)
+                pageNavDataSet("tr[data-columnNum]", 'wineInfoPagelistNavBar', tableBodyEl, postListWineTasting, id, json)
             } else {
-                document.getElementById("headTasting").remove()
-                tableTrEl.innerHTML = `<b>등록된 테이스팅 노트가 없습니다.</b>`
-                tableTrEl.setAttribute('class', "text-center")
-                tableBodyEl.appendChild(tableTrEl)
+                createNoneMessageAllchild(document.getElementById("headTasting"),tableTrEl,tableBodyEl, `<b>등록된 테이스팅 노트가 없습니다.</b>`)
             }
 
         });
 }
 
-// 인포
-export function postInfoPageFet(num,pages){
+// 마이 포스팅
+async function postListMyTasting(num) {
+    let url = '/api/v1/account/post/wine/' + num
+    return await fetch(url)
+        .then(e => e.json())
+        .then(json => {
+            const tastingDivEl = document.getElementById("mytastingDiv")
+            const tastingDivCard = document.createElement("div")
+            if (json.totalElements != 0) {
+                tastingDivCard.setAttribute("class", "card box-shadow mx-1 my-3 text-center")
+                tastingDivCard.setAttribute("style", "width: 9em; height: 12em;")
+                removeAllchild(tastingDivEl)
+                for (let i = 0; i < json.numberOfElements; i++) {
+                    tastingDivCard.innerHTML = `
+                <img src="/assets/images/samples/krug.jpg" class="card-img-top" alt="...">
+                <p class="card-text mt-3 py-2 h6 small">`+ (json.content[i].displayNameKo.substring(0, 20)) + (json.content[i].displayNameKo.length > 40 ? '...' : '') + `</p>
+                `
+                    tastingDivCard.setAttribute("data-columnNum", json.content[i].postId)
+                    tastingDivEl.appendChild(tastingDivCard.cloneNode(true));
+                }
+                pageNavDataSet("div[data-columnNum]", 'tastingPageList', tastingDivEl, postListMyTasting, 0, json)
+            }else {
+                createNoneMessageAllchild(document.getElementById("topContentBody"),tastingDivCard,tastingDivEl, `<b>지금 바로 포스팅을 작성해보세요!.</b>`)
+            }
+        });
+}
+
+export { postListWineTasting, postListMyTasting }
+
+
+
+// 공동 페이지 (테이블 data-columnNum, 페이징 data-pagenum)
+function pageNavDataSet(MainElDataSet, MainELId, MainEl, customerData, ItemPageId, json) { //MainElDataSet (테이블 데이터 셋), MainElId (메인 El Id), MainEl (메인 El), customerData (객체 전달),ItemPageId(페이지 아이템 관련)  json(Json데이터)
+
+    MainEl.querySelectorAll(MainElDataSet).forEach(e => { // 공통
+        e.addEventListener('click', () => {
+            location.href = "/post/info/" + e.dataset.columnnum + "/" + (json.pageable.pageNumber + 1)
+        })
+    })
+    // 페이징
+    const tableNav = document.getElementById(MainELId) // 공통
+    const tableNavUl = document.createElement("ul")
+    removeAllchild(tableNav)
+    tableNavUl.setAttribute('class', 'pagination pagination-danger justify-content-center')
+    tableNavUl.setAttribute('id', 'navUiTop')
+
+    let firstpage = Math.floor((json.pageable.pageNumber) / 5) * 5 + 1
+    let lastpage = (firstpage + 5)
+    let pageIno = ''
+    let pageLano = ''
+    if (firstpage > 5) {
+        pageIno = `<a class="page-link" data-pagenum=` + (firstpage - 1) + `><span aria-hidden="true"><i
+            class="bi bi-chevron-left"></i></span></a>`
+    }
+    tableNavUl.innerHTML = `
+        <li class="page-item">`+ pageIno + `</li>
+        `
+    if (json.totalElements != 0) {
+        let maxPage = lastpage > json.totalPages ? json.totalPages + 1 : lastpage
+        for (i = firstpage; i < maxPage; i++) {
+            let pageActive = ''
+            if (json.pageable.pageNumber + 1 == i) {
+                pageActive = "active"
+            }
+            tableNavUl.innerHTML += `
+            <li class="page-item `+ pageActive + `"><a class="page-link" data-pagenum=` + (i) + `>` + i + `</a></li>
+            `
+        }
+    }
+    if (lastpage <= json.totalPages) {
+        pageLano = `<a class="page-link" data-pagenum=` + lastpage + `><span aria-hidden="true">
+        <i class="bi bi-chevron-right"></i></span></a>`
+    }
+    tableNavUl.innerHTML += `
+        <li class="page-item">` + pageLano + `
+        </li>
+`
+    tableNavUl.querySelectorAll('a[data-pagenum]').forEach(e => {
+        if (!e.parentElement.classList.contains('active'))
+            e.addEventListener('click', () => {
+                if(customerData.length == 2)
+                    customerData(e.dataset.pagenum, ItemPageId) // 공통
+                else 
+                    customerData(e.dataset.pagenum)
+            })
+    })
+    tableNav.appendChild(tableNavUl)
+}
+
+// 삭처리
+export function postInfoPageFet(num, pages) {
     let tastingDeSumbit = document.getElementById("delCheckBtt")
 
     tastingDeSumbit.addEventListener('click', async () => {
@@ -437,7 +468,7 @@ export function postInfoPageFet(num,pages){
         // 마페로감
         location.href = pages
     })
-    
+
     function infoPostDeCall() {
         let url = '/api/v1/post/' + num
         fetch(url, {
@@ -454,7 +485,13 @@ export function postInfoPageFet(num,pages){
     }
 }
 
-
+// 추가 함수
+function createNoneMessageAllchild(topBody, center,parent, ment){ // 메인,중앙,부모
+    topBody.remove()
+    center.innerHTML = ment
+    center.setAttribute('class', "text-center my-4")
+    parent.appendChild(center)
+}
 
 // 제거 함수
 function removeAllchild(div) {

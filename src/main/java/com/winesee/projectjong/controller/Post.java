@@ -73,4 +73,9 @@ public class Post {
         model.addAttribute("postInfo", post);
         return "/pages/post/postinfo";
     }
+
+    @GetMapping("account/post/list")
+    public String postList(@AuthenticationPrincipal UserResponse userinfo){
+        return "pages/mypage/mypostlist";
+    }
 }

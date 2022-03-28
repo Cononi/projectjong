@@ -27,7 +27,10 @@ transform: translateY(-15px);
 
 .card {
 border-radius: 25px;
+}
 
+.card.cardtasting {
+    background-color: #e5e5e5;
 }
 
 .card img {

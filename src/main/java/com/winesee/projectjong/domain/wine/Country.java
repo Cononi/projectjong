@@ -16,6 +16,5 @@ public class Country implements Serializable {
 
     private String country;
 
-    @Column(name="country_ko")
     private String countryKo;
 }

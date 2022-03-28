@@ -124,6 +124,10 @@ public class Profile {
         return "pages/mypage/pass";
     }
 
+    @GetMapping("tasting")
+    public String tatstingList() {
+        return "pages/mypage/mypostlist";
+    }
 
 
     @GetMapping("message")
@@ -139,4 +143,6 @@ public class Profile {
         }
         return "";
     }
+
+
 }

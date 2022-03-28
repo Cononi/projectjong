@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{layout/default-tasting}">
+
+<head>
+    <title>리스트</title>
+    <link rel="stylesheet" href="/assets/css/pages/wineboard.css">
+</head>
+
+
+<th:block layout:fragment="content">
+    <section id="content-types">
+        <div class="container py-2">
+            <div class="page-title">
+                <div class="row">
+                    <div class="col-12 col-md-6 order-md-1 order-last">
+                        <h3>Tasting Gallery List</h3>
+                        <p class="text-subtitle text-muted">테이스팅 노트를 쓰신 와인 목록을 클릭해서 확인해보세요!</p>
+                    </div>
+                </div>
+            </div>
+            <div id="topContentBody">
+                <div class="row justify-content-center" id="mytastingDiv">
+                    <!-- <th:block th:if="${wineList.totalPages == 0}"> -->
+                    <!-- </th:block> -->
+                </div>
+            </div>
+            <nav id="tastingPageList" aria-label="Page navigation" class="my-4">
+            </nav>
+            <section class="section">
+                <!-- 조건 처리 -->
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">메세지</h4>
+                    </div>
+                    <div class="card-body">
+                        <!-- <h6 th:utext="${!#lists.isEmpty(wineList.totalPages == 0)} ? '해당 검색 내용이 존재하지 않습니다.'"> -->
+                        </h6>
+                    </div>
+                </div>
+            </section>
+    </section>
+    <!-- Nav -->
+    <!-- <nav aria-label="Page navigation example" th:with="startPage=${((wineList.pageable.pageNumber) / 5) * 5+1}
+    ,lastPage=${startPage + 5-1}
+    ,maxPage=${lastPage > wineList.totalPages} ? ${wineList.totalPages} : ${lastPage}">
+        <ul class="pagination pagination-danger justify-content-center">
+            <li class="page-item"><a th:if="${startPage > 5}" class="page-link"
+                    th:href="'javascript:callLinkChange(' + ${startPage-1} + ')'">
+                    <span aria-hidden="true"><i class="bi bi-chevron-left"></i></span>
+                </a></li>
+            <th:block th:if="${wineList.totalElements != 0}"
+                th:each="PagesNum : ${#numbers.sequence(startPage,maxPage)}">
+                <li class="page-item" th:classappend="${PagesNum == wineList.pageable.pageNumber+1} ? 'active' : ''"><a
+                        class="page-link" th:href="'javascript:callLinkChange(' + ${PagesNum} + ')'"
+                        text="${PagesNum}"></a></li>
+            </th:block>
+            <li class="page-item"><a th:if="${lastPage < wineList.totalPages}" class="page-link"
+                    th:href="'javascript:callLinkChange(' + ${maxPage+1} + ')'">
+                    <span aria-hidden="true"><i class="bi bi-chevron-right"></i></span>
+                </a></li>
+        </ul>
+    </nav> -->
+    <script th:inline="javascript" type="module">
+        import {postListMyTasting} from '/js/module.js';
+
+        postListMyTasting(1)
+        // function callLinkChange(num) {
+        //     let href = [search.keyword]
+        //     location.href = "/wine?" + href + num
+        // }
+
+        // const itemDivList = document.querySelectorAll("div[data-columns]")
+        // itemDivList.forEach(e =>
+        //         e.addEventListener('click', () => {
+        //             location.href = "/wine/" + [[wineList.pageable.pageNumber+1]] + "/" + e.dataset.columns + "/" + 1
+        //         })
+        //     )
+    </script>
+</th:block>
+
+</html>

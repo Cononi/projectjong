@@ -130,14 +130,16 @@
                 </div>
     </section>
     <script th:inline="javascript" type="module">
-        import { userTastingPostAccess } from '/js/module.js';
-        userTastingPostAccess([[${tastingPage}]] ,[[${ wineInfo.wineId }]])
+        import { postListWineTasting } from '/js/module.js';
+        postListWineTasting([[${tastingPage}]] ,[[${ wineInfo.wineId }]])
         if ([[${ userinfo }]]) {
             const itemDivList = document.getElementById("tastingGoSumbit").addEventListener("click", () => {
                 location.href = "/post/" + [[${ wineInfo.wineId }]]
             })
         }
+        
     </script>
+    
 </th:block>
 
 </html>

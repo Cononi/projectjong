@@ -5,12 +5,13 @@ import com.winesee.projectjong.domain.board.PostRepository;
 import com.winesee.projectjong.domain.board.dto.PostListResponse;
 import com.winesee.projectjong.domain.board.dto.PostRequest;
 import com.winesee.projectjong.domain.board.dto.PostResponse;
-import com.winesee.projectjong.domain.user.dto.UserRequest;
+import com.winesee.projectjong.domain.user.UserRepository;
 import com.winesee.projectjong.domain.user.dto.UserResponse;
-import com.winesee.projectjong.domain.wine.Wine;
 import com.winesee.projectjong.domain.wine.WineRepository;
+import com.winesee.projectjong.domain.wine.dto.WineMyPostResponse;
 import com.winesee.projectjong.domain.wine.dto.WineResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -23,10 +24,12 @@ import java.util.NoSuchElementException;
 @Service
 @Transactional
 @RequiredArgsConstructor
+@Slf4j
 public class PostServiceImpl implements PostService {
 
     private final PostRepository postRepository;
     private final WineRepository wineRepository;
+    private final UserRepository userRepository;
 
     @Override
     public Page<PostListResponse> postListSearch(int pageCount, Long wineId) {
@@ -83,5 +86,16 @@ public class PostServiceImpl implements PostService {
         if(post.getUserId().getId().equals(user.getId())){
             postRepository.deleteById(number);
         }
+    }
+
+    @Override
+    public Page<WineMyPostResponse> myPostWineList(UserResponse user, int pageCount) {
+        Pageable pageable = PageRequest.of(pageCount,12);
+          return wineRepository.findEntityGraphWineIdAndUserId(user,pageable).map(WineMyPostResponse::new);
+    }
+
+    @Override
+    public Page<PostListResponse> myPostInfoList(int pageCount, Long postId) {
+        return null;
     }
 }
