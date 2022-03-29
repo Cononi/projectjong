@@ -57,10 +57,25 @@
                                 value="port" th:checked="${search != null && search.subType == 'port'} ? ${true}">
                             <label class="btn btn-outline-success" for="typeSubOption2">포트</label>
                         </div>
+                        <!-- <div class="input-group mb-2">
+                            <label class="input-group-text"><b>알콜 범위</b></label>
+                            <input type="radio" class="btn-check" name="alcohol" id="alcoholOption1" autocomplete="off"
+                                value="0+10">
+                            <label class="btn btn-outline-success" for="alcoholOption1">0~10</label>
+                            <input type="radio" class="btn-check" name="alcohol" id="alcoholOption2" autocomplete="off"
+                                value="10+15">
+                            <label class="btn btn-outline-success" for="alcoholOption2">10~15</label>
+                            <input type="radio" class="btn-check" name="alcohol" id="alcoholOption2" autocomplete="off"
+                                value="15+20">
+                            <label class="btn btn-outline-success" for="alcoholOption2">15~</label>
+                        </div> -->
+                        <!-- 나라 처리 .-->
                         <div class="input-group mb-2">
                             <label class="shadow-sm input-group-text"><b>나라 </b></label>
                             <input type="text" class="form-control" id="countryInput" autocomplete="off" name="country"
                                 th:value="${search} ? ${search.country}">
+                            <!-- <input type="text" class="form-control" name="queryInput" id="queryInput"
+                                th:value="${search != null} ? ${search.query}" placeholder="" autocomplete="off"> -->
                         </div>
                         <button class="shadow-sm btn btn-primary" type="button" id="none">초기화</button>
                     </div>
