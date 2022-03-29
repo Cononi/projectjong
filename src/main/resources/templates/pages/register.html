@@ -10,7 +10,7 @@
         <div class="col-lg-5 col-12">
             <div id="auth-left">
                 <div class="auth-logo">
-                    <a href="/"><img src="/assets/images/logo/logo.png" alt="Logo"></a>
+                    <a href="/"><img src="/assets/images/logo/logo2.png" alt="Logo"></a>
                 </div>
                 <h1 class="auth-title">Sign Up</h1>
                 <p class="auth-subtitle mb-3">회원 정보를 입력해주세요.</p>
@@ -78,7 +78,7 @@
                             </span>
                         </div>
                     </div>
-                    <p class="mt-10">이메일 인증은 필수 입니다. <br> 꼭 인증가능한 이메일을 신중히 입력해 주십시요.</p>
+                    <p class="mt-3">이메일 인증은 필수 입니다. <br> 꼭 인증가능한 이메일을 신중히 입력해 주십시요.</p>
                     <button class="btn btn-primary btn-block btn-lg shadow-lg mt-3" type="button" disabled=""
                         hidden="true" id="btn-signon">
                         <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
@@ -90,8 +90,8 @@
 
                 </form>
                 <div class="text-center mt-5 text-lg fs-4">
-                    <p class='text-gray-600'>로그인 하러가기 <a href="auth-login.html" class="font-bold">Log
-                            in</a>.</p>
+                    <p>계정이 존재하면</p>
+                   <a th:href="@{/account/login}" class="btn btn-outline-secondary font-bold">Login 페이지로</a>
                 </div>
             </div>
         </div>

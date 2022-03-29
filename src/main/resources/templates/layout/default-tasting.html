@@ -6,15 +6,15 @@
 
 <body>
     <!-- main -->
-    <div id="main" class='layout-navbar'>
+    <div id="main" class="layout-horizontal">
         <!-- header -->
         <th:block th:replace="include/header :: headerFragment"></th:block>
         <div id="main-content">
             <!-- content -->
             <th:block layout:fragment="content"></th:block>
             <!-- footer -->
-            <th:block th:replace="include/footer :: footerFragment"></th:block>
         </div>
+        <th:block th:replace="include/footer :: footerFragment"></th:block>
         <!-- script -->
         <th:block th:replace="include/script :: scriptFragment"></th:block>
     </div>

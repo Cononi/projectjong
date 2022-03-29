@@ -2,89 +2,114 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 
 <th:block th:fragment="headerFragment">
-
-    <header class="p-3 mb-3 border-bottom">
-        <div class="container">
-            <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+    <header class="mb-3 border-bottom bg-dark">
+        <div class="navbar navbar-expand-lg navbar-dark bg-dark justify-content-center">
+            <div class="d-flex flex-wrap align-items-center">
                 <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 text-dark text-decoration-none">
-                    <svg class="bi me-2" width="40" height="32" role="img" aria-label="Bootstrap">
-                        <use xlink:href="#bootstrap"></use>
-                    </svg>
-                    <img src="https://github.com/mdo.png" alt="mdo" width="32" height="32" class="rounded-circle">
+                    <a href="/"><img src="/assets/images/logo/logo.png" alt="Logo"></a>
                 </a>
-
-                <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
-                    <li><a href="#" class="nav-link px-2 link-secondary">Overview</a></li>
-                    <li><a href="#" class="nav-link px-2 link-dark">Inventory</a></li>
-                    <li><a href="#" class="nav-link px-2 link-dark">Customers</a></li>
-                    <li><a href="#" class="nav-link px-2 link-dark">Products</a></li>
-                </ul>
+            </div>
+        </div>
+        <!-- Navbar -->
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <!-- Container wrapper -->
+            <div class="container-fluid flex-row-reverse">
                 <th:block sec:authorize="isAuthenticated()" th:with="auth=${userinfo}">
-                    <div class="dropdown text-end">
-                        <a href="#" class="d-block link-dark text-decoration-none dropdown-toggle" id="dropdownUser1"
-                            data-bs-toggle="dropdown" aria-expanded="false">
-                            <div class="user-menu d-flex">
-                                <div class="user-img d-flex align-items-center me-3">
-                                    <div class="avatar avatar bg-primary">
-                                        <img src="https://github.com/mdo.png" alt="mdo" width="32" height="32"
-                                            class="rounded-circle">
+                    <div class="navbar-brand">
+                        <div class="dropdown text-end align-items-center">
+                            <a href="#" class="d-block link-dark text-decoration-none" id="dropdownUser1"
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                                <div class="user-menu d-flex">
+                                    <div class="user-name text-end pt-2">
+                                        <h6 th:text="${userinfo.name}" class="mb-0 text-gray-600">유저 이름</h6>
+                                        <span th:text="${userinfo.roles.title}" class="mb-0 text-sm text-gray-600">유저
+                                            등급
+                                        </span>
+                                    </div>
+                                    <div class="user-img d-flex align-items-center ms-3">
+                                        <div class="avatar avatar-lg bg-primary">
+                                            <img th:src="${auth.profileImageUrl}" alt="mdo" width="32" height="32"
+                                                class="rounded-circle">
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="user-name text-end">
-                                    <h6 th:text="${userinfo.name}" class="mb-0 text-gray-600">유저 이름</h6>
-                                    <span th:text="${userinfo.roles.title}" class="mb-0 text-sm text-gray-600">유저
-                                        등급
-                                    </span>
-                                </div>
-                            </div>
-                        </a>
-                        <ul class="dropdown-menu text-small" aria-labelledby="dropdownMenuButton">
-                            <li>
-                                <h6 th:text="'Hello, ' + ${userinfo.name}" class="dropdown-header">유저 이름</h6>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
+                                <li>
+                                    <h6 th:text="'Hello, ' + ${userinfo.name}" class="dropdown-header">유저 이름</h6>
+                                </li>
+                                <li><a class="dropdown-item" th:href="@{/account/mypage}"><i
+                                            class="icon-mid bi bi-person me-2"></i> 내
+                                        정보</a></li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li><a class="dropdown-item" href="/account/logout"><i
+                                            class="icon-mid bi bi-box-arrow-left me-2"></i>
+                                        Logout</a></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Toggle button -->
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                        <i class="fas fa-bars text-light"></i>
+                    </button>
+
+                    <!-- Collapsible wrapper -->
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                        <!-- Left links -->
+                        <ul class="navbar-nav me-auto d-flex flex-row mt-3 mt-lg-0">
+                            <li class="nav-item text-center mx-2 mx-lg-1">
+                                <a class="nav-link" aria-current="page" th:classappend="${PageActiveBtt} ? active" th:href="@{/account/tasting}">
+                                    <div>
+                                        <i class="fa-solid fa-book fa-lg mb-1"></i>
+                                    </div>
+                                    My Note
+                                </a>
                             </li>
-                            <li><a class="dropdown-item" th:href="@{/account/mypage}"><i
-                                        class="icon-mid bi bi-person me-2"></i> 내
-                                    정보</a></li>
-                            <li><a class="dropdown-item" href="#"><i class="icon-mid bi bi-gear me-2"></i>
-                                    Settings</a></li>
-                            <li><a class="dropdown-item" href="#"><i class="icon-mid bi bi-wallet me-2"></i>
-                                    Wallet</a></li>
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
-                            <li><a class="dropdown-item" href="/account/logout"><i
-                                        class="icon-mid bi bi-box-arrow-left me-2"></i>
-                                    Logout</a></li>
+                            <!-- <li class="nav-item text-center mx-2 mx-lg-1">
+                                <a class="nav-link" href="#!">
+                                    <div>
+                                        <i class="far fa-envelope fa-lg mb-1"></i>
+                                        <span class="badge rounded-pill badge-notification bg-danger">11</span>
+                                    </div>
+                                    Link
+                                </a>
+                            </li> -->
                         </ul>
+                        <!-- Left links -->
+
+                        <!-- Search form -->
                     </div>
                 </th:block>
                 <th:block sec:authorize="!isAuthenticated()">
-                    <div class="dropdown">
-                        <a href="#" data-bs-toggle="dropdown" aria-expanded="false">
-                            <div class="user-menu d-flex">
-                                <div class="user-img d-flex align-items-center">
-                                    <div class="avatar avatar-md">
-                                        <img src="/assets/images/faces/9.jpg">
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
-                            <li>
-                                <h6 class="dropdown-header">Hello Guest</h6>
+                    <div class="navbar-brand">
+                        <!-- Right links -->
+                        <ul class="navbar-nav ms-auto d-flex flex-row">
+                            <li class="nav-item text-center mx-2 mx-lg-1">
+                                <a class="nav-link" th:href="@{/account/login}"><i
+                                        class="icon-mid bi bi-box-arrow-in-right me-2"></i>Login</a>
                             </li>
-                            <li><a class="dropdown-item" href="/account/login"><i
-                                        class="icon-mid bi bi-box-arrow-left me-2"></i>
-                                    Login</a></li>
-                            <li><a class="dropdown-item" href="/account/register"><i
-                                        class="icon-mid bi bi-box-arrow-left me-2"></i>
-                                    Register</a></li>
+                            <li class="nav-item text-center mx-2 mx-lg-1">
+                                <a class="nav-link" th:href="@{/account/register}"><i
+                                        class="icon-mid bi bi-door-open-fill me-2"></i>Register</a>
+                            </li>
                         </ul>
+                        <!-- Right links -->
                     </div>
                 </th:block>
+                <!-- Collapsible wrapper -->
             </div>
-        </div>
+            <!-- Container wrapper -->
+        </nav>
+        <!-- Navbar -->
+
     </header>
+
+
 </th:block>
 
 </html>

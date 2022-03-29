@@ -321,9 +321,7 @@ function tastingPostSubmitContents(methods, postNum) {
                     // 오류 처리.
                     console.log(e)
                 })
-            } else
-                console.log(response)
-            if (response.url.includes('/login')) {
+            } else if (response.url.includes('/login')) {
                 location.href = "/account/login";
             } else {
                 return response.json()
@@ -381,10 +379,9 @@ async function postListWineTasting(page, id, link) {
             const tableBodyEl = document.getElementById("userTastingTableBody")
             const tableTrEl = document.createElement("tr")
 
-
             if (json.totalElements != 0) {
                 removeAllchild(tableBodyEl)
-                for (i = 0; i < json.content.length; i++) {
+                for (let i = 0; i < json.content.length; i++) {
                     let numberCount = ((json.totalElements - (json.pageable.pageNumber * 5)) - (i))
                     tableTrEl.innerHTML = `
                         <td>
@@ -402,7 +399,6 @@ async function postListWineTasting(page, id, link) {
                             </div>
                         </td>
                     `
-                    console.log(json.content[i])
                     // 번호 등록
                     tableTrEl.setAttribute('data-columnNum', json.content[i].postId)
                     // 공동
@@ -492,7 +488,7 @@ function pageNavDataSet(MainELId, customerData, ItemPageId, json, link) { //Main
         `
     if (json.totalElements != 0) {
         let maxPage = lastpage > json.totalPages ? json.totalPages + 1 : lastpage
-        for (i = firstpage; i < maxPage; i++) {
+        for (let i = firstpage; i < maxPage; i++) {
             let pageActive = ''
             if (json.pageable.pageNumber + 1 == i) {
                 pageActive = "active"
