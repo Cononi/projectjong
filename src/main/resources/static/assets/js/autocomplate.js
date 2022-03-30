@@ -35,7 +35,7 @@ class Autocomplete {
       }
     });
 
-    field.addEventListener('keyup', () => {
+    field.addEventListener('input', () => {
       if (this.options.onInput)
         this.options.onInput(this.field.value);
       if (this.field.value.length > 0 && this.field.value != null)

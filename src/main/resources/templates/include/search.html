@@ -1,7 +1,7 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <th:block th:fragment="searchFragment">
     <div class="row justify-content-md-center">
-        <form id='searchForms' th:action="@{/wine}" method="get" accept-charset="utf-8">
+        <form id='searchForms' accept-charset="utf-8">
             <input type='hidden' id="attr" name='attr' th:value='${search} ? ${search.attr}'>
             <input type='hidden' id="colour" name='colour' th:value="${search} ? ${search.colour}">
             <input type='hidden' id="subType" name='subType' th:value="${search} ? ${search.subType}">
@@ -20,11 +20,11 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body text-center">
-                        <form class="input-group mb-3">
+                        <div class="input-group">
                             <label class="shadow-sm btn btn-secondary" for="queryInfoName"><b>검색어</b></label>
                             <input type="text" class="form-control" name='queryInput' id="queryInfoName"
                                 autocomplete="off" th:value="${search != null} ? ${search.query}" placeholder="영문명 또는 한글명">
-                        </form>
+                        </div>
                         <div class="input-group mb-2" data-toggle="buttons">
                             <label class="shadow-sm input-group-text"><b>검색 조건</b></label>
                             <input type="radio" class="btn-check" name="attr" id="attrOption1" autocomplete="off"
@@ -59,30 +59,29 @@
                         </div>
                         <div class="input-group mb-2">
                             <label class="shadow-sm input-group-text"><b>나라 </b></label>
-                            <input type="text" class="form-control" id="countryInput" autocomplete="off" name="country"
-                                th:value="${search} ? ${search.country}">
+                            <input type="text" class="form-control" id="countryInput" autocomplete="off" name="country" th:value="${search} ? ${search.country}">
                         </div>
                         <button class="shadow-sm btn btn-primary" type="button" id="none">초기화</button>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
-                        <button type="button" class="btn btn-primary" id="modalInputCheck" >확인</button>
+                        <button type="button" class="btn btn-primary" id="modalInputCheck" data-bs-dismiss="modal" >확인</button>
                     </div>
                 </div>
             </div>
         </div>
 
 
-        <div class="col-xl-6 col-md-6 col-sm-12">
-            <form class="input-group mb-3">
+        <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
+            <div class="input-group" id="mainSearchFormInput">
                 <label class="shadow-sm input-group-text" for="queryInput"><b>검색어</b></label>
                 <input type="text" class="shadow-sm form-control" id="queryInput" name="queryInput"
                     th:value="${search != null} ? ${search.query}" autocomplete="off" placeholder="영문명 또는 한글명">
                 <button type="button" class="shadow-sm btn btn-success input-group-text" data-bs-toggle="modal"
                     data-bs-target="#searchmodal">상세</button>
-            </form>
+            </div>
             <div class="col-md-auto">
-                <div th:if="${search != null}" class="row justify-content-center" id="searchSpanList">
+                <div class="row justify-content-center" id="searchSpanList">
                 </div>
             </div>
         </div>

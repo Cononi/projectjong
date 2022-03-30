@@ -23,10 +23,8 @@ public class Wine {
     private final WineService wineService;
 
     @GetMapping(value = "wine")
-    public String wineListMain(@ModelAttribute Search search, Model model) throws IllegalAccessException {
-        if(StringUtils.isBlank(search.getQuery()))
-            return "pages/message/search-message";
-        model.addAttribute("wineList",wineService.wineAll(search));
+    public String wineListMain(Model model) throws IllegalAccessException {
+        model.addAttribute("searchPage", true);
         return "pages/wine/winelist";
     }
 

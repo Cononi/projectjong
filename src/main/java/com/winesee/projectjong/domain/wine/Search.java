@@ -2,9 +2,13 @@ package com.winesee.projectjong.domain.wine;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+import java.io.Serializable;
 
 @Getter
-public class Search {
+@NoArgsConstructor
+public class Search implements Serializable {
 
     // 이름검색시 쓰이는 필드명
     private String attr;

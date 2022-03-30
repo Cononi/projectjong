@@ -10,6 +10,8 @@
         <!-- header -->
         <th:block th:replace="include/header :: headerFragment"></th:block>
         <div id="main-content">
+            <!-- serches -->
+            <th:block th:replace="include/search :: searchFragment"></th:block>
             <!-- content -->
             <th:block layout:fragment="content"></th:block>
             <!-- footer -->

@@ -15,6 +15,7 @@ import java.util.List;
 
 public interface WineRepository extends JpaRepository<Wine, Long>, JpaSpecificationExecutor<Wine> {
 
+    @EntityGraph(attributePaths = {"country"})
     Page<Wine> findAll(Specification specification, Pageable pageable);
 
     @EntityGraph(attributePaths = {"country"})

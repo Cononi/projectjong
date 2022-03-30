@@ -1,3 +1,4 @@
+let con = true
 function SearchInfoController() {
     const searchMainForm = document.getElementById("searchForms")
     const children = Array.from(searchMainForm.children)
@@ -75,7 +76,7 @@ function SearchInfoController() {
 
         // 데이타 이름변환
         const searchSpanList = document.querySelector('#searchSpanList')
-        if (searchSpanList)
+        if (searchSpanList) {
             searchSpanList.querySelectorAll('span b').forEach(e => {
                 parserCountryList.forEach(country => {
                     if (country.value == e.innerText) {
@@ -85,23 +86,40 @@ function SearchInfoController() {
                     }
                 })
             });
+        }
     }
 
 
     // 검색창
+    function timeSubMitCon() {
+        let timeSubLodingImg = document.getElementById("lodingImg")
+        timeSubLodingImg.removeAttribute("class")
+        con = false
+        setTimeout(function () {
+            timeSubLodingImg.setAttribute("class", "d-none")
+            wineSearchFind(0)
+        }, 1000);
+        //지연
+    }
+
     function submitForm() {
-        const searchForm = document.querySelectorAll("form.input-group")
-        searchForm.forEach(e => e.addEventListener('submit', e => {
-            e.preventDefault()
-            searchMainForm.submit()
-        }))
+        const searchForm = document.getElementById('queryInput')
+        searchForm.addEventListener('keydown', (e) => {
+            if (e.keyCode === 13 && con) {
+                timeSubMitCon()
+            }
+        })
     }
 
     function modalForm() {
         const modalFormInput = document.getElementById("modalInputCheck")
         modalFormInput.addEventListener('click', () => {
-            searchMainForm.submit()
+            if (con) {
+                spanTypeCreateList()
+                timeSubMitCon()
+            }
         })
+
     }
 
 
@@ -130,13 +148,16 @@ function SearchInfoController() {
 
     // 타입 체킹
     function spanTypeCreateList() {
+        removeAllchild(searchSpanList)
         if (window.location.pathname == "/wine") {
             children.forEach(e => {
-                if (e.value && e.name != "type" && e.name != "page" && e.name != "query") {
-                    let spanTypeCreate = document.createElement("span");
-                    spanTypeCreate.setAttribute("class", "shadow-sm mx-1 input-group-text bg-white col-auto py-1 fw-bold")
-                    spanTypeCreate.innerText = typeInputCheck(e)
-                    searchSpanList.prepend(spanTypeCreate);
+                if (e.disabled == false) {
+                    if (e.value && e.name != "type" && e.name != "page" && e.name != "query") {
+                        let spanTypeCreate = document.createElement("span");
+                        spanTypeCreate.setAttribute("class", "shadow-sm mx-1 input-group-text bg-white col-auto py-1 fw-bold")
+                        spanTypeCreate.innerText = typeInputCheck(e)
+                        searchSpanList.prepend(spanTypeCreate);
+                    }
                 }
             })
         }
@@ -239,6 +260,97 @@ function SearchInfoController() {
 
 export { SearchInfoController }
 
+
+
+// -----------------------------------------------------------------
+// 검색
+async function wineSearchFind(pagenum) {
+    const searchMainForm = document.getElementById("searchForms")
+    const children = Array.from(searchMainForm.children)
+    const mainContentChangeDivEl = document.getElementById("mainContentChangeDiv")
+    const mainContentDivCard = document.createElement("div")
+    const tastingMessageDiv = document.getElementById("sectiontastingMassage")
+    const searchBodyCard = document.getElementById("searchMsgBodyCard")
+    searchBodyCard.removeAttribute("class")
+
+    // 메세지 제거
+    removeAllchild(searchBodyCard)
+    var object = {};
+    children.forEach(function (value) {
+        object[value.name] = value.value;
+    });
+    if (pagenum > 0) { object['page'] = pagenum }
+    let url = '/api/find/wine'
+    return await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(object),
+    })
+        .then(e => e.json())
+        .then(json => {
+            if (json.totalElements != 0) {
+                mainContentDivCard.setAttribute("class", "card box-shadow mx-auto px-auto")
+                mainContentDivCard.setAttribute("style", "width: 16rem;")
+                mainContentDivCard.setAttribute("th:data-columns", "modal")
+                if (tastingMessageDiv != null) {
+                    tastingMessageDiv.remove()
+                }
+                // 메인 제거
+                removeAllchild(mainContentChangeDivEl)
+                for (let i = 0; i < json.numberOfElements; i++) {
+                    let starList = ''
+                    for (let j = 1; j <= 5; j++) {
+                        starList += `<i style="color: #4249a9" class="bi` + (json.content[i].averageScore / 20 >= j ? ' bi-star-fill ' : ((json.content[i].averageScore % 20 != 0) && ((json.content[i].averageScore / 20) + 1) >= j ? ' bi-star-half ' : ' bi-star ')) + `fs-5"></i>`
+                    }
+                    mainContentDivCard.innerHTML = `
+                    <img src="/assets/images/samples/krug.jpg" class="card-img-top" alt="...">
+                    <div class="card-body px-2">
+                        <h6 style='color: #2b68e3'>`+ json.content[i].averageScore + ' / 100' + `</h6>
+                        `+ starList + `
+                        <h5 class="card-title">` + json.content[i].displayName + `</h5>
+                        <h6 class="card-sub-title">` + json.content[i].displayNameKo + `</h6>
+                        <hr>
+                        <p class="card-text">`+ json.content[i].contents + `</p>
+                    </div>
+    `
+                    // 번호
+                    mainContentDivCard.setAttribute("data-columnNum", json.content[i].wineId)
+                    //  공동
+                    mainContentChangeDivEl.appendChild(mainContentDivCard.cloneNode(true));
+                    con = true
+                }
+                // 컨텐츠 이동
+                mainContentChangeDivEl.querySelectorAll('div[data-columnNum]').forEach(e => { // 공통
+                    e.addEventListener('click', () => {
+                        location.href = "wine/" + (json.pageable.pageNumber + 1) + "/" + e.dataset.columnnum + "/" + 1
+                    })
+                })
+                pageNavDataSet('wineListPageList', wineSearchFind, 0, json)
+            } else {
+                const searchMsgDiv = document.getElementById("wineSearchMsg")
+                removeAllchild(mainContentChangeDivEl)
+                removeAllchild(document.getElementById('wineListPageList'))
+                createNoneMessageAllchild(mainContentChangeDivEl, searchBodyCard, searchMsgDiv, `
+                <div class="card-header">
+                <h4 class="card-title">메세지</h4>
+                </div>
+                <div class="card-body"><b>검색 결과가 존재하지 않습니다.</b>
+                </div>`)
+                con = true
+            }
+        }).catch(() => {
+            const searchMsgDiv = document.getElementById("wineSearchMsg")
+            removeAllchild(mainContentChangeDivEl)
+            removeAllchild(document.getElementById('wineListPageList'))
+            createNoneMessageAllchild(mainContentChangeDivEl, searchBodyCard, searchMsgDiv, `
+            <div class="card-header">
+            <h4 class="card-title">메세지</h4>
+            </div>
+            <div class="card-body"><b>최소 검색 단어는 2글자 이상입니다.</b>
+            </div>`)
+            con = true
+        })
+}
 
 //----------------------------------------------------------------//
 
@@ -370,7 +482,6 @@ function formExpCheck(e) {
 }
 
 
-// 테이스팅 페이지 ( 중복해서 쓰임으로 url 전달을 수정하도록 해야함.)
 async function postListWineTasting(page, id, link) {
     let url = '/api/v1/post/' + page + '/' + link + '/' + id
     return await fetch(url)
@@ -451,7 +562,7 @@ async function postListMyTasting(num) {
                 // 컨텐츠 이동
                 tastingDivEl.querySelectorAll('div[data-columnNum]').forEach(e => { // 공통
                     e.addEventListener('click', () => {
-                        postListWineTasting(1 , e.dataset.columnnum, 'wine')
+                        postListWineTasting(1, e.dataset.columnnum, 'wine')
                     })
                 })
                 pageNavDataSet('tastingPageList', postListMyTasting, 0, json)
@@ -509,6 +620,7 @@ function pageNavDataSet(MainELId, customerData, ItemPageId, json, link) { //Main
     tableNavUl.querySelectorAll('a[data-pagenum]').forEach(e => {
         if (!e.parentElement.classList.contains('active'))
             e.addEventListener('click', () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
                 if (customerData.length == 3)
                     customerData(e.dataset.pagenum, ItemPageId, link) // 공통
                 else
@@ -521,7 +633,7 @@ function pageNavDataSet(MainELId, customerData, ItemPageId, json, link) { //Main
 
 // 추가 함수
 function createNoneMessageAllchild(topBody, center, parent, ment) { // 메인,중앙,부모
-    topBody.remove()
+    removeAllchild(topBody)
     center.innerHTML = ment
     center.setAttribute('class', "text-center my-4")
     parent.appendChild(center)
