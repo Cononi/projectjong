@@ -68,8 +68,6 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Bean
     public UserLoginInterceptor userInterceptor() {
-
-        log.info(imglink);
         return new UserLoginInterceptor();
     }
 

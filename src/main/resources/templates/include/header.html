@@ -44,7 +44,7 @@
                                     </div>
                                     <div class="user-img d-flex align-items-center ms-3">
                                         <div class="avatar avatar-lg bg-primary">
-                                            <img th:src="${auth.profileImageUrl}" alt="mdo" width="32" height="32"
+                                            <img th:src="${#strings.defaultString(auth.profileImageUrl,'/assets/images/faces/default.jpg')}" alt="mdo" width="32" height="32"
                                                 class="rounded-circle">
                                         </div>
                                     </div>

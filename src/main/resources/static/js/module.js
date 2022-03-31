@@ -303,7 +303,7 @@ async function wineSearchFind(pagenum) {
                         starList += `<i style="color: #4249a9" class="bi` + (json.content[i].averageScore / 20 >= j ? ' bi-star-fill ' : ((json.content[i].averageScore % 20 != 0) && ((json.content[i].averageScore / 20) + 1) >= j ? ' bi-star-half ' : ' bi-star ')) + `fs-5"></i>`
                     }
                     mainContentDivCard.innerHTML = `
-                    <img src="/assets/images/samples/krug.jpg" class="card-img-top" alt="...">
+                    <img src="` + json.content[i].wineImageUrl + `" class="card-img-top" alt="...">
                     <div class="card-body px-2">
                         <h6 style='color: #2b68e3'>`+ json.content[i].averageScore + ' / 100' + `</h6>
                         `+ starList + `
@@ -561,7 +561,7 @@ async function postListMyTasting(num) {
                 }
                 for (let i = 0; i < json.numberOfElements; i++) {
                     tastingDivCard.innerHTML = `
-                <img src="/assets/images/samples/krug.jpg" class="card-img-top" alt="...">
+                <img src="`+ json.content[i].wineImageUrl + `" class="card-img-top" alt="...">
                 <p class="card-text mt-3 py-2 h6 small">`+ (json.content[i].displayNameKo.substring(0, 20)) + (json.content[i].displayNameKo.length > 20 ? '...' : '') + `</p>
                 `
                     // 번호

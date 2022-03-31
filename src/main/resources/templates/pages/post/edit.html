@@ -21,7 +21,7 @@
                     <span th:data-columns="${info.wineId}"></span>
                     <div class="row g-0">
                         <div class="card box-shadow shadow-lg mx-auto my-4 bg-light" style="width: 23rem;">
-                            <img src="/assets/images/samples/krug.jpg" class="card-img-top" alt="...">
+                            <img th:src="${info.wineImageUrl}" class="card-img-top" alt="...">
                             <div class="card-text bg-white card-img-bottom">
                                 <div class="card-body">
                                     <!-- 타이틀 -->

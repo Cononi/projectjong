@@ -35,7 +35,6 @@ public class User {
     public String login(Model model, @ModelAttribute("user") UserRequest user, HttpServletRequest request) {
         // 로그인 성공후 이전페이지로 리다이렉트.
         String referrer = request.getHeader("Referer");
-        log.info(referrer);
         request.getSession().setAttribute("prevPage", referrer);
         return "pages/login";
     }

@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.mail.MessagingException;
 import javax.persistence.NoResultException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -68,6 +69,12 @@ public class ExceptionHandling implements ErrorController {
         return "redirect:"+referer;
     }
 
+
+    @ExceptionHandler(MessagingException.class)
+    public String MessagingException(RedirectAttributes rtts,Exception e) {
+        rtts.addFlashAttribute("errorProfileMsg", e.getMessage());
+        return "redirect:/account/message";
+    }
 
 
     @ExceptionHandler(BadCredentialsException.class)

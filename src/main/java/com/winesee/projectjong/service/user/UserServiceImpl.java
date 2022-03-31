@@ -128,20 +128,20 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     public List<String> emailConfirm(String email, String authId, String authKey) throws MessagingException {
         List<String> msg = new ArrayList<>();
         // 이메일이 존재하고 이메일 인증이 안된경우.
-        Optional<User> user = Optional.of(userRepository.findByEmailAndIsEmailEnabledFalse(email));
+        User user = Optional.ofNullable(userRepository.findByEmailAndIsEmailEnabledFalse(email)).orElseThrow(() -> new MessagingException("유효하지 않는 상태 입니다."));
         // 가입 유저가 맞고 해당하는 authId와 실제 RedisServer에 존재하는 authId가 맞으면 코드 데이터를 넣고 아니면 새로 코드 발급
         EmailCode emailCode = emailCodeRepository.findById(authId)
                 .orElseGet(() ->emailCodeRepository.save(new EmailCode(email))
         );
         // 이메일이 존재하고 인증되지 않았으며 인증코드 조회가 되는경우 authId를 비교하며 비교후 맞으면 가입완료처리 아니면 재발송
        if(emailCode.getId().equals(authId)) {
-           user.get().userSecurityLockUpdate(user.get().getIsActive(), user.get().getIsNonLocked(), true);
-           userRepository.save(user.get());
+           user.userSecurityLockUpdate(user.getIsActive(), user.getIsNonLocked(), true);
+           userRepository.save(user);
            emailCodeRepository.delete(emailCode);
            msg.add("회원가입을 축하드립니다!");
            msg.add("인증이 완료되었습니다. <br/>확인을 누르면 메인페이지로 이동합니다.");
        } else {
-           mailService.sendRegisterMail(user.get().getUsername(),user.get().getEmail(),emailCode.getCode(), emailCode.getId());
+           mailService.sendRegisterMail(user.getUsername(),user.getEmail(),emailCode.getCode(), emailCode.getId());
            msg.add("유효하지 않은 접근 입니다.");
            msg.add("이메일 인증에 실패하였습니다. <br/>유효하지 않은 코드이거나 유효하지 않은 접근 입니다. <br/>새로운 이메일을 발송합니다.");
        }
@@ -198,7 +198,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     -----------------------------------------------*/
     @Override
     public UserResponse updateProfilePassword(UserResponse userinfo, PasswordChangeRequest request) throws ProfileErrorException {
-        log.info("비번바까");
         if(request.getPassword().isEmpty() || request.getConfirmPassword().isEmpty()){
             throw new ProfileErrorException(NULL_USER_PASSWORD_SUCCESSFULLY);
         }
@@ -319,7 +318,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     // 비밀번호 암호화
     private String encodePassword(String passBefore) {
-        log.info("새로운 유저 비밀번호 : " + passBefore);
         return passwordEncoder.encode(passBefore);
     }
 

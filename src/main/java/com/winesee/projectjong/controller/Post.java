@@ -33,7 +33,7 @@ public class Post {
         WineResponse wine = wineService.wineGet(number);
         // 와인정보 뿌림.
         model.addAttribute("wineInfo", wine);
-        return "/pages/post/post";
+        return "pages/post/post";
     }
 
     @GetMapping("post/edit/{number}")
@@ -44,7 +44,7 @@ public class Post {
             // 와인정보 뿌림.
             model.addAttribute("postInfo", post);
             model.addAttribute("wineInfo",post.getWineId());
-            return "/pages/post/edit";
+            return "pages/post/edit";
         } else {
             return "redirect:/";
         }
@@ -73,7 +73,7 @@ public class Post {
         model.addAttribute("backLink",backLink);
         // 포스트 정보
         model.addAttribute("postInfo", post);
-        return "/pages/post/postinfo";
+        return "pages/post/postinfo";
     }
 
     @GetMapping("account/post/list")
