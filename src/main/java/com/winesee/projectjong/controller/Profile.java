@@ -20,6 +20,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
@@ -126,7 +127,11 @@ public class Profile {
     }
 
     @GetMapping("tasting")
-    public String tatstingList(Model model) {
+    public String tatstingList(Model model, HttpServletRequest request) {
+        String referer = (String)request.getHeader("REFERER");
+        if(referer.contains("/post/info/")){
+            model.addAttribute("useBackPageNum", String.valueOf(referer.substring(referer.lastIndexOf("/")+1)));
+        }
         model.addAttribute("PageActiveBtt",true);
         return "pages/mypage/mypostlist";
     }

@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.util.ObjectUtils;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
@@ -32,10 +33,7 @@ public class PostResource {
     public ResponseEntity<?> postCreate(HttpServletRequest request, @RequestBody @Validated PostRequest post, Errors error, @AuthenticationPrincipal UserResponse user){
         if(request.getSession().getAttribute(user.getUsername()).equals(true)){
             if(error.hasErrors()) {
-                return new ResponseEntity<>(error.getFieldErrors().stream().collect(Collectors.toMap(
-                        FieldError::getField,
-                        FieldError::getDefaultMessage)
-                ), HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>("입력오류",HttpStatus.BAD_REQUEST);
             }
             request.getSession().setAttribute(user.getUsername(),false);
             return new ResponseEntity<>(postService.postCreate(post,user), HttpStatus.OK);
@@ -49,10 +47,7 @@ public class PostResource {
     public ResponseEntity<?> postEdit(HttpServletRequest request, @RequestBody @Validated PostRequest post, Errors error, @AuthenticationPrincipal UserResponse user){
         if(request.getSession().getAttribute(user.getUsername()).equals(true)){
             if(error.hasErrors()) {
-                return new ResponseEntity<>(error.getFieldErrors().stream().collect(Collectors.toMap(
-                        FieldError::getField,
-                        FieldError::getDefaultMessage)
-                ), HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>("입력오류", HttpStatus.BAD_REQUEST);
             }
             request.getSession().setAttribute(user.getUsername(),false);
             return new ResponseEntity<>(postService.postEdit(post,user), HttpStatus.OK);

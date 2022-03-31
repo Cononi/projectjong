@@ -28,7 +28,7 @@ public class Post {
     private final PostService postService;
 
     @GetMapping("post/{number}")
-    public String post(Model model, @PathVariable("number") Long number){
+    public String post(Model model, @PathVariable("number") Long number, HttpServletRequest request){
         // 와인 정보 가져옴.
         WineResponse wine = wineService.wineGet(number);
         // 와인정보 뿌림.

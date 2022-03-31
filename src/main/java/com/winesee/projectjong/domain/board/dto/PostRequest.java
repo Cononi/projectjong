@@ -61,6 +61,8 @@ public class PostRequest implements Serializable {
 
     // 알콜
     @Positive(message = "숫자만 입력 가능합니다.")
+    @Min(value = 0, message = "최소 0도 부터 입니다.")
+    @Max(value = 100, message = "최대 100도 이하 입니다.")
     private int alcPostData;
 
     // 최종 점수 ( 1 ~ 100 )

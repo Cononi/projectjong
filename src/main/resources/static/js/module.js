@@ -370,11 +370,10 @@ function tastingPostSubmitContents(methods, postNum) {
     const rangeValueText = document.getElementById("totalCountValue")
     const starPointIcon = document.querySelectorAll("#starPointIcon i")
 
-
     function rangeInputChange() {
         rangeValueText.innerText = rangeValueBtt.value + " / 100"
         let rangeV = rangeValueBtt.value / 20
-        for (i = starPointIcon.length; 0 <= i; i--) {
+        for (let i = starPointIcon.length; 0 <= i; i--) {
             if (Math.floor(rangeV) > i)
                 starPointIcon[i].classList = "bi bi-star-fill fa-2x"
             else if (rangeV >= i + 0.5)
@@ -390,6 +389,18 @@ function tastingPostSubmitContents(methods, postNum) {
     // 초기값
     rangeInputChange()
 
+    
+    function formInputNotCheck(){
+        if(titleValueText.value == '' && ContentsValueText.value == ''
+        && vintageValueText.value == '' && alcoholValueText.value == ''
+        && rateCheckItem(acidityRate) == '' && rateCheckItem(bodyRate) == ''
+        && rateCheckItem(sugarRate) == '' && priceValueText.value == ''){
+            document.getElementById('postModalBtt').click()
+            return false
+        }
+        return true
+    }
+
     // 별 체크 레이팅
     const acidityRate = document.getElementsByName("acidityEat")
     const bodyRate = document.getElementsByName("bodyEat")
@@ -401,11 +412,13 @@ function tastingPostSubmitContents(methods, postNum) {
         return itemNum
     }
 
-    tastingBtnSumbit.addEventListener('click', async (e) => {
-        // e.target.setAttribute("disabled", "disabled")
-        let numberInfo = await tastingPostCall()
-        if (numberInfo != null)
-            location.href = "/post/info/" + numberInfo + "/1"
+    tastingBtnSumbit.addEventListener('click', async () => {
+        console.log(formInputNotCheck())
+        if(formInputNotCheck()){
+            let numberInfo = await tastingPostCall()
+            if (numberInfo != null)
+                location.href = "/post/info/" + numberInfo + "/1"
+        }
     })
 
     function tastingPostCall() {
@@ -428,11 +441,7 @@ function tastingPostSubmitContents(methods, postNum) {
             }),
         }).then(function (response) {
             if (!response.ok) {
-                let error = response
-                error.then(e => {
-                    // 오류 처리.
-                    console.log(e)
-                })
+                document.getElementById('postModalBtt').click()
             } else if (response.url.includes('/login')) {
                 location.href = "/account/login";
             } else {
@@ -482,6 +491,7 @@ function formExpCheck(e) {
 }
 
 
+let postCon = ''
 async function postListWineTasting(page, id, link) {
     let url = '/api/v1/post/' + page + '/' + link + '/' + id
     return await fetch(url)
@@ -518,7 +528,7 @@ async function postListWineTasting(page, id, link) {
                 // 컨텐츠 이동
                 tableBodyEl.querySelectorAll('tr[data-columnNum]').forEach(e => { // 공통
                     e.addEventListener('click', () => {
-                        location.href = "/post/info/" + e.dataset.columnnum + "/" + (json.pageable.pageNumber + 1)
+                        location.href = "/post/info/" + e.dataset.columnnum + "/" + (postCon == '' ? json.pageable.pageNumber + 1 : postCon)
                     })
                 })
                 pageNavDataSet('wineInfoPagelistNavBar', postListWineTasting, id, json, link)
@@ -563,6 +573,8 @@ async function postListMyTasting(num) {
                 tastingDivEl.querySelectorAll('div[data-columnNum]').forEach(e => { // 공통
                     e.addEventListener('click', () => {
                         postListWineTasting(1, e.dataset.columnnum, 'wine')
+                        document.getElementById('postCreatBtt').href = "/post/" + e.dataset.columnnum
+                        postCon = (json.pageable.pageNumber+1)
                     })
                 })
                 pageNavDataSet('tastingPageList', postListMyTasting, 0, json)
