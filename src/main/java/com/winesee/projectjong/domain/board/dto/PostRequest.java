@@ -33,8 +33,7 @@ public class PostRequest implements Serializable {
     private Long winePostData;
 
     // 와인 빈티지
-    @NotBlank(message = "빈티지 입력은 필수 입니다.")
-    @Pattern(regexp = "^[0-9]{1,4}$", message = "숫자만 입력 가능합니다.")
+    @Pattern(regexp = "^[A-Za-z0-9]{0,4}$", message = "숫자만 입력 가능합니다.")
     private String vinPostData;
 
     // 바디 1-5
@@ -90,6 +89,10 @@ public class PostRequest implements Serializable {
         this.aciPostData = alcohol;
         this.scPostData = score;
         this.conPostData = contents;
+    }
+
+    public void vintageCheck(String vin){
+        this.vinPostData = vin;
     }
 
 //    public Post toEntity(){

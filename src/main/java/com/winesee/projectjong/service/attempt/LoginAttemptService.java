@@ -20,7 +20,7 @@ public class LoginAttemptService {
         super();
         // 계정 차단
         loginAttemptCache = CacheBuilder.newBuilder()
-                .expireAfterWrite(15, MINUTES)
+                .expireAfterWrite(10, MINUTES)
                 .maximumSize(100)
                 .build(new CacheLoader<String, Integer>() {
                     public Integer load(String key){

@@ -352,6 +352,58 @@ async function wineSearchFind(pagenum) {
         })
 }
 
+export function passFindEmail() {
+
+    // const findForm = Array.from(document.getElementById('passResetInputForm').children)
+    var object = {};
+    const findInputList = document.querySelectorAll('#findInputList input')
+    findInputList.forEach(e => {
+        e.addEventListener('input', data => {
+            if (data.target.name == 'username') {
+                object[data.target.name] = data.target.value;
+            } else if (data.target.name == 'email') {
+                object[data.target.name] = data.target.value;
+            }
+        })
+    })
+
+    const inputButtenResult =  document.getElementById('findPassWordReset')
+    const findPassWordCon = document.getElementById('findPassWordCon')
+    findPassWordCon.addEventListener('click', () => {
+            if('username' in object && 'username' in object) {
+                console.log(object)
+                let url = '/api/find/pass'
+                fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(object)
+                }).then(function (response) {
+                    if (!response.ok) {
+                        response.json().then(res => {
+                            return res
+                        }).then(res => {
+                            Object.keys(res).forEach(data => {
+                                findInputList.forEach(value => {
+                                    if(data == value.name) {
+                                        value.nextElementSibling.innerText = res[data]
+                                    }
+                                })
+                            })
+                        })
+                    } else {
+                        findInputList.forEach(e=> e.value = '')
+                        inputButtenResult.click()
+                        const findPassWordResetMsg = document.getElementById("findPassWordResetMsg")
+                        response.json().then(res => {return res}).then(res => {
+                            findPassWordResetMsg.innerText= res['message']
+                        })
+
+                    }
+                });
+            }
+        })
+}
+
 //----------------------------------------------------------------//
 
 function tastingPostSubmitContents(methods, postNum) {
@@ -389,12 +441,11 @@ function tastingPostSubmitContents(methods, postNum) {
     // 초기값
     rangeInputChange()
 
-    
-    function formInputNotCheck(){
-        if(titleValueText.value == '' && ContentsValueText.value == ''
-        && vintageValueText.value == '' && alcoholValueText.value == ''
-        && rateCheckItem(acidityRate) == '' && rateCheckItem(bodyRate) == ''
-        && rateCheckItem(sugarRate) == '' && priceValueText.value == ''){
+
+    function formInputNotCheck() {
+        if (titleValueText.value == '' && ContentsValueText.value == '' && alcoholValueText.value == ''
+            && rateCheckItem(acidityRate) == '' && rateCheckItem(bodyRate) == ''
+            && rateCheckItem(sugarRate) == '' && priceValueText.value == '') {
             document.getElementById('postModalBtt').click()
             return false
         }
@@ -414,7 +465,7 @@ function tastingPostSubmitContents(methods, postNum) {
 
     tastingBtnSumbit.addEventListener('click', async () => {
         console.log(formInputNotCheck())
-        if(formInputNotCheck()){
+        if (formInputNotCheck()) {
             let numberInfo = await tastingPostCall()
             if (numberInfo != null)
                 location.href = "/post/info/" + numberInfo + "/1"
@@ -574,7 +625,7 @@ async function postListMyTasting(num) {
                     e.addEventListener('click', () => {
                         postListWineTasting(1, e.dataset.columnnum, 'wine')
                         document.getElementById('postCreatBtt').href = "/post/" + e.dataset.columnnum
-                        postCon = (json.pageable.pageNumber+1)
+                        postCon = (json.pageable.pageNumber + 1)
                     })
                 })
                 pageNavDataSet('tastingPageList', postListMyTasting, 0, json)

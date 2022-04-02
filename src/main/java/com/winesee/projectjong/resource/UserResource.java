@@ -5,6 +5,7 @@ import com.winesee.projectjong.config.exception.EmailExistException;
 import com.winesee.projectjong.config.exception.UserNotFoundException;
 import com.winesee.projectjong.config.exception.UsernameExistException;
 import com.winesee.projectjong.domain.user.Role;
+import com.winesee.projectjong.domain.user.dto.UserPasswordFindRequest;
 import com.winesee.projectjong.domain.user.dto.UserResponse;
 import com.winesee.projectjong.service.user.UserService;
 import lombok.Getter;
@@ -14,6 +15,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.Errors;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -24,9 +28,10 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.winesee.projectjong.config.constant.FileConstant.*;
-import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.HttpStatus.*;
 import static org.springframework.http.MediaType.IMAGE_JPEG_VALUE;
 
 
@@ -66,6 +71,16 @@ public class UserResource {
         return Files.readAllBytes(Paths.get(USER_FOLDER + username + FORWARD_SLASH + fileName));
     }
 
+    @PostMapping(path = "find/pass",  produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getFindPassword(@RequestBody @Validated UserPasswordFindRequest request, Errors error){
+        if(error.hasErrors()){
+            return new ResponseEntity<>(error.getFieldErrors().stream().collect(Collectors.toMap(
+                    FieldError::getField,
+                    FieldError::getDefaultMessage)
+            ), BAD_REQUEST);
+        }
+        return response(OK,userService.userPasswordFind(request));
+    }
 //    @GetMapping(path = "image/profile/{username}", produces = IMAGE_JPEG_VALUE)
 //    public byte[] getTempProfileImage(@PathVariable("username") String username) throws IOException {
 //        URL url = new URL(TEMP_PROFILE_IMAGE_BASE_URL + username);

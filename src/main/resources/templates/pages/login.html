@@ -38,14 +38,65 @@
                             </label>
                         </div>
                         <div class="form-group position-relative has-icon-left mb-4">
-                            <span class="login-error-msg"><th:block th:text="${errorExceptionMSG}"></th:block></span>
+                            <span class="login-error-msg">
+                                <th:block th:text="${errorExceptionMSG}"></th:block>
+                            </span>
                         </div>
                         <button class="btn btn-primary btn-block btn-lg shadow-lg mt-2">Log in</button>
                     </div>
                 </form>
                 <div class="text-center mt-3 text-lg fs-4">
-                    <a th:href="@{/account/register}" class="btn btn-outline-secondary" >회원 가입</a>
-                    <a class="btn btn-outline-secondary" href="#">비밀번호 찾기</a>
+                    <a th:href="@{/account/register}" class="btn btn-outline-secondary">회원 가입</a>
+                    <a class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#passFindModal">비밀번호
+                        찾기</a>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- MoLine -->
+        <div class="modal fade" id="passFindModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+            aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-dialog-centered modal-dialog-scrollable"
+                role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalCenterTitle">비밀번호 찾기</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                            <i data-feather="x"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body" id="findInputList">
+                        <div class="form-group">
+                            <input type="text" placeholder="회원 아이디" name="username" class="form-control">
+                            <span class="error-message"></span>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" placeholder="회원 이메일" name="email" class="form-control">
+                            <span class="error-message"></span>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary"  id="findPassWordCon">확인</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="passFindModal2" aria-hidden="true" aria-labelledby="exampleModalToggleLabel2"
+            tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalToggleLabel2">비밀번호 찾기 결과</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body" id="findPassWordResetMsg">
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-primary" data-bs-target="#passFindModal" data-bs-toggle="modal"
+                            data-bs-dismiss="modal" id="findPassWordResetBack">확인</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -54,7 +105,12 @@
 
             </div>
         </div>
+        <button data-bs-target="#passFindModal2" data-bs-toggle="modal" data-bs-dismiss="modal" id="findPassWordReset" hidden="true"></button>
     </div>
+    <script th:inline="javascript" type="module">
+        import { passFindEmail } from '/js/module.js';
+        passFindEmail()
+    </script>
 </th:block>
 
 </html>

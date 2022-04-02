@@ -109,7 +109,7 @@
                                             <tbody>
                                                 <tr>
                                                     <td class="col-3"><b>Vintage</b></td>
-                                                    <td class="col-3"><b th:text="${info.vintage} + ' 년'">vin</b>
+                                                    <td class="col-3"><b th:text="${!#strings.isEmpty(info.vintage)} ? ${info.vintage} + ' 년' : ${info.vintage}">vin</b>
                                                     </td>
                                                 </tr>
                                                 <tr>

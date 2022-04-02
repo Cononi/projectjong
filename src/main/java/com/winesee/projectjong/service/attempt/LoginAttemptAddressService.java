@@ -14,7 +14,7 @@ import static java.util.concurrent.TimeUnit.MINUTES;
 @Service
 @Slf4j
 public class LoginAttemptAddressService {
-    private static final int MAXIMUM_NUMBER_OF_ATTEMPTSADRESS = 3;
+    private static final int MAXIMUM_NUMBER_OF_ATTEMPTSADRESS = 30;
     private static final int ATTEMPT_INCREMENT = 1;
     private final LoadingCache<String, Integer> loginAttemptCacheAdress;
 
@@ -39,7 +39,6 @@ public class LoginAttemptAddressService {
         int attemptAddress = 0;
         try {
             attemptAddress = ATTEMPT_INCREMENT + loginAttemptCacheAdress.get(address);
-            log.info(String.valueOf(attemptAddress));
         } catch (ExecutionException e) {
             e.printStackTrace();
         }

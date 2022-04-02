@@ -64,6 +64,9 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addResourceHandler("/image/wine/**")
                 .addResourceLocations(imglink)
                 .setCacheControl(cacheControl2);
+        registry.addResourceHandler("api/image/**")
+                .addResourceLocations(System.getProperty("user.home") + "/warine/user/")
+                .setCacheControl(cacheControl);
     }
 
     @Bean

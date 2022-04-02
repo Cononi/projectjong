@@ -4,6 +4,7 @@ import com.winesee.projectjong.config.exception.*;
 import com.winesee.projectjong.domain.user.Role;
 import com.winesee.projectjong.domain.user.User;
 import com.winesee.projectjong.domain.user.dto.PasswordChangeRequest;
+import com.winesee.projectjong.domain.user.dto.UserPasswordFindRequest;
 import com.winesee.projectjong.domain.user.dto.UserRequest;
 import com.winesee.projectjong.domain.user.dto.UserResponse;
 import org.springframework.http.ResponseEntity;
@@ -91,6 +92,8 @@ public interface UserService {
     Errors userValidateCheck(Errors errors, UserRequest user);
 
     List<String> emailConfirm(String email, String authId, String authKey) throws MessagingException;
+
+    String userPasswordFind(UserPasswordFindRequest request);
 
     boolean passwordAuth(String password, String passwordAuth);
 }

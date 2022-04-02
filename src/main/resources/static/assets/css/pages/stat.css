@@ -12,7 +12,7 @@ div.starPoint input[type=radio]{
 div.starPoint label{
     font-size: 1.5em; /* 이모지 크기 */
     color: transparent; /* 기존 이모지 컬러 제거 */
-    text-shadow: 0 0 0 #98989D; /* 새 이모지 색상 부여 */
+    text-shadow: 0 0 0 #b0e17f; /* 새 이모지 색상 부여 */
 }
 div.starPoint label:hover{
     text-shadow: 0 0 0 #dc3545; /* 마우스 호버 */

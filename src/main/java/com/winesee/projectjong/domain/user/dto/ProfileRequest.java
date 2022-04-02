@@ -20,7 +20,7 @@ import javax.validation.constraints.Pattern;
 @Getter
 public class ProfileRequest {
     @NotBlank(message = "닉네임은 필수 입력 입니다.")
-    @Pattern(regexp = "^[0-9a-zA-Z가-힣]{3,10}$", message = "닉네임은 3자리부터 10자리까지 영문,한글,숫자만 입력 가능합니다.")
+    @Pattern(regexp = "^[0-9a-zA-Z가-힣]{1,10}$", message = "닉네임은 1자리부터 10자리까지 영문,한글,숫자만 입력 가능합니다.")
     private String name;
     private MultipartFile profileImage;
 

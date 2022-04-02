@@ -7,6 +7,7 @@ import com.winesee.projectjong.domain.user.Role;
 import com.winesee.projectjong.domain.user.User;
 import com.winesee.projectjong.domain.user.UserRepository;
 import com.winesee.projectjong.domain.user.dto.PasswordChangeRequest;
+import com.winesee.projectjong.domain.user.dto.UserPasswordFindRequest;
 import com.winesee.projectjong.domain.user.dto.UserRequest;
 import com.winesee.projectjong.domain.user.dto.UserResponse;
 import com.winesee.projectjong.service.attempt.LoginAttemptService;
@@ -260,7 +261,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
           userCheck - Api용 - 사용중인 아이디 조회
     -----------------------------------------------*/
     @Override
-    public String userCheck(String username, String uri) throws UserNotFoundException, EmailExistException, UsernameExistException {
+    public String userCheck(String username, String uri) throws EmailExistException, UsernameExistException {
         String msg = "";
         if(uri.equals("/api/find/username/"+username)){
             validateNewUsernameAndEmail(username,null,null);
@@ -291,6 +292,28 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             }
         }
         return errors;
+    }
+
+
+    /*-----------------------------------------------
+      userPasswordFind - 비밀번호 찾기
+    -----------------------------------------------*/
+    @Override
+    public String userPasswordFind(UserPasswordFindRequest request) {
+        String errorMsg = "";
+        User user = userRepository.findByEmail(request.getEmail());
+        if(ObjectUtils.isEmpty(user)) {
+            errorMsg = "회원정보가 존재하지 않습니다. 확인 바랍니다.";
+        } else if(request.getUsername().equals(user.getUsername()) && request.getEmail().equals(user.getEmail())){
+            String pass = generatePassword();
+            user.userPasswordUpdate(encodePassword(pass));
+            userRepository.save(user);
+            mailService.sendFindPassMail(user.getName(),user.getEmail(),pass);
+            errorMsg = "임시 비밀번호가 가입하신 이메일로 발송되었습니다. 확인후 꼭 변경해주시기 바랍니다.";
+        } else {
+            errorMsg = "회원정보가 존재하지 않습니다. 확인 바랍니다.";
+        }
+        return errorMsg;
     }
 
 
