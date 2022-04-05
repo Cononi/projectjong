@@ -41,7 +41,7 @@ public class WebConfig implements WebMvcConfigurer {
                 .addPathPatterns("/account/mypage", "/account/pass-change")
                 .excludePathPatterns("/assets/**", "/api/**","/js/**")
                 .order(1);
-        registry.addInterceptor(new ApiRequstInterceptor(passwordEncoder))
+        registry.addInterceptor(new ApiRequstInterceptor())
                 .addPathPatterns(okPath)
                 .excludePathPatterns(nonPath)
                 .order(2);

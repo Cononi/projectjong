@@ -1,5 +1,7 @@
 package com.winesee.projectjong.service.post;
 
+import com.winesee.projectjong.domain.board.Comment;
+import com.winesee.projectjong.domain.board.CommentRepository;
 import com.winesee.projectjong.domain.board.Post;
 import com.winesee.projectjong.domain.board.PostRepository;
 import com.winesee.projectjong.domain.board.dto.PostListResponse;
@@ -28,6 +30,7 @@ public class PostServiceImpl implements PostService {
 
     private final PostRepository postRepository;
     private final WineRepository wineRepository;
+    private final CommentRepository commentRepository;
 
     @Override
     public Page<PostListResponse> postListSearch(int pageCount, Long wineId) {
@@ -63,7 +66,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public PostResponse postGet(Long postId) {
-        return new PostResponse(postRepository.findById(postId).orElseThrow(() -> new NoSuchElementException("존재하지 않습니다.")));
+        return new PostResponse(postRepository.findByPostId(postId).orElseThrow(() -> new NoSuchElementException("존재하지 않습니다.")));
     }
 
     @Override
@@ -86,10 +89,8 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public void postDelete(Long number, UserResponse user) {
-        Post post = postRepository.getById(number);
-        if(post.getUserId().getId().equals(user.getId())){
-            postRepository.deleteById(number);
-        }
+        commentRepository.deleteAllById(number);
+        postRepository.deleteByPostIdAndUserId(number, user.getId());
     }
 
     @Override

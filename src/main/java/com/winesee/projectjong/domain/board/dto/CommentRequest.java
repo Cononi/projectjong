@@ -5,39 +5,28 @@ import com.winesee.projectjong.domain.board.Post;
 import com.winesee.projectjong.domain.user.User;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 
 @Getter
+@NoArgsConstructor
 public class CommentRequest {
 
-    // 코멘트 번호
-    private Long commentsId;
 
     // 연관 게시글
-    private Post post;
+    private Long postId;
 
     // 작성자
-    private User user;
+    private User userId;
 
     // 작성내용
     private String comment;
 
 
     @Builder
-    public CommentRequest(Long commentsId, Post post, User user, String comment) {
-        this.commentsId = commentsId;
-        this.post = post;
-        this.user = user;
+    public CommentRequest(Long postId, String comment) {
+        this.postId= postId;
         this.comment = comment;
-    }
-
-    public Comment toEntity(){
-        return Comment.builder()
-                .commentsId(commentsId)
-                .post(post)
-                .user(user)
-                .comment(comment)
-                .build();
     }
 
 

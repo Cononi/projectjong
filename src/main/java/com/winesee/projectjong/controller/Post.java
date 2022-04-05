@@ -6,11 +6,13 @@ import com.winesee.projectjong.domain.user.dto.UserResponse;
 import com.winesee.projectjong.domain.wine.WineRepository;
 import com.winesee.projectjong.domain.wine.dto.WineRequest;
 import com.winesee.projectjong.domain.wine.dto.WineResponse;
+import com.winesee.projectjong.service.comment.CommentService;
 import com.winesee.projectjong.service.post.PostService;
 import com.winesee.projectjong.service.wine.WineService;
 import io.lettuce.core.dynamic.annotation.Param;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -26,6 +28,7 @@ public class Post {
 
     private final WineService wineService;
     private final PostService postService;
+    private final CommentService commentService;
 
     @GetMapping("post/{number}")
     public String post(Model model, @PathVariable("number") Long number, HttpServletRequest request){
@@ -56,6 +59,7 @@ public class Post {
         String referer = (String)request.getHeader("REFERER");
         PostResponse post = postService.postGet(number);
         String backLink ="";
+
         // 이전 페이지 정보를 가져옴.
         if(referer != null){
             if(referer.contains("wine/")) {

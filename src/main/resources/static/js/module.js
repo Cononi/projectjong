@@ -367,41 +367,40 @@ export function passFindEmail() {
         })
     })
 
-    const inputButtenResult =  document.getElementById('findPassWordReset')
+    const inputButtenResult = document.getElementById('findPassWordReset')
     const findPassWordCon = document.getElementById('findPassWordCon')
     findPassWordCon.addEventListener('click', () => {
-            if('username' in object && 'username' in object) {
-                console.log(object)
-                let url = '/api/find/pass'
-                fetch(url, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(object)
-                }).then(function (response) {
-                    if (!response.ok) {
-                        response.json().then(res => {
-                            return res
-                        }).then(res => {
-                            Object.keys(res).forEach(data => {
-                                findInputList.forEach(value => {
-                                    if(data == value.name) {
-                                        value.nextElementSibling.innerText = res[data]
-                                    }
-                                })
+        if ('username' in object && 'username' in object) {
+            let url = '/api/find/pass'
+            fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(object)
+            }).then(function (response) {
+                if (!response.ok) {
+                    response.json().then(res => {
+                        return res
+                    }).then(res => {
+                        Object.keys(res).forEach(data => {
+                            findInputList.forEach(value => {
+                                if (data == value.name) {
+                                    value.nextElementSibling.innerText = res[data]
+                                }
                             })
                         })
-                    } else {
-                        findInputList.forEach(e=> e.value = '')
-                        inputButtenResult.click()
-                        const findPassWordResetMsg = document.getElementById("findPassWordResetMsg")
-                        response.json().then(res => {return res}).then(res => {
-                            findPassWordResetMsg.innerText= res['message']
-                        })
+                    })
+                } else {
+                    findInputList.forEach(e => e.value = '')
+                    inputButtenResult.click()
+                    const findPassWordResetMsg = document.getElementById("findPassWordResetMsg")
+                    response.json().then(res => { return res }).then(res => {
+                        findPassWordResetMsg.innerText = res['message']
+                    })
 
-                    }
-                });
-            }
-        })
+                }
+            });
+        }
+    })
 }
 
 //----------------------------------------------------------------//
@@ -464,7 +463,6 @@ function tastingPostSubmitContents(methods, postNum) {
     }
 
     tastingBtnSumbit.addEventListener('click', async () => {
-        console.log(formInputNotCheck())
         if (formInputNotCheck()) {
             let numberInfo = await tastingPostCall()
             if (numberInfo != null)
@@ -559,12 +557,12 @@ async function postListWineTasting(page, id, link) {
                         <td>
                             <div class="row justify-content-md-center align-self-center">
                                 <div class="row">
-                                    <b class="col-md-2"><i class="fa-solid fa-book mx-1"></i>`+ numberCount + `</b>
-                                    <p class="col-md-6 font-bold mb-0">`+ (json.content[i].title.slice(0, 40)) + (json.content[i].title.length > 40 ? '...' : '') + `</p>
+                                    <b class="col-md-2"><i class="fa-solid fa-book me-1"></i>`+ numberCount + `</b>
+                                    <span class="col-md-6 font-bold mb-0">`+ (json.content[i].title.slice(0, 40)) + (json.content[i].title.length > 40 ? '...' : '') + `</span>
                                     <div class="col-md-4">
                                         <div class="row">
-                                            <p class="col-7 mb-0">`+ json.content[i].userId + `</p>
-                                            <p class="col-5 text-center mb-0">`+ json.content[i].modifieDate + `</p>
+                                            <span class="col-7 mb-0">`+ json.content[i].userId + `</span>
+                                            <span class="col-5 text-center mb-0">`+ json.content[i].modifieDate + `</span>
                                         </div>
                                      </div>
                                 </div>
@@ -638,6 +636,104 @@ async function postListMyTasting(num) {
 export { postListWineTasting, postListMyTasting }
 
 
+// 코멘 정보
+export function postCommentSubmit(id, data) {
+
+    const commentInput = document.getElementById("commentFormControlTextarea")
+    const commentSubmit = document.getElementById("commentBtnEditSubmit")
+
+
+    function tastingPostCall(id, methods) {
+        if (commentInput.value.length >= 15) {
+            let url = '/api/v1/comment'
+            fetch(url, {
+                method: methods,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    comment: commentInput.value,
+                    postId: id
+                }),
+            }).then(function (response) {
+                if (!response.ok) {
+                    document.getElementById('postModalBtt').click()
+                } else if (response.url.includes('/login')) {
+                    location.href = "/account/login";
+                } else {
+                    postCommentList(1, id, data)
+                    commentInput.value = ''
+                }
+            });
+        } else {
+            alert('15자리 이상 입력해주세요.')
+        }
+    }
+
+    commentSubmit.addEventListener('click', e => {
+        tastingPostCall(id, 'POST')
+    })
+}
+
+
+// 코멘 리스트
+export async function postCommentList(page, item, data) {
+    let url = '/api/v1/comment/' + item + '/' + page
+    return await fetch(url)
+        .then(e => e.json())
+        .then(json => {
+            const tableBodyEl = document.getElementById("userTastingTableBody")
+            const tableTrEl = document.createElement("tr")
+
+            if (json.totalElements != 0) {
+                removeAllchild(tableBodyEl)
+                for (let i = 0; i < json.content.length; i++) {
+                    let numberCount = ((json.totalElements - (json.pageable.pageNumber * 5)) - (i))
+                    console.log(json.content[i].num, data)
+                    let editBtt = function () {
+                        if (data == json.content[i].num) {
+                            return `<div class="row justify-content-center">
+                                <span class="col-auto"><i class="fa-solid fa-pen"></i>edit</span>
+                                <span class="col-auto"><i class="fa-solid fa-eraser"></i>del</span>
+                            </div>`
+                        }
+                        return ``
+                    }
+                    tableTrEl.innerHTML = `
+                        <td data-bs-toggle="collapse" data-bs-target="#collapseOne`+ i + `" aria-expanded="true" aria-controls="collapseOne` + i + `" id="heading` + i + `">
+                            <div class="row justify-content-center align-self-center">
+                                <div class="row">
+                                    <b class="col-md-2"><i class="fa-solid fa-book me-1"></i>`+ numberCount + `</b>
+                                    <span class="col-md-5 font-bold mb-0">`+ (json.content[i].comment.slice(0, 20)) + (json.content[i].comment.length > 20 ? '...' : '') + `</span>
+                                    <div class="col-md-5">
+                                        <div class="row">
+                                            <span class="col-5 mb-0">`+ json.content[i].userId + `</span>
+                                            <span class="col-7 text-center mb-0">`+ json.content[i].modifieDate + `</span>
+                                        </div>
+                                     </div>
+                                </div>
+                            </div>
+                            <div id="collapseOne`+ i + `" class="accordion-collapse collapse" aria-labelledby="heading` + i + `" data-bs-parent="#accordion">
+                                <div class="row m-2">
+                                    <div class="col-md-10">
+                                    `+ json.content[i].comment + `
+                                    </div>
+                                </div>
+                                `+ editBtt() + `
+                            </div>
+                        </td>
+                    `
+                    // 번호
+                    tableTrEl.setAttribute("data-commentNum", json.content[i].commentId)
+                    // 공동
+                    tableBodyEl.appendChild(tableTrEl.cloneNode(true));
+                }
+                pageNavDataSet('wineInfoPagelistNavBar', postCommentList, item, json, data)
+            } else {
+                createNoneMessageAllchild(document.getElementById("headTasting"), tableTrEl, tableBodyEl, `<b>등록된 댓글이 없습니다.</b>`)
+            }
+
+        });
+}
+
 
 // 공동 페이지 (테이블 data-columnNum, 페이징 data-pagenum)
 function pageNavDataSet(MainELId, customerData, ItemPageId, json, link) { //MainElDataSet (테이블 데이터 셋), MainElId (메인 El Id), MainEl (메인 El), customerData (객체 전달),ItemPageId(페이지 아이템 관련)  json(Json데이터)
@@ -683,11 +779,15 @@ function pageNavDataSet(MainELId, customerData, ItemPageId, json, link) { //Main
     tableNavUl.querySelectorAll('a[data-pagenum]').forEach(e => {
         if (!e.parentElement.classList.contains('active'))
             e.addEventListener('click', () => {
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-                if (customerData.length == 3)
+                if (customerData.length == 3) {
                     customerData(e.dataset.pagenum, ItemPageId, link) // 공통
-                else
+                } else if (customerData.length == 2) {
+                    customerData(ItemPageId, e.dataset.pagenum)
+                } else {
                     customerData(e.dataset.pagenum)
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+                tableNavUl.scrollIntoView()
             })
     })
     tableNav.appendChild(tableNavUl)

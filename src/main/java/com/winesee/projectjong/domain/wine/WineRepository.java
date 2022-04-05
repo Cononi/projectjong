@@ -22,6 +22,7 @@ public interface WineRepository extends JpaRepository<Wine, Long>, JpaSpecificat
     Wine findByWineId(Long id);
 
     // 와인 업데이트
+    @Transactional
     @Modifying
     @Query(
             value = "UPDATE wine SET average_score = (SELECT SUM(score)/COUNT(wine_id) FROM post where wine_id=?1) WHERE wine_id = ?1",

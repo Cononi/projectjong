@@ -6,11 +6,15 @@ import com.winesee.projectjong.domain.wine.Wine;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.BatchSize;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
+
+//@NamedEntityGraph(name = "Post.wineId",
+//        attributeNodes = {@NamedAttributeNode("wineId")})
 @Entity
 @Getter
 @Table(name="post")
@@ -61,13 +65,9 @@ public class Post extends BaseTime {
     @Lob
     private String contents;
 
-    // 덧글
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
-    private List<Comment> comments = new ArrayList<>();
-
 
     @Builder
-    public Post(Long postId, User userId, String title, Wine wineId, String vintage, int bodyCount, int sugarCount, int acidityCount, int price, int alcohol, int score, String contents, List<Comment> comments) {
+    public Post(Long postId, User userId, String title, Wine wineId, String vintage, int bodyCount, int sugarCount, int acidityCount, int price, int alcohol, int score, String contents) {
         this.postId = postId;
         this.userId = userId;
         this.title = title;
@@ -80,7 +80,6 @@ public class Post extends BaseTime {
         this.alcohol = alcohol;
         this.score = score;
         this.contents = contents;
-        this.comments = comments;
     }
 
     public void Update(String title, String vintage, int bodyCount, int sugarCount, int acidityCount, int price, int alcohol, int score, String contents) {

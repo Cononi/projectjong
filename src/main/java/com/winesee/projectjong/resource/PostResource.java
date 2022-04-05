@@ -1,7 +1,9 @@
 package com.winesee.projectjong.resource;
 
+import com.winesee.projectjong.domain.board.Post;
 import com.winesee.projectjong.domain.board.dto.PostRequest;
 import com.winesee.projectjong.domain.user.dto.UserResponse;
+import com.winesee.projectjong.service.comment.CommentService;
 import com.winesee.projectjong.service.post.PostService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -69,13 +71,13 @@ public class PostResource {
         return new ResponseEntity<>(postService.postListSearch(pageNum-1,wineId),HttpStatus.OK);
     }
 
-    // 내가 작성한 와인 포스팅 목록
+    // 내가 작성한 와인 목록
     @GetMapping("v1/account/post/wine/{pageNum}")
     public ResponseEntity<?> accountPostList(@AuthenticationPrincipal UserResponse user, @PathVariable("pageNum") Integer pageNum){
         return new ResponseEntity<>(postService.myPostWineList(user,pageNum-1),HttpStatus.OK);
     }
 
-    // 내가 작성한 와인 포스팅 목록
+    // 내가 작성한 와인 상세 포스팅 목록
     @GetMapping("v1/post/{pageNum}/wine/{wineId}")
     public ResponseEntity<?> accountPostMyList(@AuthenticationPrincipal UserResponse user,@PathVariable("pageNum") Integer pageNum, @PathVariable("wineId") Long wineId){
         return new ResponseEntity<>(postService.postMyListSearch(user,pageNum-1,wineId),HttpStatus.OK);

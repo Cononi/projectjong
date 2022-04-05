@@ -57,8 +57,8 @@ public class PostResponse {
 //    @Lob
     private String contents;
 
-    // 덧글
-    private List<Comment> comments = new ArrayList<>();
+//    // 덧글
+//    private List<Comment> comments = new ArrayList<>();
 
     private LocalDateTime modifieDate;
 
@@ -77,7 +77,7 @@ public class PostResponse {
         this.alcohol = entity.getAlcohol();
         this.score = entity.getScore();
         this.contents = entity.getContents();
-        this.comments = entity.getComments();
+//        this.comments = entity.getComments();
         this.modifieDate = entity.getModifieDate();
     }
 

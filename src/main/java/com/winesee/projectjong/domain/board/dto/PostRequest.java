@@ -91,6 +91,18 @@ public class PostRequest implements Serializable {
         this.conPostData = contents;
     }
 
+//    public Post toEntity(){
+//        return Post.builder()
+//                .postId(idPostData)
+//                .title(titPostData)
+//                .vintage(vinPostData)
+//                .bodyCount(bodyPostData)
+//                .sugarCount(sugPostData)
+//                .
+//                .build();
+//    }
+
+
     public void vintageCheck(String vin){
         this.vinPostData = vin;
     }

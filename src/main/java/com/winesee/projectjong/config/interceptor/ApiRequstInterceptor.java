@@ -28,8 +28,6 @@ import static com.winesee.projectjong.config.constant.SecurityConstant.LOGIN_USE
 @RequiredArgsConstructor
 public class ApiRequstInterceptor implements HandlerInterceptor {
 
-    private final PasswordEncoder passwordEncoder;
-
 //    @Override
 //    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
 //        log.info("여기로 돌어 오는가?");

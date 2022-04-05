@@ -109,7 +109,8 @@
                                             <tbody>
                                                 <tr>
                                                     <td class="col-3"><b>Vintage</b></td>
-                                                    <td class="col-3"><b th:text="${!#strings.isEmpty(info.vintage)} ? ${info.vintage} + ' 년' : ${info.vintage}">vin</b>
+                                                    <td class="col-3"><b
+                                                            th:text="${!#strings.isEmpty(info.vintage)} ? ${info.vintage} + ' 년' : ${info.vintage}">vin</b>
                                                     </td>
                                                 </tr>
                                                 <tr>
@@ -205,12 +206,52 @@
                     </div>
                 </div>
             </div>
+            <div class="row-auto">
+                <div class="col-auto">
+                    <div class="card">
+                        <div class="card-header bg-light shadow-sm text-center pb-0">
+                            <h3>Comment</h3>
+                            <p>클릭시 상세보기 가능</p>
+                        </div>
+                        <div class="table-hover">
+                            <table class="table table-hover accordion" id="accordion">
+                                <thead id="headTasting">
+                                </thead>
+                                <tbody id="userTastingTableBody" style="font-size: 14px;">
+                                </tbody>
+                            </table>
+                            <nav id="wineInfoPagelistNavBar" aria-label="Page navigation example">
+                            </nav>
+                            <th:block sec:authorize="isAuthenticated()">
+                                <div class="row justify-content-center mb-3">
+                                    <div class="card-body">
+                                        <div class="form-group with-title mb-3">
+                                            <textarea class="form-control" id="commentFormControlTextarea" placeholder="최소 15자리 이상 입력"
+                                                rows="3"></textarea>
+                                            <label>한줄평을 남겨주세요.</label>
+                                            <div class="row justify-content-center mt-1">
+                                                <a id="commentBtnEditSubmit" class="btn btn-primary mx-1 my-1 col-3 justify-content-end">작성</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </th:block>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <th:block sec:authorize="isAuthenticated()">
                 <script th:inline="javascript" type="module">
-                    import { postInfoPageFet } from '/js/module.js';
+                    import { postInfoPageFet, postCommentSubmit } from '/js/module.js';
                     postInfoPageFet([[${ info.postId }]], [[${ backLink }]])
+                    postCommentSubmit([[${info.postId}]], [[${info.userNum}]])
                 </script>
             </th:block>
+            <script th:inline="javascript" type="module">
+                import { postCommentList } from '/js/module.js';
+                postCommentList(1, [[${ info.postId }]], [[${info.userNum}]])
+            </script>
         </div>
     </body>
 </th:block>
