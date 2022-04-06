@@ -226,11 +226,12 @@
                                 <div class="row justify-content-center mb-3">
                                     <div class="card-body">
                                         <div class="form-group with-title mb-3">
-                                            <textarea class="form-control" id="commentFormControlTextarea" placeholder="최소 15자리 이상 입력"
-                                                rows="3"></textarea>
+                                            <textarea class="form-control" id="commentFormControlTextarea"
+                                                placeholder="최소 15자리 이상 입력" rows="3"></textarea>
                                             <label>한줄평을 남겨주세요.</label>
                                             <div class="row justify-content-center mt-1">
-                                                <a id="commentBtnEditSubmit" class="btn btn-primary mx-1 my-1 col-3 justify-content-end">작성</a>
+                                                <a id="commentBtnEditSubmit"
+                                                    class="btn btn-primary mx-1 my-1 col-3 justify-content-end">작성</a>
                                             </div>
                                         </div>
                                     </div>
@@ -241,16 +242,45 @@
                 </div>
             </div>
 
+            <!-- MoLine -->
+            <div class="modal fade" id="delCommentModalCenter" tabindex="-1" role="dialog"
+                aria-labelledby="commentModalCenterTitle" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-dialog-centered modal-dialog-scrollable"
+                    role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="commentModalCenterTitle">글을 삭제하시겠습니까?
+                            </h5>
+                            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                <i data-feather="x"></i>
+                            </button>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                            <button type="button" class="btn btn-primary" id="delCommentCheckBtt"
+                                data-bs-dismiss="modal">확인</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <th:block sec:authorize="isAuthenticated()">
                 <script th:inline="javascript" type="module">
                     import { postInfoPageFet, postCommentSubmit } from '/js/module.js';
                     postInfoPageFet([[${ info.postId }]], [[${ backLink }]])
-                    postCommentSubmit([[${info.postId}]], [[${info.userNum}]])
+                    const commentSubmit = document.getElementById("commentBtnEditSubmit")
+                    commentSubmit.addEventListener('click', () => {
+                        postCommentSubmit([[${ info.postId }]], 0, 'POST', [[${ userinfo.id }]], document.getElementById('commentFormControlTextarea'))
+                    })
                 </script>
             </th:block>
             <script th:inline="javascript" type="module">
                 import { postCommentList } from '/js/module.js';
-                postCommentList(1, [[${ info.postId }]], [[${info.userNum}]])
+                <th:block sec:authorize="isAuthenticated()">
+                    postCommentList(1, [[${ info.postId }]], [[${userinfo.id}]])
+                </th:block>
+                <th:block sec:authorize="!isAuthenticated()">
+                    postCommentList(1, [[${ info.postId }]], 'node')
+                </th:block>
             </script>
         </div>
     </body>

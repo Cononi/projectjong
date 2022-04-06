@@ -29,13 +29,13 @@ public class CommentResponse {
     private String comment;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss", timezone = "Asia/Seoul")
-    private LocalDateTime modifieDate;
+    private LocalDateTime createDate;
 
     public CommentResponse(Comment entity) {
         this.commentId = entity.getCommentId();
         this.userId = entity.getUserId().getName();
         this.comment = entity.getComment();
         this.num = entity.getUserId().getId();
-        this.modifieDate = entity.getModifieDate();
+        this.createDate = entity.getCreateDate();
     }
 }

@@ -582,7 +582,7 @@ async function postListWineTasting(page, id, link) {
                 })
                 pageNavDataSet('wineInfoPagelistNavBar', postListWineTasting, id, json, link)
             } else {
-                createNoneMessageAllchild(document.getElementById("headTasting"), tableTrEl, tableBodyEl, `<b>등록된 테이스팅 노트가 없습니다.</b>`)
+                createNoneMessageAllchild(document.getElementById("headTasting"), tableTrEl, tableBodyEl, `<div class="mt-4"><b>등록된 테이스팅 노트가 없습니다.</b></div>`)
             }
 
         });
@@ -637,87 +637,129 @@ export { postListWineTasting, postListMyTasting }
 
 
 // 코멘 정보
-export function postCommentSubmit(id, data) {
-
-    const commentInput = document.getElementById("commentFormControlTextarea")
-    const commentSubmit = document.getElementById("commentBtnEditSubmit")
-
-
-    function tastingPostCall(id, methods) {
-        if (commentInput.value.length >= 15) {
-            let url = '/api/v1/comment'
-            fetch(url, {
-                method: methods,
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    comment: commentInput.value,
-                    postId: id
-                }),
-            }).then(function (response) {
-                if (!response.ok) {
-                    document.getElementById('postModalBtt').click()
-                } else if (response.url.includes('/login')) {
-                    location.href = "/account/login";
-                } else {
-                    postCommentList(1, id, data)
-                    commentInput.value = ''
-                }
-            });
-        } else {
-            alert('15자리 이상 입력해주세요.')
-        }
+export function postCommentSubmit(id, coid, methods, data, commentInputId) {
+    const commentInput = commentInputId
+    if (commentInput.value.length >= 15) {
+        let url = '/api/v1/comment'
+        fetch(url, {
+            method: methods,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                commentId: coid,
+                comment: commentInput.value,
+                postId: id
+            }),
+        }).then(function (response) {
+            if (!response.ok) {
+                document.getElementById('postModalBtt').click()
+            } else if (response.url.includes('/login')) {
+                location.href = "/account/login";
+            } else {
+                postCommentList(1, id, data)
+                commentInput.value = ''
+            }
+        });
+    } else {
+        alert('15자리 이상 입력해주세요.')
     }
-
-    commentSubmit.addEventListener('click', e => {
-        tastingPostCall(id, 'POST')
-    })
 }
 
 
 // 코멘 리스트
+let commentDelId = ''
+let commentEditId = ''
+let commentPre = ''
+let thisCommentCountNum = 1
 export async function postCommentList(page, item, data) {
+    // 삭
+    function infoCommentDeCall(num) {
+        let url = '/api/v1/comment/' + num
+        fetch(url, {
+            method: 'DELETE',
+        }).then(function (response) {
+            if (!response.ok) {
+                let error = response
+                error.then(() => {
+                })
+            } else {
+                con = true
+                postCommentList(thisCommentCountNum, item, data)
+            }
+        });
+    }
+    // 버튼컨트롤
+    function commitBttCreate(e) {
+        e.parentElement.querySelectorAll('button').forEach(btt => {
+            if (btt.classList.contains('d-none')) {
+                btt.classList.remove('d-none')
+            } else {
+                btt.classList.add('d-none')
+            }
+        })
+    }
+
+    // 셀렉트 컨
+    function selectForClick(body, selected, bool) {
+        body.querySelectorAll(selected).forEach(e => {
+            e.addEventListener('click', () => {
+                if (bool) {
+                    commentEditId.setAttribute('readonly', 'true')
+                    commentEditId.classList.remove('border', 'border-2')
+                    commentEditId.value = commentPre
+                } else {
+                    commentEditId.removeAttribute("readonly")
+                    commentEditId.classList.add('border', 'border-2')
+                }
+                commitBttCreate(e)
+            })
+        })
+    }
     let url = '/api/v1/comment/' + item + '/' + page
-    return await fetch(url)
+    await fetch(url)
         .then(e => e.json())
         .then(json => {
             const tableBodyEl = document.getElementById("userTastingTableBody")
             const tableTrEl = document.createElement("tr")
-
             if (json.totalElements != 0) {
                 removeAllchild(tableBodyEl)
                 for (let i = 0; i < json.content.length; i++) {
                     let numberCount = ((json.totalElements - (json.pageable.pageNumber * 5)) - (i))
-                    console.log(json.content[i].num, data)
                     let editBtt = function () {
                         if (data == json.content[i].num) {
-                            return `<div class="row justify-content-center">
-                                <span class="col-auto"><i class="fa-solid fa-pen"></i>edit</span>
-                                <span class="col-auto"><i class="fa-solid fa-eraser"></i>del</span>
+                            return `<div class="row-auto bg-white">
+                                <div class="row justify-content-center">
+                                    <button class="col-auto btn btn-sm btn-outline-secondary" data-button-type="edit"><i class="fa-solid fa-pen"></i>edit</button>
+                                    <button class="col-auto btn btn-sm btn-outline-secondary d-none" data-button-type="modify"><i class="fa-solid fa-check"></i></i>modify</button>
+                                    <button class="col-auto btn btn-sm btn-outline-secondary d-none" data-button-type="cancel"><i class="fa-solid fa-xmark"></i>cancel</button>
+                                    <button class="col-auto btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#delCommentModalCenter"><i class="fa-solid fa-eraser"></i>del</button>
+                                </div>
                             </div>`
                         }
-                        return ``
+                        return ''
                     }
                     tableTrEl.innerHTML = `
-                        <td data-bs-toggle="collapse" data-bs-target="#collapseOne`+ i + `" aria-expanded="true" aria-controls="collapseOne` + i + `" id="heading` + i + `">
-                            <div class="row justify-content-center align-self-center">
+                        <td class="p-0">
+                            <div class="row-auto ps-3 py-2 border-bottom justify-content-center align-self-center" data-bs-toggle="collapse" data-bs-target="#collapseOne`+ i + `" aria-expanded="true" aria-controls="collapseOne` + i + `" id="heading` + i + `">
                                 <div class="row">
                                     <b class="col-md-2"><i class="fa-solid fa-book me-1"></i>`+ numberCount + `</b>
                                     <span class="col-md-5 font-bold mb-0">`+ (json.content[i].comment.slice(0, 20)) + (json.content[i].comment.length > 20 ? '...' : '') + `</span>
                                     <div class="col-md-5">
                                         <div class="row">
                                             <span class="col-5 mb-0">`+ json.content[i].userId + `</span>
-                                            <span class="col-7 text-center mb-0">`+ json.content[i].modifieDate + `</span>
+                                            <span class="col-7 text-center mb-0">`+ json.content[i].createDate + `</span>
                                         </div>
                                      </div>
                                 </div>
                             </div>
-                            <div id="collapseOne`+ i + `" class="accordion-collapse collapse" aria-labelledby="heading` + i + `" data-bs-parent="#accordion">
-                                <div class="row m-2">
-                                    <div class="col-md-10">
-                                    `+ json.content[i].comment + `
+                            <div id="collapseOne`+ i + `" class="accordion-collapse bg-white collapse" aria-labelledby="heading` + i + `" data-bs-parent="#accordion">
+                                <div class="row-auto">
+                                    <div class="col-md-12">
+                                    <textarea class="comment outcontent px-3 py-2" data-button-type="textarea"
+                                    placeholder="최소 15자리 이상 입력" rows="4" style="resize : none;" readonly>`+ json.content[i].comment + `</textarea>
+                                    <span class="d-none" data-button-type="textareare">`+ json.content[i].comment + `</span>
                                     </div>
+                                    `+ editBtt() + `
                                 </div>
-                                `+ editBtt() + `
                             </div>
                         </td>
                     `
@@ -726,9 +768,33 @@ export async function postCommentList(page, item, data) {
                     // 공동
                     tableBodyEl.appendChild(tableTrEl.cloneNode(true));
                 }
+                tableBodyEl.querySelectorAll('tr[data-commentNum]').forEach(e => {
+                    e.addEventListener('click', () => {
+                        commentDelId = e.dataset.commentnum
+                        commentEditId = e.querySelector('textarea')
+                        commentPre = e.querySelector('span[data-button-type="textareare"]').innerText
+                    })
+                })
+                tableBodyEl.querySelectorAll('button[data-button-type="modify"]').forEach(e => {
+                    e.addEventListener('click', () => {
+                        postCommentSubmit(item, commentDelId, 'PUT', data, commentEditId)
+                    })
+                })
+                selectForClick(tableBodyEl, 'button[data-button-type="edit"]', false) // edit
+                selectForClick(tableBodyEl, 'button[data-button-type="cancel"]', true) // cancel
+                const commentDel = document.getElementById("delCommentCheckBtt").addEventListener('click', () => {
+                    if (con) {
+                        con = false
+                        infoCommentDeCall(commentDelId)
+                    }
+                })
                 pageNavDataSet('wineInfoPagelistNavBar', postCommentList, item, json, data)
             } else {
-                createNoneMessageAllchild(document.getElementById("headTasting"), tableTrEl, tableBodyEl, `<b>등록된 댓글이 없습니다.</b>`)
+                removeAllchild(document.getElementById('wineInfoPagelistNavBar'))
+                removeAllchild(tableBodyEl)
+                const newTable = document.createElement("div")
+                newTable.setAttribute('class', 'mt-4')
+                createNoneMessageAllchild(document.getElementById("headTasting"), newTable, tableBodyEl, `<b>등록된 댓글이 없습니다.</b>`)
             }
 
         });
@@ -781,6 +847,7 @@ function pageNavDataSet(MainELId, customerData, ItemPageId, json, link) { //Main
             e.addEventListener('click', () => {
                 if (customerData.length == 3) {
                     customerData(e.dataset.pagenum, ItemPageId, link) // 공통
+                    thisCommentCountNum = e.dataset.pagenum // 코멘트 카운트용
                 } else if (customerData.length == 2) {
                     customerData(ItemPageId, e.dataset.pagenum)
                 } else {

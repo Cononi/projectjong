@@ -11,12 +11,13 @@ import java.util.List;
 public interface CommentService {
 
     // 작성
-    Long createComment(CommentRequest commentId, UserResponse userId);
+    Long createComment(CommentRequest request, UserResponse user);
     // 수정
-    Long editComment(CommentRequest commentId, UserResponse userId);
+    Long editComment(CommentRequest request, UserResponse user);
     // 삭제
     Long deleteComment(Long commentId, UserResponse userId);
     // 조회
     Page<CommentResponse> listComment(Long postId, int page);
+
 
 }

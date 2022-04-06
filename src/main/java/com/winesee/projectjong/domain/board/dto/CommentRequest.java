@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CommentRequest {
 
-
+    private Long commentId;
     // 연관 게시글
     private Long postId;
 
@@ -24,7 +24,8 @@ public class CommentRequest {
 
 
     @Builder
-    public CommentRequest(Long postId, String comment) {
+    public CommentRequest(Long commentId, Long postId, String comment) {
+        this.commentId = commentId;
         this.postId= postId;
         this.comment = comment;
     }

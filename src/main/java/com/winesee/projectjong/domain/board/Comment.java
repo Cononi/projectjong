@@ -40,4 +40,8 @@ public class Comment extends BaseTime {
         this.userId = userId;
         this.comment = comment;
     }
+
+    public void update(String comment){
+        this.comment = comment;
+    }
 }

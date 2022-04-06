@@ -39,19 +39,22 @@ public class CommentServiceImpl implements CommentService{
     }
 
     @Override
-    public Long editComment(CommentRequest commentId, UserResponse userId) {
-        return 0L;
+    public Long editComment(CommentRequest request, UserResponse user) {
+        Comment comment = commentRepository.getById(request.getCommentId());
+        comment.update(request.getComment());
+        commentRepository.save(comment);
+        return 1L;
     }
 
     @Override
     public Long deleteComment(Long commentId, UserResponse userId) {
-        commentRepository.deleteById(commentId);
+        commentRepository.deleteByIdAndUserId(commentId, userId.getId());
         return 1L;
     }
 
     @Override
     public Page<CommentResponse> listComment(Long postId, int page) {
-        Pageable pageable = PageRequest.of(page,5, Sort.by("modifieDate").descending());
+        Pageable pageable = PageRequest.of(page,5, Sort.by("createDate").descending());
         return commentRepository.findAllByPostId(postId,pageable).map(CommentResponse::new);
     }
 }

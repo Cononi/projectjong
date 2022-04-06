@@ -27,12 +27,21 @@ public class CommentResource {
 
     // 저장
     @PostMapping(value = "v1/comment", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> postCreate(HttpServletRequest request, @RequestBody @Validated CommentRequest comment, Errors error, @AuthenticationPrincipal UserResponse user){
+    public ResponseEntity<?> commentCreate(HttpServletRequest request, @RequestBody @Validated CommentRequest comment, Errors error, @AuthenticationPrincipal UserResponse user){
             if(error.hasErrors()) {
                 return new ResponseEntity<>("입력오류",HttpStatus.BAD_REQUEST);
             }
             request.getSession().setAttribute(user.getUsername(),false);
             return new ResponseEntity<>(commentService.createComment(comment,user), HttpStatus.OK);
+    }
+    // 저장
+    @PutMapping(value = "v1/comment", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> commentEdit(HttpServletRequest request, @RequestBody @Validated CommentRequest comment, Errors error, @AuthenticationPrincipal UserResponse user){
+        if(error.hasErrors()) {
+            return new ResponseEntity<>("입력오류",HttpStatus.BAD_REQUEST);
+        }
+        request.getSession().setAttribute(user.getUsername(),false);
+        return new ResponseEntity<>(commentService.editComment(comment,user), HttpStatus.OK);
     }
 //
 //    // 수정
@@ -50,11 +59,11 @@ public class CommentResource {
 //    }
 
 
-//    // 삭제.
-//    @DeleteMapping(value = "v1/post/{number}", produces = MediaType.APPLICATION_JSON_VALUE)
-//    public void postDelete(@PathVariable Long number, @AuthenticationPrincipal UserResponse user){
-//        postService.postDelete(number, user);
-//    }
+    // 삭제.
+    @DeleteMapping(value = "v1/comment/{number}")
+    public void postDelete(@PathVariable Long number, @AuthenticationPrincipal UserResponse user){
+        commentService.deleteComment(number,user);
+    }
 
 
     // 코멘트 리스트
