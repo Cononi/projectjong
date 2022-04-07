@@ -51,6 +51,7 @@ manifest.yml
 .log
 .xml
 /log
+*.hprof
 
 ### SETTING ###
 *.yml
