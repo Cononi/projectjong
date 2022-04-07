@@ -8,6 +8,7 @@ group = 'com.winesee'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '1.8'
 
+// 이름
 bootJar{
 	archivesBaseName = 'projectjong'
 	archiveFileName = 'warin.jar'
