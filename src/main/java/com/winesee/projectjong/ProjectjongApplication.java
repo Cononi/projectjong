@@ -2,6 +2,7 @@ package com.winesee.projectjong;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.ApplicationPidFileWriter;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -31,7 +32,10 @@ public class ProjectjongApplication {
 	}
 
 	public static void main(String[] args) {
-		SpringApplication.run(ProjectjongApplication.class, args);
+		SpringApplication application = new SpringApplication(ProjectjongApplication.class);
+		application.addListeners(new ApplicationPidFileWriter());
+		application.run(args);
+//		SpringApplication.run(ProjectjongApplication.class, args);
 		new File(USER_FOLDER).mkdirs();
 	}
 
