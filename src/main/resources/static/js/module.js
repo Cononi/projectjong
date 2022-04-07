@@ -664,7 +664,6 @@ export function postCommentSubmit(id, coid, methods, data, commentInputId) {
     }
 }
 
-
 // 코멘 리스트
 let commentDelId = ''
 let commentEditId = ''
