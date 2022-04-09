@@ -18,7 +18,6 @@
  %X : 로깅이 발생한 thread와 관련된 MDC(mapped diagnostic context)를 출력합니다.
  %% : % 표시를 출력하기 위해 사용한다.
  %t : 로그이벤트가 발생된 쓰레드의 이름을 출력합니다
-
  // 출력준비
 -->
 <configuration scan="true" scanPeriod="30 seconds">
