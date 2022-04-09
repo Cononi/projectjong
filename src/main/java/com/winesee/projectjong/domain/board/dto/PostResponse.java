@@ -29,8 +29,10 @@ public class PostResponse {
     private String title;
 
     // 와인 정보 ( 자동 완성 기능 )
-
     private WineResponse wineId;
+
+    // 유저 이미지
+    private String profileImage;
 
     // 와인 빈티지
     private String vintage;
@@ -69,6 +71,7 @@ public class PostResponse {
         this.userNum = entity.getUserId().getId();
         this.title = entity.getTitle();
         this.wineId = new WineResponse(entity.getWineId());
+        this.profileImage = entity.getUserId().getProfileImageUrl();;
         this.vintage = entity.getVintage();
         this.bodyCount = entity.getBodyCount();
         this.sugarCount = entity.getSugarCount();
