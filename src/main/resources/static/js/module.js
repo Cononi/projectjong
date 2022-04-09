@@ -876,3 +876,15 @@ function removeAllchild(div) {
 }
 
 
+//------------------------------------------------------------------------------------------------
+export function mainBestPostList(){
+    const mainBestPost = document.getElementById('mainBestGallery')
+
+    mainBestPost.querySelectorAll('div[data-postNum]').forEach(e=>{
+        e.addEventListener('click',() => {
+            location.href = '/post/info/' + e.dataset.postnum + '/1'
+        })
+    })
+}
+
+

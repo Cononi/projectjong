@@ -102,7 +102,7 @@
         <!-- 공지글 끝 -->
 
         <!-- 갤러리 시작 -->
-        <section class="section">
+        <section class="section" id="mainBestGallery">
             <div class="row">
                 <div class="col-12">
                     <div class="card" style="background-color: #e8f2ff;">
@@ -110,13 +110,13 @@
                             <h4 class="card-title h3">와린이 인기 노트</h4>
                         </div>
                         <div class="row justify-content-center">
-                            <div class="card box-shadow mx-1 my-3 text-center" style="width: 9em; height: 16em;"
+                            <div class="card box-shadow mx-1 my-3 text-center" style="width: 9em; height: 17em;"
                                 th:each="best : ${bestList}">
                                 <div th:data-postNum="${best.postId}">
                                     <img th:src="${best.wineImageUrl}" class="card-img-top" alt="...">
                                     <th:block th:with="score=${best.score}">
                                         <div class="row">
-                                            <div class="card-content px-0 py-1">
+                                            <div class="card-content px-1 py-1">
                                                 <span class="font-bold" style='color: #2b68e3; font-size:12px;'
                                                     th:text="${score} +' / 100'"></span>
                                                 <div>
@@ -129,13 +129,14 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="position-absolute bottom-0 mb-3">
+                                            <div class="position-absolute bottom-0 mb-2">
                                                 <div class="user-img align-items-center">
                                                     <div class="avatar avatar bg-primary">
                                                         <img th:src="${#strings.defaultString(best.userProfileImgUrl,'/assets/images/faces/default.jpg')}"
                                                             alt="mdo" width="32" height="32" class="rounded-circle">
                                                     </div>
                                                 </div>
+                                                <span class="h6" style="font-size:12px;" th:text="${best.userId}"> </span>
                                             </div>
                                         </div>
                                     </th:block>
@@ -148,7 +149,10 @@
         </section>
         <!-- 갤러리 끝 -->
     </div>
-
+    <script th:inline="javascript" type="module">
+        import { mainBestPostList } from '/js/module.js';
+        mainBestPostList()
+    </script>
 </th:block>
 
 </html>
