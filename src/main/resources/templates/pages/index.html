@@ -110,29 +110,36 @@
                             <h4 class="card-title h3">와린이 인기 노트</h4>
                         </div>
                         <div class="row justify-content-center">
-                            <div class="card box-shadow mx-1 my-3 text-center" style="width: 9em; height: 12em;">
-                                <img src="/assets/images/best/1.jpg" class="card-img-top" alt="...">
-                                <p class="card-text mt-3 py-2 h6 small">#</p>
-                            </div>
-                            <div class="card box-shadow mx-1 my-3 text-center" style="width: 9em; height: 12em;">
-                                <img src="/assets/images/best/1.jpg" class="card-img-top" alt="...">
-                                <p class="card-text mt-3 py-2 h6 small">#</p>
-                            </div>
-                            <div class="card box-shadow mx-1 my-3 text-center" style="width: 9em; height: 12em;">
-                                <img src="/assets/images/best/1.jpg" class="card-img-top" alt="...">
-                                <p class="card-text mt-3 py-2 h6 small">#</p>
-                            </div>
-                            <div class="card box-shadow mx-1 my-3 text-center" style="width: 9em; height: 12em;">
-                                <img src="/assets/images/best/1.jpg" class="card-img-top" alt="...">
-                                <p class="card-text mt-3 py-2 h6 small">#</p>
-                            </div>
-                            <div class="card box-shadow mx-1 my-3 text-center" style="width: 9em; height: 12em;">
-                                <img src="/assets/images/best/1.jpg" class="card-img-top" alt="...">
-                                <p class="card-text mt-3 py-2 h6 small">#</p>
-                            </div>
-                            <div class="card box-shadow mx-1 my-3 text-center" style="width: 9em; height: 12em;">
-                                <img src="/assets/images/best/1.jpg" class="card-img-top" alt="...">
-                                <p class="card-text mt-3 py-2 h6 small">#</p>
+                            <div class="card box-shadow mx-1 my-3 text-center" style="width: 9em; height: 16em;"
+                                th:each="best : ${bestList}">
+                                <div th:data-postNum="${best.postId}">
+                                    <img th:src="${best.wineImageUrl}" class="card-img-top" alt="...">
+                                    <th:block th:with="score=${best.score}">
+                                        <div class="row">
+                                            <div class="card-content px-0 py-1">
+                                                <span class="font-bold" style='color: #2b68e3; font-size:12px;'
+                                                    th:text="${score} +' / 100'"></span>
+                                                <div>
+                                                    <th:block th:each="starScore : ${#numbers.sequence(1,5)}">
+                                                        <i style='color: #4249a9'
+                                                            th:class="'bi ' + (${score / 20 >= starScore} ? 'bi-star-fill' : (${(score % 20 != 0) && ((score / 20)+1) ==  starScore} ? 'bi-star-half' : bi-star))+ ' fs-9'"></i>
+                                                    </th:block>
+                                                    <div class="card-text h6 small"
+                                                        th:text="${#strings.length(best.title) > 20} ? ${#strings.substring(best.title,0,20)} + ... : ${best.title}">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="position-absolute bottom-0 mb-3">
+                                                <div class="user-img align-items-center">
+                                                    <div class="avatar avatar bg-primary">
+                                                        <img th:src="${#strings.defaultString(best.userProfileImgUrl,'/assets/images/faces/default.jpg')}"
+                                                            alt="mdo" width="32" height="32" class="rounded-circle">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </th:block>
+                                </div>
                             </div>
                         </div>
                     </div>

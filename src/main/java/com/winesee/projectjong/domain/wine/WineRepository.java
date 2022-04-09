@@ -33,6 +33,4 @@ public interface WineRepository extends JpaRepository<Wine, Long>, JpaSpecificat
     @EntityGraph(attributePaths = {"country"})
     @Query("SELECT DISTINCT c FROM Wine c, Post p WHERE p.modifieDate in (Select max(s.modifieDate) FROM Post s where s.wineId=p.wineId) and p.wineId = c.wineId and p.userId = :user ORDER BY p.modifieDate DESC")
     Page<Wine> findEntityGraphWineIdAndUserId(@Param("user") User userId,Pageable pageable);
-
-
 }

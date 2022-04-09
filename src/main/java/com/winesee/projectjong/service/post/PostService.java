@@ -1,6 +1,7 @@
 package com.winesee.projectjong.service.post;
 
 
+import com.winesee.projectjong.domain.board.dto.PostBestListResponse;
 import com.winesee.projectjong.domain.board.dto.PostListResponse;
 import com.winesee.projectjong.domain.board.dto.PostRequest;
 import com.winesee.projectjong.domain.board.dto.PostResponse;
@@ -9,6 +10,8 @@ import com.winesee.projectjong.domain.user.dto.UserResponse;
 import com.winesee.projectjong.domain.wine.dto.WineMyPostResponse;
 import com.winesee.projectjong.domain.wine.dto.WineResponse;
 import org.springframework.data.domain.Page;
+
+import java.util.List;
 
 public interface PostService {
 
@@ -30,6 +33,9 @@ public interface PostService {
     // 내가 작성한 와인 리스트 보여주기
     Page<WineMyPostResponse> myPostWineList(UserResponse user, int pageCount);
 
-    // 내가 작성한 와인의 글 목록 보여주기
-    Page<PostListResponse> myPostInfoList(int pageCount, Long postId);
+//    // 내가 작성한 와인의 글 목록 보여주기
+//    Page<PostListResponse> myPostInfoList(int pageCount, Long postId);
+
+    // 베스트 5 덧글이 많이 달린 와인 리스트 10일이내 기준
+    List<PostBestListResponse> bestPostCommentList();
 }

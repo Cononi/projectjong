@@ -28,7 +28,6 @@ public class Post {
 
     private final WineService wineService;
     private final PostService postService;
-    private final CommentService commentService;
 
     @GetMapping("post/{number}")
     public String post(Model model, @PathVariable("number") Long number, HttpServletRequest request){

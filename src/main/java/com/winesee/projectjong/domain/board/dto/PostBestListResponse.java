@@ -1,17 +1,14 @@
 package com.winesee.projectjong.domain.board.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.winesee.projectjong.domain.board.Comment;
 import com.winesee.projectjong.domain.board.Post;
 import com.winesee.projectjong.domain.wine.dto.WineResponse;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Getter
-public class PostListResponse {
+public class PostBestListResponse {
 
     // 번호
     private Long postId;
@@ -22,23 +19,25 @@ public class PostListResponse {
     // 작성자
     private String userId;
 
-    // 제목
+    // 타이틀
     private String title;
 
-    // 와인 정보 ( 자동 완성 기능 )
+    // 와인 정보
+//    private WineResponse wineId;
 
-    private Long wineId;
+    // 와인 이미지
+    private String wineImageUrl;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
-    private LocalDateTime modifieDate;
+    // 종합점수
+    private int score;
 
-
-    public PostListResponse(Post entity) {
+    public PostBestListResponse(Post entity) {
         this.postId = entity.getPostId();
         this.userId = entity.getUserId().getName();
+//        this.wineId = new WineResponse(entity.getWineId());
         this.title = entity.getTitle();
-        this.wineId = entity.getWineId().getWineId();
-        this.modifieDate = entity.getModifieDate();
+        this.wineImageUrl = entity.getWineId().getWineImageUrl();
         this.userProfileImgUrl = entity.getUserId().getProfileImageUrl();
+        this.score = entity.getScore();
     }
 }

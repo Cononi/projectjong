@@ -4,6 +4,7 @@ import com.winesee.projectjong.domain.board.Comment;
 import com.winesee.projectjong.domain.board.CommentRepository;
 import com.winesee.projectjong.domain.board.Post;
 import com.winesee.projectjong.domain.board.PostRepository;
+import com.winesee.projectjong.domain.board.dto.PostBestListResponse;
 import com.winesee.projectjong.domain.board.dto.PostListResponse;
 import com.winesee.projectjong.domain.board.dto.PostRequest;
 import com.winesee.projectjong.domain.board.dto.PostResponse;
@@ -20,7 +21,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -99,8 +102,15 @@ public class PostServiceImpl implements PostService {
           return wineRepository.findEntityGraphWineIdAndUserId(user,pageable).map(WineMyPostResponse::new);
     }
 
+//    @Override
+//    public Page<PostListResponse> myPostInfoList(int pageCount, Long postId) {
+//        return null;
+//    }
+
+
     @Override
-    public Page<PostListResponse> myPostInfoList(int pageCount, Long postId) {
-        return null;
+    public List<PostBestListResponse> bestPostCommentList() {
+        Pageable pageable = PageRequest.of(0,6);
+        return postRepository.findAllWithCommentGraph(pageable).stream().map(PostBestListResponse::new).collect(Collectors.toList());
     }
 }
