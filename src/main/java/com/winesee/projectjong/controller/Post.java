@@ -1,17 +1,20 @@
 package com.winesee.projectjong.controller;
 
 import com.winesee.projectjong.domain.board.PostRepository;
+import com.winesee.projectjong.domain.board.dto.PageRequest;
 import com.winesee.projectjong.domain.board.dto.PostResponse;
 import com.winesee.projectjong.domain.user.dto.UserResponse;
 import com.winesee.projectjong.domain.wine.WineRepository;
 import com.winesee.projectjong.domain.wine.dto.WineRequest;
 import com.winesee.projectjong.domain.wine.dto.WineResponse;
 import com.winesee.projectjong.service.comment.CommentService;
+import com.winesee.projectjong.service.post.NoticeService;
 import com.winesee.projectjong.service.post.PostService;
 import com.winesee.projectjong.service.wine.WineService;
 import io.lettuce.core.dynamic.annotation.Param;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -19,6 +22,14 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
+import static com.winesee.projectjong.config.constant.FileConstant.*;
+import static com.winesee.projectjong.config.constant.FileConstant.PNG_EXTENSION;
+import static org.springframework.http.MediaType.IMAGE_JPEG_VALUE;
+import static org.springframework.http.MediaType.IMAGE_PNG_VALUE;
 
 @Controller
 @RequiredArgsConstructor
@@ -83,4 +94,10 @@ public class Post {
     public String postList(@AuthenticationPrincipal UserResponse userinfo){
         return "pages/mypage/mypostlist";
     }
+
+
+
+
 }
+
+

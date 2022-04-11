@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{layout/default}">
+
+<head>
+    <title>공지사항 작성</title>
+    <link rel="stylesheet" href="/assets/css/pages/stat.css">
+    <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css" />
+</head>
+<th:block layout:fragment="content">
+
+    <body>
+        <div class="page-heading" th:with="info=${noticeList}">
+            <div class="row-auto">
+                <div class="col-auto">
+                    <div class="card">
+                        <div class="card-header bg-light text-center shadow-sm pb-0">
+                            <h3>Notice</h3>
+                        </div>
+                        <div>
+                            <input type="text" class="form-control" id="noticeTitle" placeholder="제목을 입력해 주세요">
+                        </div>
+                        <div id="editor">
+                            <div class="card"></div>
+                        </div>
+                    </div>
+                    <div class="row justify-content-center">
+                        <button class="btn btn-primary col-5" id="noticePostSubmit">작성하기</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
+        <script th:inline="javascript">
+            const Editor = toastui.Editor;
+            const editor = new Editor({
+                el: document.querySelector('#editor'),
+                height: '500px',
+                initialEditType: 'wysiwyg',
+                previewStyle: 'vertical',
+                hooks: {
+                    addImageBlobHook: (blob, callback) => {
+                        const upload = blob
+                        noticePhotoUpload(blob).then(e=> { callback(e,"alt")
+                        console.log(e.url)})
+                    }
+                }
+            });
+            async function noticePhotoUpload(blob) {
+                let url = '/api/v1/notice/image/upload'
+                const formData = new FormData();
+                formData.append("multipartFiles", blob);
+                return await fetch(url, {
+                    method: 'POST',
+                    body: formData
+                }).then(function (response) {
+                    if (response.ok) {
+                        return response.text()
+                    } else if (response.url.includes('/login')) {
+                        location.href = "/account/login";
+                    }
+                });
+            }
+
+            document.getElementById('noticePostSubmit').addEventListener('click', () => {
+                const title = document.getElementById('noticeTitle')
+                let url = '/api/v1/notice/post'
+                fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        noticeTitle : title.value,
+                        noticeContents : editor.getHTML()
+                    })
+                }).then(function (response) {
+                    if (response.ok) {
+                        response.text().then(e=>{
+                            location.href = "/notice/" + e
+                        })
+                    } else if (response.url.includes('/login')) {
+                        location.href = "/account/login";
+                    }
+                });
+            })
+
+        </script>
+    </body>
+</th:block>
+
+</html>

@@ -281,7 +281,7 @@ async function wineSearchFind(pagenum) {
     });
     if (pagenum > 0) { object['page'] = pagenum }
     let url = '/api/find/wine'
-    return await fetch(url, {
+    await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(object),
@@ -543,7 +543,7 @@ function formExpCheck(e) {
 let postCon = ''
 async function postListWineTasting(page, id, link) {
     let url = '/api/v1/post/' + page + '/' + link + '/' + id
-    return await fetch(url)
+    await fetch(url)
         .then(e => e.json())
         .then(json => {
             const tableBodyEl = document.getElementById("userTastingTableBody")
@@ -591,7 +591,7 @@ async function postListWineTasting(page, id, link) {
 // 마이 포스팅
 async function postListMyTasting(num) {
     let url = '/api/v1/account/post/wine/' + num
-    return await fetch(url)
+    await fetch(url)
         .then(e => formExpCheck(e))
         .then(json => {
             const tastingDivEl = document.getElementById("mytastingDiv")
@@ -877,14 +877,77 @@ function removeAllchild(div) {
 
 
 //------------------------------------------------------------------------------------------------
-export function mainBestPostList(){
+export function mainLinkedList() {
     const mainBestPost = document.getElementById('mainBestGallery')
 
-    mainBestPost.querySelectorAll('div[data-postNum]').forEach(e=>{
-        e.addEventListener('click',() => {
+    mainBestPost.querySelectorAll('div[data-postNum]').forEach(e => {
+        e.addEventListener('click', () => {
             location.href = '/post/info/' + e.dataset.postnum + '/1'
         })
     })
+
 }
+
+export function noticeLinks() {
+    const mainNoticeList = document.getElementById('noticeBoardList')
+    mainNoticeList.querySelectorAll('tr[data-noticeNum]').forEach(e => {
+        e.addEventListener('click', () => {
+            setCookie("_vi", 1)
+            location.href = '/notice/' + e.dataset.noticenum
+        })
+    })
+}
+
+
+export function noticeFun(page) {
+
+    noticeListWineTasting(page)
+
+    async function noticeListWineTasting(page) {
+        let url = '/api/v1/notice/' + page
+        await fetch(url)
+            .then(e => e.json())
+            .then(json => {
+                const tableBodyEl = document.getElementById("noticeBoardList")
+                const tableTrEl = document.createElement("tr")
+
+                if (json.totalElements != 0) {
+                    removeAllchild(tableBodyEl)
+                    for (let i = 0; i < json.content.length; i++) {
+                        let numberCount = ((json.totalElements - (json.pageable.pageNumber * 10)) - (i))
+                        tableTrEl.innerHTML = `
+                            <td data->
+                                <div class="row justify-content-md-center align-self-center">
+                                    <b class="col-md-2"><i class="fa-solid fa-book me-1"></i>`+ numberCount + `</b>
+                                    <span class="col-md-8 font-bold mb-0">`+ (json.content[i].noticeTitle.slice(0, 40)) + (json.content[i].noticeTitle.length > 40 ? '...' : '') + `</span>
+                                    <span class="col-auto text-center mb-0">`+ json.content[i].modifieDate + `</span>
+                                </div>
+                            </td>
+                        `
+                        // 번호 등록
+                        tableTrEl.setAttribute('data-noticenum', json.content[i].noticeId)
+                        // 공동
+                        tableBodyEl.appendChild(tableTrEl.cloneNode(true));
+                    }
+                    // 컨텐츠 이동
+                    tableBodyEl.querySelectorAll('tr[data-noticenum]').forEach(e => { // 공통
+                        e.addEventListener('click', () => {
+                            location.href = '/notice/' + e.dataset.noticenum
+                            setCookie("_vi", json.pageable.pageNumber+1)
+                        })
+                    })
+                    pageNavDataSet('noticePagelistNavBar', noticeListWineTasting, 0, json)
+                } else {
+                    createNoneMessageAllchild(document.getElementById("headTasting"), tableTrEl, tableBodyEl, `<div class="mt-4"><b>등록된 테이스팅 노트가 없습니다.</b></div>`)
+                }
+
+            });
+    }
+}
+
+let setCookie = function(name, value) {
+	var date = new Date();
+	document.cookie = name + '=' + value + ';path=/';
+};
 
 

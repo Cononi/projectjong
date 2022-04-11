@@ -63,9 +63,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .csrf().disable()
                 // 모든 사용자가 해당 메뉴를 제외하고 액세스를 허용함
-                .authorizeRequests().antMatchers(PUBLIC_URLS).permitAll()
+                .authorizeRequests().antMatchers(ADMIN_URLS).hasRole("ADMIN")
                 .and()
-                .authorizeRequests().antMatchers("/api/delete/**").hasRole("ADMIN")
+                .authorizeRequests().antMatchers(PUBLIC_URLS).permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .sessionManagement()

@@ -1,5 +1,6 @@
 package com.winesee.projectjong.service.post;
 
+import com.winesee.projectjong.config.exception.NotAnImageFileException;
 import com.winesee.projectjong.domain.board.Comment;
 import com.winesee.projectjong.domain.board.CommentRepository;
 import com.winesee.projectjong.domain.board.Post;
@@ -8,22 +9,38 @@ import com.winesee.projectjong.domain.board.dto.PostBestListResponse;
 import com.winesee.projectjong.domain.board.dto.PostListResponse;
 import com.winesee.projectjong.domain.board.dto.PostRequest;
 import com.winesee.projectjong.domain.board.dto.PostResponse;
+import com.winesee.projectjong.domain.user.User;
 import com.winesee.projectjong.domain.user.UserRepository;
 import com.winesee.projectjong.domain.user.dto.UserResponse;
 import com.winesee.projectjong.domain.wine.WineRepository;
 import com.winesee.projectjong.domain.wine.dto.WineMyPostResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
+
+import static com.winesee.projectjong.config.constant.FileConstant.*;
+import static com.winesee.projectjong.config.constant.FileConstant.FILE_SAVED_IN_FILE_SYSTEM;
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
+import static org.springframework.http.MediaType.*;
 
 @Service
 @Transactional
@@ -113,4 +130,6 @@ public class PostServiceImpl implements PostService {
         Pageable pageable = PageRequest.of(0,6);
         return postRepository.findAllWithCommentGraph(pageable).stream().map(PostBestListResponse::new).collect(Collectors.toList());
     }
+
+
 }

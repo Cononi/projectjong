@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="/assets/css/pages/wineboard.css">
 </head>
 <th:block layout:fragment="content">
-    <div>
+    <div class="box-shadow rounded-circle">
         <div id="carouselExampleCaptions" class="carousel slide" data-bs-ride="carousel">
             <ol class="carousel-indicators">
                 <li data-bs-target="#carouselExampleCaptions" data-bs-slide-to="0" class="active"></li>
@@ -43,55 +43,29 @@
 
     <!-- 공지 글 시작-->
     <div class="page-heading mt-4">
-        <div class="page-title">
-            <div class="row">
-                <div class="col-12 col-md-6 order-md-1 order-last">
-                    <h3>오늘의 와인</h3>
-                    <th:block sec:authorize="isAuthenticated()">
-                        <p class="text-subtitle text-muted">칠레</p>
-                    </th:block>
-                </div>
-            </div>
-        </div>
         <section class="section">
             <div class="row-auto">
                 <div class="col-auto">
-                    <div class="card">
-                        <div class="card-header bg-light shadow-sm text-center pb-0">
-                            <h3>Notice</h3>
+                    <div class="card box-shadow">
+                        <div class="card-header bg-light text-center shadow-sm pb-0">
+                                <h3>Notice</h3>
                         </div>
                         <div class="table-hover">
                             <table class="table table-hover">
                                 <thead id="headTasting">
                                 </thead>
-                                <tbody id="userTastingTableBody" style="font-size: 14px;">
-                                    <tr>
-                                        <td>
-                                            <div class="row justify-content-md-center align-self-center">
-                                                <b class="col-md-2"><i class="fa-solid fa-book me-1"></i>1</b>
-                                                <span class="col-md-8 font-bold mb-0">금주 최고의 베스트 와인은 이런 와인이 아닐까?</span>
-                                                <span class="col-auto text-center mb-0">2022-02-21</span>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <div class="row justify-content-md-center align-self-center">
-                                                <b class="col-md-2"><i class="fa-solid fa-book me-1"></i>1</b>
-                                                <span class="col-md-8 font-bold mb-0">금주 최고의 베스트 와인은 이런 와인이 아닐까?</span>
-                                                <span class="col-auto text-center mb-0">2022-02-21</span>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <div class="row justify-content-md-center align-self-center">
-                                                <b class="col-md-2"><i class="fa-solid fa-book me-1"></i>1</b>
-                                                <span class="col-md-8 font-bold mb-0">금주 최고의 베스트 와인은 이런 와인이 아닐까?</span>
-                                                <span class="col-auto text-center mb-0">2022-02-21</span>
-                                            </div>
-                                        </td>
-                                    </tr>
+                                <tbody id="noticeBoardList" style="font-size: 14px;">
+                                    <th:block th:each="notice,i : ${noticeList}">
+                                        <tr th:data-noticeNum="${notice.noticeId}">
+                                            <td>
+                                                <div class="row justify-content-md-center align-self-center">
+                                                    <i class="fa-solid fa-book me-1 col-md-2"><b class="ms-2" th:text="${i.count}"></b></i></b>
+                                                    <span class="col-md-8 font-bold mb-0" th:text="${notice.noticeTitle}"></span>
+                                                    <span class="col-auto text-center mb-0" th:text="${#temporals.format(notice.modifieDate, 'yyyy-MM-dd')}"></span>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </th:block>
                                 </tbody>
                             </table>
                         </div>
@@ -105,8 +79,8 @@
         <section class="section" id="mainBestGallery">
             <div class="row">
                 <div class="col-12">
-                    <div class="card" style="background-color: #e8f2ff;">
-                        <div class="card-header main">
+                    <div class="card box-shadow" style="background-color: #e8f2ff;">
+                        <div class="card-header bg-light text-center shadow-sm">
                             <h4 class="card-title h3">와린이 인기 노트</h4>
                         </div>
                         <div class="row justify-content-center">
@@ -136,7 +110,8 @@
                                                             alt="mdo" width="32" height="32" class="rounded-circle">
                                                     </div>
                                                 </div>
-                                                <span class="h6" style="font-size:12px;" th:text="${best.userId}"> </span>
+                                                <span class="h6" style="font-size:12px;" th:text="${best.userId}">
+                                                </span>
                                             </div>
                                         </div>
                                     </th:block>
@@ -150,8 +125,10 @@
         <!-- 갤러리 끝 -->
     </div>
     <script th:inline="javascript" type="module">
-        import { mainBestPostList } from '/js/module.js';
-        mainBestPostList()
+        import { mainLinkedList, noticeLinks } from '/js/module.js';
+        mainLinkedList()
+        noticeLinks()
+
     </script>
 </th:block>
 

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{layout/default}">
+
+<head>
+    <title>공지사항</title>
+    <link rel="stylesheet" href="/assets/css/pages/stat.css">
+</head>
+<th:block layout:fragment="content">
+
+    <body>
+        <div class="page-heading" th:with="info=${noticeInfo}">
+            <div class="col-sm-12">
+                <div class="row g-0">
+                    <div class="card box-shadow shadow-lg mx-auto my-4 bg-white col-md-12">
+                        <div class="card h-100">
+                            <!-- 타이틀 -->
+                            <div class="card-header">
+                                <h2 id="tastingTitle" th:text="${info.noticeTitle}"></h2>
+                                <h6 class="text-subtitle text-muted"
+                                    th:text="'작성일 : ' + ${#temporals.format(info.modifieDate, 'yyyy-MM-dd HH:mm:ss')}">
+                                </h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="form-group mb-3">
+                                    <div style="white-space:pre-wrap;" th:utext="${info.noticeContents}">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row justify-content-center">
+                    <a href="/notice" class="btn btn-secondary col-5" data-bs-dismiss="modal">공지사항 더보기</a>
+                </div>
+            </div>
+        </div>
+    </body>
+</th:block>
+
+</html>

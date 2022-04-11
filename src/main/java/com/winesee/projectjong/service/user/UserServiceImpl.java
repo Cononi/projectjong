@@ -349,6 +349,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         return RandomStringUtils.randomNumeric(6);
     }
 
+    // 프로필 업로드
     private UserResponse saveProfileImage(User user , String name, MultipartFile profileImage) throws IOException, NotAnImageFileException {
         if (StringUtils.isNotBlank(profileImage.getOriginalFilename())) { // user/home/warine/user/rick
             if(!Arrays.asList(IMAGE_JPEG_VALUE, IMAGE_PNG_VALUE, IMAGE_GIF_VALUE).contains(profileImage.getContentType())) {
