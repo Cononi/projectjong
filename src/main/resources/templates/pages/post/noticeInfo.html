@@ -5,6 +5,7 @@
 <head>
     <title>공지사항</title>
     <link rel="stylesheet" href="/assets/css/pages/stat.css">
+    <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor-viewer.min.css" />
 </head>
 <th:block layout:fragment="content">
 
@@ -22,9 +23,7 @@
                                 </h6>
                             </div>
                             <div class="card-body">
-                                <div class="form-group mb-3">
-                                    <div style="white-space:pre-wrap;" th:utext="${info.noticeContents}">
-                                    </div>
+                                <div id="viewer">
                                 </div>
                             </div>
                         </div>
@@ -36,6 +35,15 @@
             </div>
         </div>
     </body>
+    <script src="https://uicdn.toast.com/editor/latest/toastui-editor-viewer.js"></script>
+    <script th:inline="javascript">
+        const Viewer = toastui.Editor;
+        const viewer = new Viewer({
+            el: document.querySelector('#viewer'),
+            height: '600px',
+            initialValue: [[${noticeInfo.noticeContents}]]
+        });
+    </script>
 </th:block>
 
 </html>

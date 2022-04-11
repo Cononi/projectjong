@@ -31,58 +31,9 @@
             </div>
         </div>
         <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
-        <script th:inline="javascript">
-            const Editor = toastui.Editor;
-            const editor = new Editor({
-                el: document.querySelector('#editor'),
-                height: '500px',
-                initialEditType: 'wysiwyg',
-                previewStyle: 'vertical',
-                hooks: {
-                    addImageBlobHook: (blob, callback) => {
-                        const upload = blob
-                        noticePhotoUpload(blob).then(e=> { callback(e,"alt")
-                        console.log(e.url)})
-                    }
-                }
-            });
-            async function noticePhotoUpload(blob) {
-                let url = '/api/v1/notice/image/upload'
-                const formData = new FormData();
-                formData.append("multipartFiles", blob);
-                return await fetch(url, {
-                    method: 'POST',
-                    body: formData
-                }).then(function (response) {
-                    if (response.ok) {
-                        return response.text()
-                    } else if (response.url.includes('/login')) {
-                        location.href = "/account/login";
-                    }
-                });
-            }
-
-            document.getElementById('noticePostSubmit').addEventListener('click', () => {
-                const title = document.getElementById('noticeTitle')
-                let url = '/api/v1/notice/post'
-                fetch(url, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        noticeTitle : title.value,
-                        noticeContents : editor.getHTML()
-                    })
-                }).then(function (response) {
-                    if (response.ok) {
-                        response.text().then(e=>{
-                            location.href = "/notice/" + e
-                        })
-                    } else if (response.url.includes('/login')) {
-                        location.href = "/account/login";
-                    }
-                });
-            })
-
+        <script th:inline="javascript" type="module">
+            import { noticePostSet } from '/js/module.js';
+            noticePostSet()
         </script>
     </body>
 </th:block>
