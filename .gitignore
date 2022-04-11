@@ -56,5 +56,4 @@ manifest.yml
 
 ### SETTING ###
 *.yml
-constant/
 /src/main/resources/static/assets/wine/
