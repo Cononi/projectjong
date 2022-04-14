@@ -61,10 +61,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .deleteCookies("JSESSIONID", "ppp_at");
 
         http
+                .authorizeRequests().antMatchers(ADMIN_URLS).hasRole("ADMIN");
+
+        http
                 .csrf().disable()
                 // 모든 사용자가 해당 메뉴를 제외하고 액세스를 허용함
-                .authorizeRequests().antMatchers(ADMIN_URLS).hasRole("ADMIN")
-                .and()
                 .authorizeRequests().antMatchers(PUBLIC_URLS).permitAll()
                 .anyRequest().authenticated()
                 .and()

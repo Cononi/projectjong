@@ -1,10 +1,12 @@
 package com.winesee.projectjong.resource;
 
+import com.winesee.projectjong.config.exception.UserNotFoundException;
 import com.winesee.projectjong.domain.board.Post;
 import com.winesee.projectjong.domain.board.dto.PostRequest;
 import com.winesee.projectjong.domain.user.dto.UserResponse;
 import com.winesee.projectjong.service.comment.CommentService;
 import com.winesee.projectjong.service.post.PostService;
+import com.winesee.projectjong.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -31,6 +33,7 @@ import java.util.stream.Collectors;
 public class PostResource {
 
     private final PostService postService;
+    private final UserService userService;
 
     // 저장
     @PostMapping(value = "v1/post", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -78,6 +81,7 @@ public class PostResource {
     public ResponseEntity<?> accountPostList(@AuthenticationPrincipal UserResponse user, @PathVariable("pageNum") Integer pageNum){
         return new ResponseEntity<>(postService.myPostWineList(user,pageNum-1),HttpStatus.OK);
     }
+
 
     // 내가 작성한 와인 상세 포스팅 목록
     @GetMapping("v1/post/{pageNum}/wine/{wineId}")

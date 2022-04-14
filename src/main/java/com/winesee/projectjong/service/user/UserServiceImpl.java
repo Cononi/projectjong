@@ -6,10 +6,7 @@ import com.winesee.projectjong.domain.redis.EmailCodeRepository;
 import com.winesee.projectjong.domain.user.Role;
 import com.winesee.projectjong.domain.user.User;
 import com.winesee.projectjong.domain.user.UserRepository;
-import com.winesee.projectjong.domain.user.dto.PasswordChangeRequest;
-import com.winesee.projectjong.domain.user.dto.UserPasswordFindRequest;
-import com.winesee.projectjong.domain.user.dto.UserRequest;
-import com.winesee.projectjong.domain.user.dto.UserResponse;
+import com.winesee.projectjong.domain.user.dto.*;
 import com.winesee.projectjong.service.attempt.LoginAttemptService;
 import com.winesee.projectjong.service.email.MailService;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +15,10 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -160,16 +161,26 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     /*-----------------------------------------------
-    getUsers - 모든 유저 목록
+    getUserId - 해당 유저 Id번호로 정보 조회
      -----------------------------------------------*/
+
     @Override
-    public List<UserResponse> getUsers() {
-        List<User> user = userRepository.findAll();
-        List<UserResponse> userResponse = new ArrayList<>();
-        for(User response : user) {
-            userResponse.add(new UserResponse(response));
-        }
-        return userResponse;
+    public UserInfoResponse getUserId(Long id) throws UserNotFoundException {
+        return new UserInfoResponse(userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("존재하지 않는 유저 입니다.")));
+    }
+
+    @Override
+    public UserResponse getUserIdResponse(Long username) throws UserNotFoundException {
+        return new UserResponse(userRepository.findById(username).orElseThrow(() -> new UserNotFoundException("존재하지 않는 유저 입니다.")));
+    }
+
+    /*-----------------------------------------------
+            getUsers - 모든 유저 목록
+             -----------------------------------------------*/
+    @Override
+    public Page<UserInfoResponse> getUsers(int page) {
+        Pageable pageable = PageRequest.of(page, 24, Sort.by("id"));
+        return  userRepository.findAll(pageable).map(UserInfoResponse::new);
     }
 
     /*-----------------------------------------------
@@ -314,6 +325,21 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             errorMsg = "회원정보가 존재하지 않습니다. 확인 바랍니다.";
         }
         return errorMsg;
+    }
+
+    /*-----------------------------------------------
+      회원정보 수정 - Admin Page
+    -----------------------------------------------*/
+    @Override
+    public void adminPageUserEdit(UserAdminEditRequest request, Long userId) {
+        User user = userRepository.getById(userId);
+        // 권한 변경
+        user.roleEdit(request.getRoles());
+        // 기본 정보 변경
+        user.userProfileAdminSet(request.getName(),request.getEmail(),user.getProfileImageUrl());
+        // 상태 업데이트
+        user.userSecurityLockUpdate(request.getIsActive(),request.getIsNonLocked(),request.getIsEmailEnabled());
+        userRepository.save(user);
     }
 
 

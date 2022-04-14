@@ -191,6 +191,13 @@ public class User extends BaseTime implements Serializable, Principal, UserDetai
         this.profileImageUrl = profileImageUrl;
     }
 
+    // 어드민 페이지 전체 변경
+    public void userProfileAdminSet(String name, String email,String profileImageUrl) {
+        this.name = name;
+        this.email = email;
+        this.profileImageUrl = profileImageUrl;
+    }
+
     // 비밀번호 변경
     public void userPasswordUpdate(String password) {
         this.password = password;

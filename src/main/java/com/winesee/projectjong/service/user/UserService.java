@@ -3,10 +3,8 @@ package com.winesee.projectjong.service.user;
 import com.winesee.projectjong.config.exception.*;
 import com.winesee.projectjong.domain.user.Role;
 import com.winesee.projectjong.domain.user.User;
-import com.winesee.projectjong.domain.user.dto.PasswordChangeRequest;
-import com.winesee.projectjong.domain.user.dto.UserPasswordFindRequest;
-import com.winesee.projectjong.domain.user.dto.UserRequest;
-import com.winesee.projectjong.domain.user.dto.UserResponse;
+import com.winesee.projectjong.domain.user.dto.*;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
 import org.springframework.web.multipart.MultipartFile;
@@ -37,10 +35,24 @@ public interface UserService {
     UserResponse getUser(String username);
 
     /**
+     * 유저 가져오기
+     * @param username 유저 ID
+     * @return UserResponse 반환
+     */
+    UserResponse getUserIdResponse(Long username) throws UserNotFoundException;
+
+    /**
+     * 유저 가져오기
+     * @param id 유저 ID
+     * @return UserResponse 반환
+     */
+    UserInfoResponse getUserId(Long id) throws UserNotFoundException;
+
+    /**
      * 모든 유저 가져오기
      * @return List<UserResponse>를 반환
      */
-    List<UserResponse> getUsers();
+    Page<UserInfoResponse> getUsers(int page);
 
     /**
      * 이름으로 회원 정보 조회
@@ -96,6 +108,11 @@ public interface UserService {
     String userPasswordFind(UserPasswordFindRequest request);
 
     boolean passwordAuth(String password, String passwordAuth);
+
+    // 어드민 페이지에서  회원 정보 수정
+
+    void adminPageUserEdit(UserAdminEditRequest request, Long userId);
+
 }
 
 

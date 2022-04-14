@@ -50,13 +50,13 @@ public class Post {
     }
 
     @GetMapping("post/edit/{number}")
-    public String edit(Model model, @AuthenticationPrincipal UserResponse userinfo, @PathVariable("number") Long number){
+    public String edit(Model model, @AuthenticationPrincipal UserResponse userinfo, @PathVariable("number") Long number) {
         // 와인 정보 가져옴.
         PostResponse post = postService.postGet(number);
-        if(userinfo.getId().equals(post.getUserNum())){
+        if (userinfo.getId().equals(post.getUserNum())) {
             // 와인정보 뿌림.
             model.addAttribute("postInfo", post);
-            model.addAttribute("wineInfo",post.getWineId());
+            model.addAttribute("wineInfo", post.getWineId());
             return "pages/post/edit";
         } else {
             return "redirect:/";

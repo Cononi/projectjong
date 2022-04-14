@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{layout/default-admin}">
+
+<head>
+    <title>와린이</title>
+    <link rel="stylesheet" href="/assets/css/pages/wineboard.css">
+</head>
+<th:block layout:fragment="content">
+    <div class="page-title">
+        <div class="col-12 mt-4 order-md-1 order-last text-center">
+            <div class="user-img d-flex justify-content-center align-items-center">
+                <div class="avatar avatar-lg bg-primary mb-2 mx-2">
+                    <img th:src="${#strings.defaultString(userInfo.profileImageUrl,'/assets/images/faces/default.jpg')}"
+                        alt="mdo" width="32" height="32" class="rounded-circle">
+                </div>
+                <h2 th:text="${userInfo.username} + |(${userInfo.name})|">Tasting Notes</h2>
+            </div>
+        </div>
+    </div>
+    <div class="card box-shadow shadow-lg mx-auto my-4 bg-white col-md-7" th:with="info = ${userInfo}">
+        <form id="userEditSubmit" method="post" th:action="@{/admin/users/edit/} + ${userInfo.id}">
+            <div class="card">
+                <div class="card-body">
+                    <!-- 타이틀 -->
+                    <div class="form-group">
+                        <label for="tastingTitle">아이디</label>
+                        <small class="text-muted">( 15자리 까지 입력가능 - 변경 절때 금지 )</small>
+                        <input type="text" class="form-control" placeholder="제목을 입력해 주세요" th:value="${info.username}"
+                            disabled>
+                    </div>
+                    <!-- 한줄평 -->
+                    <div class="form-group mb-3">
+                        <label for="tastingTitle">닉네임</label>
+                        <small class="text-muted">( 15자리 까지 입력가능 - 임의 변경 가능)</small>
+                        <input type="text" class="form-control" name="name" placeholder="제목을 입력해 주세요"
+                            th:value="${info.name}">
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="tastingTitle">이메일</label>
+                        <small class="text-muted">(임의 변경 가능)</small>
+                        <input type="text" class="form-control" name="email" placeholder="제목을 입력해 주세요"
+                            th:value="${info.email}">
+                    </div>
+                    <!-- 세부 내용 -->
+                    <div class="row g-0">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="tastingVintage">회원 권한</label>
+                                <div>
+                                    <input type="radio" class="btn-check" name="roles" id="authuser" autocomplete="off"
+                                        value="USER" th:checked="${#strings.equals(info.roles,'USER')} ? true">
+                                    <label class="btn btn-outline-success" for="authuser">와린이</label>
+                                    <input type="radio" class="btn-check" name="roles" id="authinstar"
+                                        autocomplete="off" value="STAR"
+                                        th:checked="${#strings.equals(info.roles,'STAR')} ? true">
+                                    <label class="btn btn-outline-success" for="authinstar">와스타</label>
+                                    <input type="radio" class="btn-check" name="roles" id="authsuperuser"
+                                        autocomplete="off" value="ADMIN"
+                                        th:checked="${#strings.equals(info.roles,'ADMIN')} ? true">
+                                    <label class="btn btn-outline-success" for="authsuperuser">운영자</label>
+                                </div>
+                            </div>
+                            <div class="card-text px-0 p-1">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="isActive" name="isActive"
+                                        th:checked="${info.isActive}">
+                                    <label class="form-check-label" for="isActive">계정 잠김</label>
+                                </div>
+                            </div>
+                            <div class="card-text px-0 p-1">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="isNonLocked" name="isNonLocked"
+                                        th:checked="${info.isNonLocked}">
+                                    <label class="form-check-label" for="isNonLocked">계정 일시 정지</label>
+                                </div>
+                            </div>
+                            <div class="card-text px-0 p-1">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="isEmailEnabled"
+                                        name="isEmailEnabled" th:checked="${info.isEmailEnabled}">
+                                    <label class="form-check-label" for="isEmailEnabled">이메일 인증 여부</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mt-2">
+                            <div class="form-group">
+                                <label for="tastingAlcohol">가입일</label>
+                                <div th:text="${#temporals.format(info.createDate, 'yyyy-MM-dd HH:mm:ss')}"></div>
+                            </div>
+                            <div class="form-group">
+                                <label for="tastingPrice">마지막 수정일</label>
+                                <div th:text="${#temporals.format(info.modifieDate, 'yyyy-MM-dd HH:mm:ss')}"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row justify-content-center">
+                <button id="userInfoSubmmit" class="btn btn-primary m-1 col-4">수정 하기</button>
+                <a id="subm" class="btn btn-primary m-1 col-4">이전 으로</a>
+            </div>
+        </form>
+    </div>
+</th:block>
+
+</html>

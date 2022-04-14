@@ -1,3 +1,5 @@
+import { setCookie, createNoneMessageAllchild, removeAllchild, pageNavDataSet} from '/js/common.js';
+
 let con = true
 function SearchInfoController() {
     const searchMainForm = document.getElementById("searchForms")
@@ -264,7 +266,7 @@ export { SearchInfoController }
 
 // -----------------------------------------------------------------
 // 검색
-async function wineSearchFind(pagenum) {
+ function wineSearchFind(pagenum) {
     const searchMainForm = document.getElementById("searchForms")
     const children = Array.from(searchMainForm.children)
     const mainContentChangeDivEl = document.getElementById("mainContentChangeDiv")
@@ -281,7 +283,7 @@ async function wineSearchFind(pagenum) {
     });
     if (pagenum > 0) { object['page'] = pagenum }
     let url = '/api/find/wine'
-    await fetch(url, {
+    fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(object),
@@ -462,9 +464,9 @@ function tastingPostSubmitContents(methods, postNum) {
         return itemNum
     }
 
-    tastingBtnSumbit.addEventListener('click', async () => {
+    tastingBtnSumbit.addEventListener('click', () => {
         if (formInputNotCheck()) {
-            let numberInfo = await tastingPostCall()
+            let numberInfo = tastingPostCall()
             if (numberInfo != null)
                 location.href = "/post/info/" + numberInfo + "/1"
         }
@@ -506,8 +508,8 @@ export { tastingPostSubmitContents }
 export function postInfoPageFet(num, pages) {
     let tastingDeSumbit = document.getElementById("delCheckBtt")
 
-    tastingDeSumbit.addEventListener('click', async () => {
-        await infoPostDeCall()
+    tastingDeSumbit.addEventListener('click', () => {
+        infoPostDeCall()
         // 마페로감
         location.href = pages
     })
@@ -541,9 +543,9 @@ function formExpCheck(e) {
 
 
 let postCon = ''
-async function postListWineTasting(page, id, link) {
+function postListWineTasting(page, id, link) {
     let url = '/api/v1/post/' + page + '/' + link + '/' + id
-    await fetch(url)
+    fetch(url)
         .then(e => e.json())
         .then(json => {
             const tableBodyEl = document.getElementById("userTastingTableBody")
@@ -589,9 +591,9 @@ async function postListWineTasting(page, id, link) {
 }
 
 // 마이 포스팅
-async function postListMyTasting(num) {
+function postListMyTasting(num) {
     let url = '/api/v1/account/post/wine/' + num
-    await fetch(url)
+    fetch(url)
         .then(e => formExpCheck(e))
         .then(json => {
             const tastingDivEl = document.getElementById("mytastingDiv")
@@ -669,7 +671,7 @@ let commentDelId = ''
 let commentEditId = ''
 let commentPre = ''
 let thisCommentCountNum = 1
-export async function postCommentList(page, item, data) {
+export function postCommentList(page, item, data) {
     // 삭
     function infoCommentDeCall(num) {
         let url = '/api/v1/comment/' + num
@@ -714,7 +716,7 @@ export async function postCommentList(page, item, data) {
         })
     }
     let url = '/api/v1/comment/' + item + '/' + page
-    await fetch(url)
+    fetch(url)
         .then(e => e.json())
         .then(json => {
             const tableBodyEl = document.getElementById("userTastingTableBody")
@@ -800,81 +802,6 @@ export async function postCommentList(page, item, data) {
 }
 
 
-// 공동 페이지 (테이블 data-columnNum, 페이징 data-pagenum)
-function pageNavDataSet(MainELId, customerData, ItemPageId, json, link) { //MainElDataSet (테이블 데이터 셋), MainElId (메인 El Id), MainEl (메인 El), customerData (객체 전달),ItemPageId(페이지 아이템 관련)  json(Json데이터)
-
-    // 페이징
-    const tableNav = document.getElementById(MainELId) // 공통
-    const tableNavUl = document.createElement("ul")
-    removeAllchild(tableNav)
-    tableNavUl.setAttribute('class', 'pagination pagination-danger justify-content-center')
-    tableNavUl.setAttribute('id', 'navUiTop')
-
-    let firstpage = Math.floor((json.pageable.pageNumber) / 5) * 5 + 1
-    let lastpage = (firstpage + 5)
-    let pageIno = ''
-    let pageLano = ''
-    if (firstpage > 5) {
-        pageIno = `<a class="page-link" data-pagenum=` + (firstpage - 1) + `><span aria-hidden="true"><i
-            class="bi bi-chevron-left"></i></span></a>`
-    }
-    tableNavUl.innerHTML = `
-        <li class="page-item">`+ pageIno + `</li>
-        `
-    if (json.totalElements != 0) {
-        let maxPage = lastpage > json.totalPages ? json.totalPages + 1 : lastpage
-        for (let i = firstpage; i < maxPage; i++) {
-            let pageActive = ''
-            if (json.pageable.pageNumber + 1 == i) {
-                pageActive = "active"
-            }
-            tableNavUl.innerHTML += `
-            <li class="page-item `+ pageActive + `"><a class="page-link" data-pagenum=` + (i) + `>` + i + `</a></li>
-            `
-        }
-    }
-    if (lastpage <= json.totalPages) {
-        pageLano = `<a class="page-link" data-pagenum=` + lastpage + `><span aria-hidden="true">
-        <i class="bi bi-chevron-right"></i></span></a>`
-    }
-    tableNavUl.innerHTML += `
-        <li class="page-item">` + pageLano + `
-        </li>
-`
-    tableNavUl.querySelectorAll('a[data-pagenum]').forEach(e => {
-        if (!e.parentElement.classList.contains('active'))
-            e.addEventListener('click', () => {
-                if (customerData.length == 3) {
-                    customerData(e.dataset.pagenum, ItemPageId, link) // 공통
-                    thisCommentCountNum = e.dataset.pagenum // 코멘트 카운트용
-                } else if (customerData.length == 2) {
-                    customerData(ItemPageId, e.dataset.pagenum)
-                } else {
-                    customerData(e.dataset.pagenum)
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                }
-                tableNavUl.scrollIntoView()
-            })
-    })
-    tableNav.appendChild(tableNavUl)
-}
-
-
-// 추가 함수
-function createNoneMessageAllchild(topBody, center, parent, ment) { // 메인,중앙,부모
-    removeAllchild(topBody)
-    center.innerHTML = ment
-    center.setAttribute('class', "text-center my-4")
-    parent.appendChild(center)
-}
-
-// 제거 함수
-function removeAllchild(div) {
-    while (div.hasChildNodes()) {
-        div.removeChild(div.firstChild);
-    }
-}
-
 
 //------------------------------------------------------------------------------------------------
 export function mainLinkedList() {
@@ -903,9 +830,9 @@ export function noticeFun(page) {
 
     noticeListWineTasting(page)
 
-    async function noticeListWineTasting(page) {
+    function noticeListWineTasting(page) {
         let url = '/api/v1/notice/' + page
-        await fetch(url)
+        fetch(url)
             .then(e => e.json())
             .then(json => {
                 const tableBodyEl = document.getElementById("noticeBoardList")
@@ -998,7 +925,3 @@ export function noticePostSet(){
             })
 }
 
-let setCookie = function(name, value) {
-	var date = new Date();
-	document.cookie = name + '=' + value + ';path=/';
-};

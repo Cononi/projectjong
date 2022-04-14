@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<!-- CSS 파일 -->
+<!-- cssFragment(~{::title},~{::link}) -->
+<th:block th:replace="include/head :: cssFragment"></th:block>
+
+<body>
+    <!-- main -->
+    <div id="main" class="layout-horizontal">
+        <!-- header -->
+        <th:block th:replace="include/header-admin :: headerAdminFragment"></th:block>
+        <div id="main-content">
+            <!-- content -->
+            <th:block layout:fragment="content"></th:block>
+            <!-- footer -->
+            <th:block th:replace="include/footer :: footerFragment"></th:block>
+        </div>
+        <!-- script -->
+        <th:block th:replace="include/script :: scriptFragment"></th:block>
+    </div>
+</body>
+
+</html>
